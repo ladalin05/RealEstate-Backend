@@ -85,6 +85,7 @@ Route::middleware(['auth', 'abilities'])->group(function () {
         Route::get('/', [LocationController::class, 'index'])->name('index');
         Route::match(['get', 'post'],'/add', [LocationController::class, 'store'])->name('add');
         Route::match(['get', 'post'],'/edit/{id}', [LocationController::class, 'update'])->name('edit');
+        Route::get('/delete/{id}', [LocationController::class, 'destroy'])->name('deleted');
     });
 
     // Properties

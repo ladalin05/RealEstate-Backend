@@ -48,8 +48,8 @@ class LocationController extends Controller
                 
                 return response()->json([
                     'status'  => 'success',
-                    'message' => __('global.create_type_success'),
-                    'redirect' => route('type.index'),
+                    'message' => __('global.create_location_successfully'),
+                    'redirect' => route('location.index'),
                 ]);
             }
 
@@ -94,12 +94,31 @@ class LocationController extends Controller
                 ]);
                 
                 return response()->json([
-                    'status' => 'success',
-                    'title'  => __('global.edit'),
-                    'html'   => view('pages.location.edit', compact('location'))->render(),
+                    'status'  => 'success',
+                    'message' => __('global.updated_location_successfully'),
+                    'redirect' => route('location.index'),
                 ]);
             }
 
+        } catch(\Throwable $e) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $location = Location::findOrFail($id);
+            $location->delete();
+
+            return response()->json([
+                'status'  => 'success',
+                'message' => __('global.delete_location_successfully'),
+                'redirect' => route('location.index'),
+            ]);
         } catch(\Throwable $e) {
             return response()->json([
                 'status'  => 'error',

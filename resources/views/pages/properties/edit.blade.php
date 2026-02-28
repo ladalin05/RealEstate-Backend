@@ -116,7 +116,7 @@
                         
                     </div>
 
-                    <form action="{{ route('property.edit', $property_info->id) }}" method="POST" id="property-form" enctype="multipart/form-data">
+                    <form action="{{ route('property.edit', $property_info->id) }}" method="POST" id="editProperty" enctype="multipart/form-data">
                         @csrf
 
                         <div class="card">
@@ -267,10 +267,9 @@
                                         <label class="form-label">Featured Image</label>
                                         <div class="image-upload-wrapper">
                                             <input type="file" name="feature_image" id="feature_image" class="d-none" accept="image/*">
-                                            <input type="hidden" name="feature_image_name" id="feature_image_name" value="{{ $property_info->image }}">
                                             <button type="button" class="btn btn-dark mb-2" id="feature-image-btn">Change Image</button>
                                             <p class="small text-muted mb-0">Recommended: 800x480px</p>
-                                            <img id="feature-image-preview" src="{{ asset('storage/' . $property_info->image) }}" class="img-preview-custom">
+                                            <img id="feature-image-preview" src="{{ $property_info->image ? asset('storage/' . $property_info->image) : asset('/upload/placeholder_img.jpg')  }}" class="img-preview-custom">
                                         </div>
                                     </div>
 
@@ -278,7 +277,6 @@
                                         <label class="form-label">Floor Plan</label>
                                         <div class="image-upload-wrapper">
                                             <input type="file" name="floor_plan_image" id="floor_plan_image" class="d-none" accept="image/*">
-                                            <input type="hidden" name="floor_plan_image_name" id="floor_plan_image_name" value="{{ $property_info->floor_plan_image }}">
                                             <button type="button" class="btn btn-dark mb-2" id="floor-plan-image-btn">Change Plan</button>
                                             <p class="small text-muted mb-0">Upload architecture layout</p>
                                             <img id="floor-plan-image-preview" src="{{ asset('/' . $property_info->floor_plan_image) }}" class="img-preview-custom">
@@ -327,6 +325,10 @@
     @push('scripts')
         <script>
             $(document).ready(function () {
+                $(document).on('submit', '#editProperty', function (event) {
+                    event.preventDefault();
+                    ajaxSubmit('#editProperty');
+                });
                 // Trigger file inputs
                 $('#feature-image-btn').click(() => $('#feature_image').click());
                 $('#floor-plan-image-btn').click(() => $('#floor_plan_image').click());

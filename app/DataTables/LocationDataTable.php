@@ -25,19 +25,29 @@ class LocationDataTable extends DataTable
                 </div>';
             })
             ->addColumn('action', function ($row) {
-                $edit = route('location.edit', $row->id);
 
                 return '
-                <div class="d-flex gap-2">
-                    <a href="'.$edit.'" class="btn btn-sm btn-success" onclick="editlocation(event)">
-                        <i class="fa fa-edit"></i>
-                    </a>
+                        <div class="d-flex gap-2">
+                            <button type="button"
+                                class="btn btn-success btn-sm text-white"
+                                data-url="'.route('location.edit', $row->id).'"
+                                onclick="editLocation(event)">
+                                
+                                <i class="ph ph-pencil-simple me-1"></i>
+                                Edit
+                            </button>
 
-                    <button class="btn btn-sm btn-danger data_remove"
-                        data-id="'.$row->id.'">
-                        <i class="fa fa-trash"></i>
-                    </button>
-                </div>';
+                            <button type="button"
+                                class="btn btn-danger btn-sm data_remove"
+                                data-url="'.route('location.deleted', $row->id).'"
+                                onclick="deleteLocation(event)">
+
+                                <i class="fa fa-trash"></i>
+
+                            </button>
+
+                        </div>
+                        ';
             })
             ->rawColumns(['status','action']);
     }

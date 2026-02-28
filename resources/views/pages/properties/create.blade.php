@@ -117,7 +117,7 @@
                     </div>
 
                     {{-- Updated Route for Store --}}
-                    <form action="{{ route('property.add') }}" method="POST" id="property-form" enctype="multipart/form-data">
+                    <form action="{{ route('property.add') }}" method="POST" id="addProperty" enctype="multipart/form-data">
                         @csrf
 
                         <div class="card">
@@ -298,9 +298,10 @@
                                     {{-- Start with one empty slot or leave empty --}}
                                 </div>
                             </div>
+                            {{-- Actions --}}
                             <div class="card-footer d-flex justify-content-end">
                                 <button type="submit" class="btn btn-primary btn-lg shadow">
-                                    <i class="fa-solid fa-floppy-disk me-2"></i> Create Property
+                                    <i class="fa-solid fa-floppy-disk me-2"></i> {{__('global.save')}} Changes
                                 </button>
                             </div> 
                         </div>
@@ -312,6 +313,10 @@
 
     @push('scripts')
     <script>
+        $(document).on('submit', '#addProperty', function (event) {
+            event.preventDefault();
+            ajaxSubmit('#addProperty');
+        });
         $(document).ready(function () {
             // Trigger file inputs
             $('#feature-image-btn').click(() => $('#feature_image').click());

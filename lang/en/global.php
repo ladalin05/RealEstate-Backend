@@ -250,5 +250,8 @@ return [
     'remove' => "Remove",
     'property_management' => 'Property Management',
     'view_and_manage_payment_history' => 'View and manage payment history',
+    'create_location_successfully' => 'Create Location Successfully',
+    'updated_location_successfully' => 'Updated Location Successfully',
+    'delete_location_successfully' => 'Delete Location Successfully'
 
 ];
