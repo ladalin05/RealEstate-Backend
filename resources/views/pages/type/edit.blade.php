@@ -88,7 +88,7 @@
                     <div class="card card-modern">
                         {{-- Body --}}
                         <div class="card-body p-3 p-md-3">
-                            <form method="POST" action="{{ route('type.edit', $data_obj->id) }}" id="form-type" enctype="multipart/form-data">
+                            <form method="POST" action="{{ route('type.edit', $data_obj->id) }}" id="editType" enctype="multipart/form-data">
                                 @csrf
                                 <input type="hidden" name="id" value="{{ $data_obj->id ?? '' }}">
 
@@ -156,6 +156,10 @@
 
     @push('scripts')
     <script>
+        $(document).on('submit', '#editType', function (event) {
+            event.preventDefault();
+            ajaxSubmit('#editType');
+        });
         $(document).ready(function() {
             // Function to handle image click and preview
             $('#type-image-btn').on('click', function() {

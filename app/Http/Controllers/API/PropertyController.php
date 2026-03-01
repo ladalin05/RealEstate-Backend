@@ -20,16 +20,16 @@ class PropertyController extends Controller
     public function getProperty(Request $request)
     {
         $property = Property::query()
-                            ->join('type', 'property.type_id', '=', 'type.id')
+                            ->join('types', 'property.type_id', '=', 'types.id')
                             ->leftJoin('locations', 'property.location_id', '=', 'locations.id')
                             ->leftJoin('users', 'property.user_id', '=', 'users.id')
-                            ->join('user_inform', 'users.id', '=', 'user_inform.user_id')
+                            ->leftJoin('user_inform', 'users.id', '=', 'user_inform.user_id')
                             ->leftJoin('favourite', 'property.id', '=', 'favourite.post_id')
                             ->select(
                                 'property.*',
-                                'type.type_name',
+                                'types.type_name',
                                 'locations.name as location_name',
-                                'users.display_name as user_name',
+                                'users.name_en as user_name',
                                 'user_inform.image as user_image',
                                 DB::raw("(SELECT MAX(pv.post_views) FROM post_views pv WHERE pv.post_id = property.id) AS post_views"),
                                 DB::raw("(SELECT MAX(pv.date) FROM post_views pv WHERE pv.post_id = property.id) AS post_date"),
@@ -50,16 +50,16 @@ class PropertyController extends Controller
     
     public function getPropertyDetails($id)
     {
-        $property = Property::join('type', 'property.type_id', '=', 'type.id')
+        $property = Property::join('types', 'property.type_id', '=', 'types.id')
                             ->leftJoin('locations', 'property.location_id', '=', 'locations.id')
                             ->leftJoin('users', 'property.user_id', '=', 'users.id')
-                            ->join('user_inform', 'users.id', '=', 'user_inform.user_id')
+                            ->leftJoin('user_inform', 'users.id', '=', 'user_inform.user_id')
                             ->leftJoin('favourite', 'property.id', '=', 'favourite.post_id')
                             ->select(
                                 'property.*',
-                                'type.type_name',
+                                'types.type_name',
                                 'locations.name as location_name',
-                                'users.display_name as user_name',
+                                'users.name_en as user_name',
                                 'user_inform.image as user_image',
                                 DB::raw("(SELECT MAX(pv.post_views) FROM post_views pv WHERE pv.post_id = property.id) AS post_views"),
                                 DB::raw("(SELECT MAX(pv.date) FROM post_views pv WHERE pv.post_id = property.id) AS post_date"),
@@ -80,16 +80,16 @@ class PropertyController extends Controller
             ->orderBy('id')
             ->get();
 
-        $latest_list = Property::join('type', 'property.type_id', '=', 'type.id')
+        $latest_list = Property::join('types', 'property.type_id', '=', 'types.id')
                             ->leftJoin('locations', 'property.location_id', '=', 'locations.id')
                             ->leftJoin('users', 'property.user_id', '=', 'users.id')
-                            ->join('user_inform', 'users.id', '=', 'user_inform.user_id')
+                            ->leftJoin('user_inform', 'users.id', '=', 'user_inform.user_id')
                             ->leftJoin('favourite', 'property.id', '=', 'favourite.post_id')
                             ->select(
                                 'property.*',
-                                'type.type_name',
+                                'types.type_name',
                                 'locations.name as location_name',
-                                'users.display_name as user_name',
+                                'users.name_en as user_name',
                                 'user_inform.image as user_image',
                                 DB::raw("(SELECT MAX(pv.post_views) FROM post_views pv WHERE pv.post_id = property.id) AS post_views"),
                                 DB::raw("(SELECT MAX(pv.date) FROM post_views pv WHERE pv.post_id = property.id) AS post_date"),
@@ -101,16 +101,16 @@ class PropertyController extends Controller
                             ->limit(5)
                             ->get();
 
-        $related_list = Property::join('type', 'property.type_id', '=', 'type.id')
+        $related_list = Property::join('types', 'property.type_id', '=', 'types.id')
                             ->leftJoin('locations', 'property.location_id', '=', 'locations.id')
                             ->leftJoin('users', 'property.user_id', '=', 'users.id')
-                            ->join('user_inform', 'users.id', '=', 'user_inform.user_id')
+                            ->leftJoin('user_inform', 'users.id', '=', 'user_inform.user_id')
                             ->leftJoin('favourite', 'property.id', '=', 'favourite.post_id')
                             ->select(
                                 'property.*',
-                                'type.type_name',
+                                'types.type_name',
                                 'locations.name as location_name',
-                                'users.display_name as user_name',
+                                'users.name_en as user_name',
                                 'user_inform.image as user_image',
                                 DB::raw("(SELECT MAX(pv.post_views) FROM post_views pv WHERE pv.post_id = property.id) AS post_views"),
                                 DB::raw("(SELECT MAX(pv.date) FROM post_views pv WHERE pv.post_id = property.id) AS post_date"),

@@ -24,31 +24,7 @@ class LocationDataTable extends DataTable
                         '.$checked.'>
                 </div>';
             })
-            ->addColumn('action', function ($row) {
-
-                return '
-                        <div class="d-flex gap-2">
-                            <button type="button"
-                                class="btn btn-success btn-sm text-white"
-                                data-url="'.route('location.edit', $row->id).'"
-                                onclick="editLocation(event)">
-                                
-                                <i class="ph ph-pencil-simple me-1"></i>
-                                Edit
-                            </button>
-
-                            <button type="button"
-                                class="btn btn-danger btn-sm data_remove"
-                                data-url="'.route('location.deleted', $row->id).'"
-                                onclick="deleteLocation(event)">
-
-                                <i class="fa fa-trash"></i>
-
-                            </button>
-
-                        </div>
-                        ';
-            })
+            ->addColumn('action', fn($row) => view('pages.location.action', compact('row')))
             ->rawColumns(['status','action']);
     }
 

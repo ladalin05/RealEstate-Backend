@@ -2,7 +2,7 @@
     <style>
         .nav-sidebar {
             width: 250px;
-            background: #f8f9fa;
+            background: #fff;
             border-right: 1px solid #dee2e6;
             height: 100vh;
         }

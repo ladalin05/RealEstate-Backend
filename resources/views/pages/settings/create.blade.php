@@ -1,179 +1,241 @@
 <x-app-layout>
     <style>
-        .card-body label {
-            color: #797979 ;
+        :root {
+            --primary-bg: #f8f9fa;
+            --card-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            --accent-color: #4e73df;
         }
+
+        body { background-color: var(--primary-bg); }
+
+        .settings-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+        }
+
+        .card-header-custom {
+            background: #fff;
+            padding: 1.5rem;
+            border-bottom: 1px solid #edf2f9;
+        }
+
+        .section-title {
+            font-weight: 700;
+            color: #334155;
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title i {
+            width: 35px;
+            height: 35px;
+            background: rgba(78, 115, 223, 0.1);
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            margin-right: 12px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            border: 1px solid #d1d9e6;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.25rem rgba(78, 115, 223, 0.1);
+        }
+
+        .preview-container {
+            background: #f1f5f9;
+            border: 2px dashed #cbd5e1;
+            border-radius: 10px;
+            padding: 10px;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .img-thumbnail-custom {
+            max-width: 120px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-save {
+            padding: 12px 30px;
+            font-weight: 600;
+            border-radius: 10px;
+            letter-spacing: 0.5px;
+            transition: transform 0.2s;
+        }
+
+        .btn-save:hover { transform: translateY(-2px); }
     </style>
-    <div class="content">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="card-box">
-                        <div class="row mb-4">
-                            <div class="col-sm-6">
-                                <h4 class="mb-0">Website Settings</h4>
-                            </div>
+
+    <div class="content py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-11">
+                    
+                    <div class="card settings-card">
+                        <div class="card-header-custom d-flex justify-content-between align-items-center">
+                            <h4 class="mb-0 fw-bold">Website Configuration</h4>
+                            <span class="badge bg-soft-primary text-primary">System Settings</span>
                         </div>
-                        <div class="card-body">
+
+                        <div class="card-body p-4 p-lg-5">
                             <form action="{{ route('settings.general.create') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
-                                <div class="row">
+                                
+                                <div class="row g-5">
                                     <div class="col-md-6">
-                                        <legend class="float-none w-auto px-1 fs-5">General Settings</legend>
-                                        <fieldset class="border p-3 mb-4">
-                                            <div class="mb-3">
-                                                <label for="web_name" class="form-label">Website Name</label>
-                                                <input type="text" class="form-control @error('web_name') is-invalid @enderror" id="web_name" name="web_name" value="" required>
-                                                @error('web_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                                            </div>
+                                        <h5 class="section-title"><i class="bi bi-gear-fill"></i> General Settings</h5>
+                                        
+                                        <div class="mb-4">
+                                            <label for="web_name" class="form-label">Website Name</label>
+                                            <input type="text" class="form-control @error('web_name') is-invalid @enderror" id="web_name" name="web_name" placeholder="e.g. My Awesome Brand" required>
+                                            @error('web_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                        </div>
 
-                                            <div class="mb-3">
-                                                <label for="web_logo" class="form-label">Website Logo</label>
-                                                <input type="file" class="form-control @error('web_logo') is-invalid @enderror" id="web_logo" name="web_logo" accept="image/*">
-                                                
-                                                <div class="form-group row my-3">
-                                                    <div class="col-sm-8">
-                                                        <img id="web_logo_preview" src="#" style="max-width:150px; display:none;" class="img-thumbnail">
-                                                    </div>
-                                                </div
-                                                @error('web_logo') <div class="invalid-feedback">{{ $message }} </div>@enderror
+                                        <div class="row mb-4">
+                                            <div class="col-6">
+                                                <label class="form-label">Website Logo</label>
+                                                <input type="file" class="form-control" id="web_logo" name="web_logo" accept="image/*">
+                                                <div class="preview-container mt-2">
+                                                    <img id="web_logo_preview" src="#" style="display:none;" class="img-thumbnail-custom">
+                                                </div>
                                             </div>
-                                            
-                                            <div class="mb-3">
-                                                <label for="favicon" class="form-label">Favicon</label>
-                                                <input type="file" class="form-control @error('favicon') is-invalid @enderror" id="favicon" name="favicon" accept="image/*">
-                                                <div class="form-group row my-3">
-                                                    <div class="col-sm-8">
-                                                        <img id="favicon_preview" src="#" style="max-width:150px; display:none;" class="img-thumbnail">
-                                                    </div>
-                                                </div
-                                                @error('favicon') <div class="invalid-feedback">{{ $message }} </div>@enderror
+                                            <div class="col-6">
+                                                <label class="form-label">Favicon</label>
+                                                <input type="file" class="form-control" id="favicon" name="favicon" accept="image/*">
+                                                <div class="preview-container mt-2">
+                                                    <img id="favicon_preview" src="#" style="display:none;" class="img-thumbnail-custom">
+                                                </div>
                                             </div>
+                                        </div>
 
-                                            <div class="mb-3">
-                                                <label for="web_email" class="form-label">Email</label>
-                                                <input type="email" class="form-control @error('web_email') is-invalid @enderror" id="web_email" name="web_email" value="">
-                                                @error('web_email')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                                            </div>
-                                            
-                                            <div class="mb-3">
-                                                <label for="description" class="form-label">Description</label>
-                                                <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description" rows="3"></textarea>
-                                                <div class="form-text">Recommended length: 150-160 characters.</div>
-                                                @error('description')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                                            </div>
+                                        <div class="mb-4">
+                                            <label for="web_email" class="form-label">System Email</label>
+                                            <input type="email" class="form-control @error('web_email') is-invalid @enderror" id="web_email" name="web_email">
+                                        </div>
 
-                                        </fieldset>
+                                        <div class="mb-0">
+                                            <label for="description" class="form-label">Meta Description</label>
+                                            <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description" rows="4" placeholder="Brief site summary..."></textarea>
+                                            <div class="form-text mt-2 text-muted small">SEO Best Practice: 150-160 characters.</div>
+                                        </div>
                                     </div>
+
                                     <div class="col-md-6">
-                                        <legend class="float-none w-auto px-1 fs-5">Contact Us</legend>
-                                        <fieldset class="border p-3 mb-4">
-                                            <div class="mb-3">
-                                                <label for="contact_email" class="form-label">Contact Email</label>
-                                                <input type="email" class="form-control @error('contact_email') is-invalid @enderror" id="contact_email" name="contact_email" value="">
-                                                @error('contact_email')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                                            </div>
+                                        <h5 class="section-title"><i class="bi bi-person-rolodex"></i> Contact Details</h5>
+                                        
+                                        <div class="mb-4">
+                                            <label for="contact_email" class="form-label">Public Contact Email</label>
+                                            <input type="email" class="form-control" id="contact_email" name="contact_email" placeholder="support@brand.com">
+                                        </div>
 
-                                            <div class="mb-3">
-                                                <label for="contact_phone" class="form-label">Contact Phone</label>
-                                                <input type="tel" class="form-control @error('contact_phone') is-invalid @enderror" id="contact_phone" name="contact_phone" placeholder="+855 123 456 789" value="">
-                                                @error('contact_phone')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                                            </div>
+                                        <div class="mb-4">
+                                            <label for="contact_phone" class="form-label">Phone Number</label>
+                                            <input type="tel" class="form-control" id="contact_phone" name="contact_phone" placeholder="+855 123 456 789">
+                                        </div>
 
-                                            <div class="mb-3">
-                                                <label for="contact_address" class="form-label">Contact Address</label>
-                                                <input type="text" class="form-control @error('contact_address') is-invalid @enderror" id="contact_address" name="contact_address" value="">
-                                                @error('contact_address')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                                            </div>
+                                        <div class="mb-5">
+                                            <label for="location" class="form-label">Business Location</label>
+                                            <input type="text" class="form-control" id="location" name="location" placeholder="City, Country">
+                                        </div>
 
-                                            <div class="mb-3">
-                                                <label for="location" class="form-label">Location</label>
-                                                <input type="text" class="form-control @error('location') is-invalid @enderror" id="location" name="location" value="">
-                                                @error('location')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                        <h5 class="section-title"><i class="bi bi-share-fill"></i> Social Profiles</h5>
+                                        <div class="row g-3">
+                                            <div class="col-6">
+                                                <div class="input-group">
+                                                    <span class="input-group-text bg-white"><i class="bi bi-facebook text-primary"></i></span>
+                                                    <input type="url" name="facebook" class="form-control" placeholder="Facebook">
+                                                </div>
                                             </div>
-                                        </fieldset>
-                                        <legend class="float-none w-auto px-1 fs-5">Social Links</legend>
-                                        <fieldset class="border p-3 mb-4">
-                                            <div class="mb-3">
-                                                <label for="facebook" class="form-label">Facebook URL</label>
-                                                <input type="url" class="form-control @error('facebook') is-invalid @enderror" id="facebook" name="facebook" value="">
-                                                @error('facebook')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                            <div class="col-6">
+                                                <div class="input-group">
+                                                    <span class="input-group-text bg-white"><i class="bi bi-instagram text-danger"></i></span>
+                                                    <input type="url" name="instagram" class="form-control" placeholder="Instagram">
+                                                </div>
                                             </div>
-
-                                            <div class="mb-3">
-                                                <label for="instagram" class="form-label">Instagram URL</label>
-                                                <input type="url" class="form-control @error('instagram') is-invalid @enderror" id="instagram" name="instagram" value="">
-                                                @error('instagram')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                            <div class="col-6">
+                                                <div class="input-group">
+                                                    <span class="input-group-text bg-white"><i class="bi bi-twitter-x"></i></span>
+                                                    <input type="url" name="twitter" class="form-control" placeholder="X / Twitter">
+                                                </div>
                                             </div>
-
-                                            <div class="mb-3">
-                                                <label for="twitter" class="form-label">X (Twitter) URL</label>
-                                                <input type="url" class="form-control @error('twitter') is-invalid @enderror" id="twitter" name="twitter" value="">
-                                                @error('twitter')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                            <div class="col-6">
+                                                <div class="input-group">
+                                                    <span class="input-group-text bg-white"><i class="bi bi-youtube text-danger"></i></span>
+                                                    <input type="url" name="youtube" class="form-control" placeholder="YouTube">
+                                                </div>
                                             </div>
-
-                                            <div class="mb-3">
-                                                <label for="youtube" class="form-label">Youtube URL</label>
-                                                <input type="url" class="form-control @error('youtube') is-invalid @enderror" id="youtube" name="youtube" value="">
-                                                @error('youtube')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                                            </div>
-                                        </fieldset>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="d-grid justify-content-end gap-2">
-                                    <button type="submit" class="btn btn-success btn-lg">
-                                        <i class="bi bi-save me-2"></i> Save Settings
+
+                                <hr class="my-5 opacity-10">
+
+                                <div class="d-flex justify-content-end">
+                                    <button type="reset" class="btn btn-light me-3 px-4">Discard Changes</button>
+                                    <button type="submit" class="btn btn-success btn-save shadow-sm">
+                                        Update Settings
                                     </button>
                                 </div>
                             </form>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
     </div>
-    
+
     @push('scripts')
         <script>
+            // Your existing JavaScript logic remains compatible with this UI
             $(document).ready(function() {
                 function setupImageUpload(inputId, previewId) {
                     $(inputId).on('change', function(e) {
                         const file = e.target.files[0];
                         const preview = $(previewId);
-
                         if (file) {
                             const reader = new FileReader();
-                            reader.onload = function(event) {
-                                preview.attr('src', event.target.result);
-                                preview.show();
+                            reader.onload = (event) => {
+                                preview.attr('src', event.target.result).fadeIn();
                             };
                             reader.readAsDataURL(file);
-                        } else {
-                            preview.attr('src', '#');
-                            preview.hide();
                         }
                     });
                 }
+                setupImageUpload('#web_logo', '#web_logo_preview');
+                setupImageUpload('#favicon', '#favicon_preview');
 
-                    // Initialize both uploads
-                setupImageUpload( '#web_logo', '#web_logo_preview');
-                setupImageUpload( '#favicon', '#favicon_preview');
-                
-
+                // Auto-formatting for phone remains same
                 $('#contact_phone').on('input', function() {
-                    let value = $(this).val();
-                    let numbers = value.replace(/\D/g, '');
-                    numbers = numbers.substring(0, 12);
-
-                    let formatted = '';
-                    if (numbers.length >= 1) formatted += '+' + numbers.substring(0, 3);
+                    let numbers = $(this).val().replace(/\D/g, '').substring(0, 12);
+                    let formatted = numbers.length >= 1 ? '+' + numbers.substring(0, 3) : '';
                     if (numbers.length >= 4) formatted += ' ' + numbers.substring(3, 6);
                     if (numbers.length >= 7) formatted += ' ' + numbers.substring(6, 9);
                     if (numbers.length >= 10) formatted += ' ' + numbers.substring(9, 12);
-
                     $(this).val(formatted);
                 });
-
             });
         </script>
     @endpush

@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Type;
 use App\Models\Location;
 use App\Models\Admin\Menu;
+use App\Models\SubscriptionPlan;
+use App\Models\Admin\PostViews;
+use App\Models\UserManagement\User;
 use App\Models\Admin\Permission;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Support\Facades\Auth;
@@ -148,5 +151,32 @@ if (!function_exists('getSubPlanById')) {
     {
         $sub_plan = SubscriptionPlan::where('id', $id)->first();
         return $sub_plan ? $sub_plan->plan_name : null;
+    }
+}
+
+if (!function_exists('post_views_save')) {
+    function post_views_save($post_id,$post_type,$user_id=null)
+    {       
+
+        $today_date = date('Y-m-d H:i:s');
+        $view_info = PostViews::where('post_id', '=', $post_id)->where('post_type', '=', $post_type)->where('date', '==', $today_date)->first();   
+
+        if($view_info)
+        { 
+            $view_obj = PostViews::findOrFail($view_info->id);        
+            $view_obj->increment('post_views');     
+            $view_obj->save();
+             
+        }
+        else
+        {
+            PostViews::create([
+                'post_id' => $post_id,
+                'post_type' => $post_type,
+                'post_views' => 1,
+                'date' => $today_date,
+            ]);
+        }
+ 
     }
 }

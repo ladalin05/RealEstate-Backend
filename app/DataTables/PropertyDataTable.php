@@ -40,22 +40,7 @@ class PropertyDataTable extends DataTable
                     ? '<span class="badge bg-success">Yes</span>'
                     : '<span class="badge bg-secondary">No</span>';
             })
-            ->addColumn('action', function ($row) {
-
-                $edit = route('property.edit', $row->id);
-
-                return '
-                <div class="d-flex gap-2">
-                    <a href="'.$edit.'" class="btn btn-sm btn-success">
-                        <i class="fa fa-edit"></i>
-                    </a>
-
-                    <button class="btn btn-sm btn-danger data_remove"
-                        data-id="'.$row->id.'">
-                        <i class="fa fa-trash"></i>
-                    </button>
-                </div>';
-            })
+            ->addColumn('action', fn($row) => view('pages.property.action', compact('row')))
             ->rawColumns(['image','status','featured','action']);
     }
 

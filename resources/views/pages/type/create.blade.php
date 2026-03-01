@@ -92,7 +92,7 @@
                     <div class="card card-modern">
                         {{-- Body --}}
                         <div class="card-body p-3">
-                            <form method="POST" action="{{ route('type.add') }}" id="form-type" enctype="multipart/form-data">
+                            <form method="POST" action="{{ route('type.add') }}" id="#addType" enctype="multipart/form-data">
                                 @csrf
 
                                 {{-- Name Field --}}
@@ -164,8 +164,11 @@
 
     @push('scripts')
     <script>
+        $(document).on('submit', '#addType', function (event) {
+            event.preventDefault();
+            ajaxSubmit('#addType');
+        });
         $(document).ready(function() {
-
             $('#type-image-btn').on('click', function() {
                 $('#type-image').click();
             });

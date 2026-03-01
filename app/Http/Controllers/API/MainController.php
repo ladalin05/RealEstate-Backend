@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Models\Menus;
+use App\Models\Admin\Page;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -16,7 +16,7 @@ class MainController extends Controller
 {
     public function getMenu(Request $request)
     {
-        $menus = Menus::query()->where('status',1)->orderBy('page_order', 'ASC')->get();
+        $menus = Page::query()->where('status',1)->orderBy('page_order', 'ASC')->get();
 
         return response()->json([
             'status' => 'success',
@@ -27,7 +27,9 @@ class MainController extends Controller
     public function getContact(Request $request)
     {
         try {
-            $id = User::where('role_id',1)->first()->id ?? null;
+            $id = User::join('user_role','users.id','=','user_role.user_id')
+                        ->join('roles','user_role.role_id','=','roles.id')
+                        ->where('roles.administrator',1)->first()->id ?? null;
             if (!$id) {
                 return response()->json([
                     'success' => false,
