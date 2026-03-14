@@ -109,14 +109,14 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="d-flex align-items-center justify-content-between mb-4">
-                        <a href="{{ route('property.index') }}" class="btn-back text-decoration-none">
+                        <a href="{{ route('property.properties.index') }}" class="btn-back text-decoration-none">
                             <i class="fa fa-arrow-left me-1"></i> {{ __('global.back') }}
                         </a>
                         <h3 class="h4 mb-0 text-gray-800">Edit Property Details</h3>
                         
                     </div>
 
-                    <form action="{{ route('property.edit', $property_info->id) }}" method="POST" id="editProperty" enctype="multipart/form-data">
+                    <form action="{{ route('property.properties.dit', $property_info->id) }}" method="POST" id="editProperty" enctype="multipart/form-data">
                         @csrf
 
                         <div class="card">

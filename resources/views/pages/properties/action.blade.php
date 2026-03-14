@@ -1,6 +1,6 @@
 
 <div class="d-flex gap-2">
-    <a href="{{route('property.edit', $row->id)}}" class="btn btn-sm btn-success">
+    <a href="{{route('property.properties.edit', $row->id)}}" class="btn btn-sm btn-success">
         <i class="fa fa-edit"></i>
     </a>
 

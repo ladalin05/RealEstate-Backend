@@ -63,7 +63,7 @@
                     @endif
                     @if (!in_array($menu->id, $has_menus) && !empty($has_menus))
                         @continue
-                    @endif
+                    @endif 
                     <li class="nav-item {{ $menu->children->count() && $menu->is_main_section != 1  ? 'nav-item-submenu' : '' }}">
                         <a href="{{ !empty($menu->route) ? route($menu->route) : '#' }}" class="nav-link main-link align-items-center {{ isActiveMenu($menu->route) }}">
                             @if (!empty($menu->icon))

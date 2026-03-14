@@ -15,8 +15,8 @@
             <div class="row mb-4">
                 @php
                     $stats = [
-                        ['route' => 'type.index', 'count' => $typeCount, 'label' => 'global.type', 'icon' => 'fa-sitemap', 'color' => 'primary'],
-                        ['route' => 'property.index', 'count' => $propertyCount, 'label' => 'global.property', 'icon' => 'fa-building', 'color' => 'success'],
+                        ['route' => 'property.types.index', 'count' => $typeCount, 'label' => 'global.type', 'icon' => 'fa-sitemap', 'color' => 'primary'],
+                        ['route' => 'property.properties.index', 'count' => $propertyCount, 'label' => 'global.property', 'icon' => 'fa-building', 'color' => 'success'],
                         ['url' => 'admin/users', 'count' => $userCount, 'label' => 'global.users', 'icon' => 'fa-users', 'color' => 'info'],
                         ['url' => 'admin/reports', 'count' => $reportCount, 'label' => 'global.reports', 'icon' => 'fa-exclamation-triangle', 'color' => 'danger'],
                     ];

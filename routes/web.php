@@ -55,26 +55,64 @@ Route::middleware(['auth', 'abilities'])->group(function () {
             Route::post('/save/{id?}', [RoleController::class, 'save'])->name('save');
             Route::delete('/delete/{id}', [RoleController::class, 'delete'])->name('delete');
         });
+        
+        Route::group([
+            'prefix' => 'agents',
+            'as' => 'agents.'
+        ], function () {
+            Route::get('/', [RoleController::class, 'index'])->name('index');
+            Route::get('/add', [RoleController::class, 'add'])->name('add');
+            Route::get('/edit/{id}', [RoleController::class, 'edit'])->name('edit');
+            Route::post('/save/{id?}', [RoleController::class, 'save'])->name('save');
+            Route::delete('/delete/{id}', [RoleController::class, 'delete'])->name('delete');
+        });
     });
 
-    // Type
+    // Properties
     Route::group([
-        'prefix' => 'type',
-        'as' => 'type.'
+        'prefix' => 'property',
+        'as' => 'property.'
     ], function () {
-        Route::get('/', [TypeController::class, 'index'])->name('index');
-        Route::match(['get', 'post'], 'add', [TypeController::class, 'create'])->name('add');
-        Route::match(['get', 'post'], 'edit/{id}', [TypeController::class, 'edit'])->name('edit');
-        Route::get('/delete/{id}', [TypeController::class, 'delete'])->name('deleted');
-    });
+        Route::group([
+            'prefix' => 'properties',
+            'as' => 'properties.'
+        ], function () {
+            Route::get('/', [PropertyController::class, 'index'])->name('index');
+            Route::match(['get', 'post'], '/add', [PropertyController::class, 'create'])->name('add');
+            Route::match(['get', 'post'], '/edit/{id}', [PropertyController::class, 'edit'])->name('edit');
+            Route::get('/delete/{id}', [PropertyController::class, 'destroy'])->name('deleted');
+            Route::get('/search', [PropertyController::class, 'property_filter'])->name('filter');
+        });
 
-    // Types
-    Route::group([
-        'prefix' => 'types',
-        'as' => 'types.'
-    ], function () {
-        Route::get('/', [TypesController::class, 'types'])->name('index');
-        Route::get('types/{slug}/{id}', [TypesController::class, 'types_property'])->name('property');
+        Route::group([
+            'prefix' => 'types',
+            'as' => 'types.'
+        ], function () {
+            Route::get('/', [TypeController::class, 'index'])->name('index');
+            Route::match(['get', 'post'], 'add', [TypeController::class, 'create'])->name('add');
+            Route::match(['get', 'post'], 'edit/{id}', [TypeController::class, 'edit'])->name('edit');
+            Route::get('/delete/{id}', [TypeController::class, 'delete'])->name('deleted');
+        });
+
+        Route::group([
+            'prefix' => 'amenities',
+            'as' => 'amenities.'
+        ], function () {
+            Route::get('/', [TypeController::class, 'index'])->name('index');
+            Route::match(['get', 'post'], 'add', [TypeController::class, 'create'])->name('add');
+            Route::match(['get', 'post'], 'edit/{id}', [TypeController::class, 'edit'])->name('edit');
+            Route::get('/delete/{id}', [TypeController::class, 'delete'])->name('deleted');
+        });
+
+        Route::group([
+            'prefix' => 'features',
+            'as' => 'features.'
+        ], function () {
+            Route::get('/', [TypeController::class, 'index'])->name('index');
+            Route::match(['get', 'post'], 'add', [TypeController::class, 'create'])->name('add');
+            Route::match(['get', 'post'], 'edit/{id}', [TypeController::class, 'edit'])->name('edit');
+            Route::get('/delete/{id}', [TypeController::class, 'delete'])->name('deleted');
+        });
     });
 
     // Locations
@@ -88,16 +126,30 @@ Route::middleware(['auth', 'abilities'])->group(function () {
         Route::get('/delete/{id}', [LocationController::class, 'destroy'])->name('deleted');
     });
 
-    // Properties
+    // Customer Interaction
     Route::group([
-        'prefix' => 'property',
-        'as' => 'property.'
+        'prefix' => 'interaction',
+        'as' => 'interaction.'
     ], function () {
-        Route::get('/', [PropertyController::class, 'index'])->name('index');
-        Route::match(['get', 'post'], '/add', [PropertyController::class, 'create'])->name('add');
-        Route::match(['get', 'post'], '/edit/{id}', [PropertyController::class, 'edit'])->name('edit');
-        Route::get('/delete/{id}', [PropertyController::class, 'destroy'])->name('deleted');
-        Route::get('/search', [PropertyController::class, 'property_filter'])->name('filter');
+        Route::group([
+            'prefix' => 'inquiries',
+            'as' => 'inquiries.'
+        ], function () {
+            Route::get('/', [PropertyController::class, 'index'])->name('index');
+            Route::match(['get', 'post'], '/add', [PropertyController::class, 'create'])->name('add');
+            Route::match(['get', 'post'], '/edit/{id}', [PropertyController::class, 'edit'])->name('edit');
+            Route::get('/delete/{id}', [PropertyController::class, 'destroy'])->name('deleted');
+        });
+
+        Route::group([
+            'prefix' => 'reviews',
+            'as' => 'reviews.'
+        ], function () {
+            Route::get('/', [PropertyController::class, 'index'])->name('index');
+            Route::match(['get', 'post'], '/add', [PropertyController::class, 'create'])->name('add');
+            Route::match(['get', 'post'], '/edit/{id}', [PropertyController::class, 'edit'])->name('edit');
+            Route::get('/delete/{id}', [PropertyController::class, 'destroy'])->name('deleted');
+        });
     });
 
     Route::group([
@@ -108,26 +160,22 @@ Route::middleware(['auth', 'abilities'])->group(function () {
         Route::get('/filter', [ReportsController::class, 'report_filter'])->name('filter');
     });
 
-    // Sub Admins
+    // Blog
     Route::group([
-        'prefix' => 'sub_admin',
-        'as' => 'sub_admin.'
-    ], function () {
-        Route::get('/', [UserController::class, 'admin_list'])->name('index');
-        Route::match(['get', 'post'] ,'/add', [UserController::class, 'admin_create'])->name('add');
-        Route::match(['get', 'post'] ,'/edit/{id}', [UserController::class, 'admin_update'])->name('edit');
-        Route::delete('/delete/{id}', [UserController::class, 'admin_delete'])->name('delete');
-        Route::get('/filter', [UserController::class, 'filter_sub_admin'])->name('filter');
-    });
-
-    // Transactions
-    Route::group([
-        'prefix' => 'transactions',
-        'as' => 'transactions.'
+        'prefix' => 'posts',
+        'as' => 'posts.'
     ], function () {
         Route::get('/', [TransactionController::class, 'index'])->name('index');
         Route::post('/filter', [TransactionController::class, 'transaction_filter'])->name('filter');
         Route::post('/export', [TransactionController::class, 'transaction_export'])->name('export');
+        Route::group([
+            'prefix' => 'categories',
+            'as' => 'categories.'
+        ], function () {
+            Route::get('/', [SettingsController::class, 'general_settings'])->name('index');
+            Route::post('/create', [SettingsController::class, 'general_setting_create'])->name('create');
+            Route::post('/update', [SettingsController::class, 'general_setting_update'])->name('update');
+    });
     });
     
     // Web Settings
@@ -135,31 +183,10 @@ Route::middleware(['auth', 'abilities'])->group(function () {
         'prefix' => 'settings',
         'as' => 'settings.'
     ], function () {
+        Route::get('/', [SettingsController::class, 'content_page'])->name('index');
         Route::group([
-            'prefix' => 'general',
-            'as' => 'general.'
-        ], function () {
-                Route::get('/', [SettingsController::class, 'general_settings'])->name('index');
-                Route::post('/create', [SettingsController::class, 'general_setting_create'])->name('create');
-                Route::post('/update', [SettingsController::class, 'general_setting_update'])->name('update');
-        });
-
-        Route::get('/email', [SettingsController::class, 'email_settings'])->name('email');
-        Route::post('/email', [SettingsController::class, 'update_email_settings'])->name('email.update');
-
-        Route::get('/test_smtp', [SettingsController::class, 'test_smtp_settings'])->name('test_smtp');
-        Route::get('/social_login', [SettingsController::class, 'social_login_settings'])->name('social_login');
-        Route::post('/social_login', [SettingsController::class, 'update_social_login_settings'])->name('social_login.update');
-
-        Route::get('/recaptcha', [SettingsController::class, 'recaptcha_settings'])->name('recaptcha');
-        Route::post('/recaptcha', [SettingsController::class, 'update_recaptcha_settings'])->name('recaptcha.update');
-
-        Route::get('/web_ads', [SettingsController::class, 'web_ads_settings'])->name('web_ads');
-        Route::post('/web_ads', [SettingsController::class, 'update_web_ads_settings'])->name('web_ads.update');
-
-        Route::group([
-            'prefix' => 'content_page',
-            'as' => 'content_page.',
+            'prefix' => 'banners',
+            'as' => 'banners.',
         ], function () {
             Route::get('/', [SettingsController::class, 'content_page'])->name('index');
             Route::match(['get', 'post'], '/create', [SettingsController::class, 'content_page_create'])->name('create');

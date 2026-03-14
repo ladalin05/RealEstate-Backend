@@ -40,7 +40,7 @@ class PropertyDataTable extends DataTable
                     ? '<span class="badge bg-success">Yes</span>'
                     : '<span class="badge bg-secondary">No</span>';
             })
-            ->addColumn('action', fn($row) => view('pages.property.action', compact('row')))
+            ->addColumn('action', fn($row) => view('pages.properties.action', compact('row')))
             ->rawColumns(['image','status','featured','action']);
     }
 

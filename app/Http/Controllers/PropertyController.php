@@ -112,7 +112,7 @@ class PropertyController extends Controller
                     return response()->json([
                         'status'  => 'success',
                         'message' => __('global.create_property_successfully'),
-                        'redirect' => route('property.index'),
+                        'redirect' => route('property.properties.index'),
                     ]);
 
             } catch (\Throwable $e) {
@@ -183,7 +183,7 @@ class PropertyController extends Controller
                 return response()->json([
                     'status'  => 'success',
                     'message' => __('global.updated_property_successfully'),
-                    'redirect' => route('property.index'),
+                    'redirect' => route('property.properties.index'),
                 ]);
 
             } catch (\Throwable $e) {
@@ -239,7 +239,7 @@ class PropertyController extends Controller
         $property = Property::findOrFail($id);
         $property->delete();
 
-        return redirect()->route('property.index')->with('flash_message', __('global.deleted_property_successfully'));
+        return redirect()->route('property.properties.index')->with('flash_message', __('global.deleted_property_successfully'));
     }
 
     /**

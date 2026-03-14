@@ -21,13 +21,14 @@ use Illuminate\Support\Facades\Session;
 use Spatie\Activitylog\Models\Activity;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Laravel\Sanctum\HasApiTokens;
 use App\Models\Setting\ScholarshipCategoryUser;
 use App\Models\Setting\WarehouseUser;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-	use Notifiable, SoftDeletes;
+	use Notifiable, SoftDeletes, HasApiTokens;
 	public $timestamps = true;
 
 	/**

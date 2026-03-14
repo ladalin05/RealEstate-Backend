@@ -20,28 +20,41 @@ return Application::configure(basePath: dirname(__DIR__))
         }
     )
     ->withMiddleware(function (Middleware $middleware) {
+
+        // ❌ REMOVE Sanctum cookie-based SPA guard 
+        // (You are using token login, not cookie login)
         $middleware->api(prepend: [
-            Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+            // No Sanctum EnsureFrontendRequestsAreStateful here
         ]);
+
+        // Custom middleware aliases
         $middleware->alias([
             'abilities' => \App\Http\Middleware\Abilities::class,
         ]);
+
+        // Web-only middleware
         $middleware->web([
             \App\Http\Middleware\SetLocale::class,
         ]);
+
+        // ✅ Fix CSRF for API routes
         $middleware->validateCsrfTokens(except: [
-            'callback',
+            'api/*',   // <-- IMPORTANT
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
+
+        // Custom API unauthenticated response
         $exceptions->render(function (AuthenticationException $e, $request) {
-            if (in_array('sanctum', $e->guards()) && $request->is('api/*')) {
+            if ($request->is('api/*')) {
                 return response()->json([
                     'status' => 401,
                     'message' => 'Unauthenticated.'
                 ]);
             }
         });
+
+        // Custom API validation error response
         $exceptions->render(function (ValidationException $e) {
             return response()->json([
                 'status' => 422,
@@ -49,4 +62,5 @@ return Application::configure(basePath: dirname(__DIR__))
                 'errors' => $e->errors()
             ]);
         });
-    })->create();
+    })
+    ->create();

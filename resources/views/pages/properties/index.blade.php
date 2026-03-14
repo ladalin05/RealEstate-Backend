@@ -9,7 +9,7 @@
         </x-slot>
 
         <div class="header-actions">
-            <a href="{{ route('property.add') }}"
+            <a href="{{ route('property.properties.add') }}"
                class="btn btn-add-user text-white">
                 <i class="ph ph-plus-circle me-1"></i>
                 {{ __('global.add_property') }}
@@ -31,7 +31,7 @@
                     var location_id = $('#location_id').val();
                     var searchText = $('#search_text').val().trim();
                     $.ajax({
-                        url: "{{ route('property.filter') }}",
+                        url: "{{ route('property.properties.filter') }}",
                         type: 'GET',
                         data: {
                             type_id: type_id,
