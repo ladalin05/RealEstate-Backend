@@ -53,6 +53,11 @@ class CommuneController extends Controller
                     'redirect' => route('location.communes.index'),
                 ]);
             }
+            
+            return response()->json([
+                'status' => 'error',
+                'message' => __('messages.405'),
+            ]);
 
         } catch (\Exception $e) {
 
@@ -98,6 +103,11 @@ class CommuneController extends Controller
                     'redirect' => route('location.communes.index'),
                 ]);
             }
+            
+            return response()->json([
+                'status' => 'error',
+                'message' => __('messages.405'),
+            ]);
 
         } catch (\Exception $e) {
 

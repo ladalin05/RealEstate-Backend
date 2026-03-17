@@ -16,8 +16,10 @@
 $(document).ready(function () {
     $(document).on('submit', '.ajax-form', function (e) {
         e.preventDefault();
+        
         let form = $(this);
         console.log("Submitting form:", form.attr('id') || form.attr('class'));
+        return;     
 
         if (form.data('processing')) return;
 

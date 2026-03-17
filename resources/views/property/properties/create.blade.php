@@ -358,6 +358,7 @@
     </div>
 
     @push('scripts')
+        @include('property.properties.script')
         <script>
         $(document).on('submit', '#addProperty', function (event) {
             event.preventDefault();

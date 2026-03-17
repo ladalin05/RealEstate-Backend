@@ -32,7 +32,7 @@ class DistrictDataTable extends DataTable
                 </div>';
             })
 
-            ->addColumn('action', fn($row) => view('pages.location.district.action', compact('row')))
+            ->addColumn('action', fn($row) => view('location.districts.action', compact('row')))
 
             ->rawColumns(['status','action']);
     }

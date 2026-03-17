@@ -36,7 +36,7 @@ class CommuneDataTable extends DataTable
                 </div>';
             })
 
-            ->addColumn('action', fn($row) => view('pages.location.commune.action', compact('row')))
+            ->addColumn('action', fn($row) => view('location.communes.action', compact('row')))
 
             ->rawColumns(['status','action']);
     }

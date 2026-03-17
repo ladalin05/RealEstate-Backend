@@ -9,6 +9,10 @@ use App\Models\SubscriptionPlan;
 use App\Models\Property\PropertyViews;
 use App\Models\UserManagement\User;
 use App\Models\Admin\Permission;
+use App\Models\Location\City;
+use App\Models\Location\Commune;
+use App\Models\Location\Country;
+use App\Models\Location\District;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
@@ -179,5 +183,37 @@ if (!function_exists('post_views_save')) {
             ]);
         }
  
+    }
+}
+
+
+if (!function_exists('getCountry')) {
+    function getCountry()
+    {
+        return Country::select('id', 'name')->get();
+    }
+}
+
+if (!function_exists('getCity')) {
+    function getCity()
+    {
+        return City::select('id', 'name', 'country_id')
+            ->get();
+    }
+}
+
+if (!function_exists('getDistrict')) {
+    function getDistrict($city_id = null)
+    {
+        return District::select('id', 'name', 'city_id')
+            ->get();
+    }
+}
+
+if (!function_exists('getCommune')) {
+    function getCommune($district_id = null)
+    {
+        return Commune::select('id', 'name', 'district_id')
+            ->get();
     }
 }

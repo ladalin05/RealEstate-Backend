@@ -52,6 +52,11 @@ class CityController extends Controller
                     'redirect' => route('location.cities.index'),
                 ]);
             }
+            
+            return response()->json([
+                'status' => 'error',
+                'message' => __('messages.405'),
+            ]);
 
         } catch (\Exception $e) {
 
@@ -97,6 +102,11 @@ class CityController extends Controller
                     'redirect' => route('location.cities.index'),
                 ]);
             }
+            
+            return response()->json([
+                'status' => 'error',
+                'message' => __('messages.405'),
+            ]);
 
         } catch (\Exception $e) {
 

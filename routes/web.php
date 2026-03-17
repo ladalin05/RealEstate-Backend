@@ -155,7 +155,7 @@ Route::middleware(['auth', 'abilities'])->group(function () {
             'as' => 'cities.'
         ], function () {
             Route::get('/', [CityController::class, 'index'])->name('index');
-            Route::match(['get', 'post'],'/add', [CityController::class, 'store'])->name('add');
+            Route::match(['get', 'post'],'/add', [CityController::class, 'create'])->name('add');
             Route::match(['get', 'post'],'/edit', [CityController::class, 'update'])->name('edit');
             Route::get('/delete', [CityController::class, 'destroy'])->name('deleted');
         });
@@ -164,7 +164,7 @@ Route::middleware(['auth', 'abilities'])->group(function () {
             'as' => 'districts.'
         ], function () {
             Route::get('/', [DistrictController::class, 'index'])->name('index');
-            Route::match(['get', 'post'],'/add', [DistrictController::class, 'store'])->name('add');
+            Route::match(['get', 'post'],'/add', [DistrictController::class, 'create'])->name('add');
             Route::match(['get', 'post'],'/edit', [DistrictController::class, 'update'])->name('edit');
             Route::get('/delete', [DistrictController::class, 'destroy'])->name('deleted');
         });
@@ -173,7 +173,7 @@ Route::middleware(['auth', 'abilities'])->group(function () {
             'as' => 'communes.'
         ], function () {
             Route::get('/', [CommuneController::class, 'index'])->name('index');
-            Route::match(['get', 'post'],'/add', [CommuneController::class, 'store'])->name('add');
+            Route::match(['get', 'post'],'/add', [CommuneController::class, 'create'])->name('add');
             Route::match(['get', 'post'],'/edit', [CommuneController::class, 'update'])->name('edit');
             Route::get('/delete', [CommuneController::class, 'destroy'])->name('deleted');
         });
@@ -252,3 +252,4 @@ Route::middleware(['auth', 'abilities'])->group(function () {
 
 require __DIR__.'/auth.php';
 require __DIR__ . '/admin.php';
+require __DIR__ . '/filtter.php';

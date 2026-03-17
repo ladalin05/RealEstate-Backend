@@ -103,6 +103,11 @@ class CountryController extends Controller
                     'redirect' => route('location.countries.index'),
                 ]);
             }
+            
+            return response()->json([
+                'status' => 'error',
+                'message' => __('messages.405'),
+            ]);
 
         } catch (\Exception $e) {
 

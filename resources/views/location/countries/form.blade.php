@@ -1,17 +1,17 @@
-<div class="p-4">
-    <div class="text-center mb-4">
-        <div class="bg-light d-inline-block p-3 rounded-circle mb-2">
-            <i class="fa-solid {{ isset($country) ? 'fa-pencil-square' : 'fa-plus-circle' }} fs-3 text-primary"></i>
+<div class="py-1 px-4">
+    <div class="text-center mb-2">
+        <div class="bg-light d-inline-block p-1 rounded-circle mb-1">
+            <i class="fa-solid {{ isset($form->id) ? 'fa-pencil-square' : 'fa-plus-circle' }} fs-3 text-primary"></i>
         </div>
         <p class="text-muted small">
-            {{ isset($country) ? 'Modify the information for ' . $country->name : 'Please fill in the details to register a new country.' }}
+            {{ isset($form->id) ? 'Modify the information for ' . $form->name : 'Please fill in the details to register a new country.' }}
         </p>
     </div>
 
-    <form action="{{ $action }}" method="POST" id="country-form">
+    <form action="{{ $action }}" method="POST" id="country-form" class="ajax-form">
         @csrf
 
-        <div class="mb-4">
+        <div class="mb-3">
             <label for="name" class="form-label fw-bold text-dark small text-uppercase">Country Name</label>
             <div class="input-group">
                 <span class="input-group-text bg-white border-end-0 text-muted">

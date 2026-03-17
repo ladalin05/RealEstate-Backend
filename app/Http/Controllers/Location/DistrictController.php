@@ -53,6 +53,11 @@ class DistrictController extends Controller
                     'redirect' => route('location.districts.index'),
                 ]);
             }
+            
+            return response()->json([
+                'status' => 'error',
+                'message' => __('messages.405'),
+            ]);
 
         } catch (\Exception $e) {
 
@@ -84,6 +89,11 @@ class DistrictController extends Controller
 
             if ($request->isMethod('post')) {
 
+                $request->validate([
+                    'city_id' => 'required',
+                    'name' => 'required'
+                ]);
+                
                 $district = District::findOrFail($request->id);
 
                 $district->update([
@@ -98,7 +108,12 @@ class DistrictController extends Controller
                     'redirect' => route('location.districts.index'),
                 ]);
             }
-
+            
+            return response()->json([
+                'status' => 'error',
+                'message' => __('messages.405'),
+            ]);
+            
         } catch (\Exception $e) {
 
             return response()->json([

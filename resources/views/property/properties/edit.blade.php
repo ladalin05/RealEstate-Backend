@@ -379,6 +379,7 @@
     </div>
 
     @push('scripts')
+        @include('property.properties.script')
         <script>
             $(document).ready(function () {
                 $(document).on('submit', '#editProperty', function (event) {

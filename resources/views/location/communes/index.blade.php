@@ -28,4 +28,6 @@
         <x-basic.form id="action-form" novalidate>
         </x-basic.form>
     </x-basic.modal>
+
+
 </x-app-layout>

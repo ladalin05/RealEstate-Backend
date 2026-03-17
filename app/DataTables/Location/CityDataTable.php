@@ -31,7 +31,7 @@ class CityDataTable extends DataTable
                 </div>';
             })
 
-            ->addColumn('action', fn($row) => view('pages.location.city.action', compact('row')))
+            ->addColumn('action', fn($row) => view('location.cities.action', compact('row')))
 
             ->rawColumns(['status','action']);
     }
