@@ -166,72 +166,47 @@
                                         <label class="form-label">{{ __('global.phone') }}</label>
                                         <div class="input-group">
                                             <span class="input-group-text"><i class="fa fa-phone"></i></span>
-                                            <input type="text" name="phone" value="{{ $property_info->phone }}" class="form-control">
+                                            <input type="text" name="phone" class="form-control" 
+                                                value="{{ old('phone', $data->phone ?? '') }}">
                                         </div>
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="form-label">{{ __('global.country') }} *</label>
-                                        <select class="form-control select2" name="country" id="country" required>
+                                        <label class="form-label">{{ __('global.country') }}</label>
+                                        <select class="form-control select2" name="country_id" id="country" required>
                                             <option value="">{{ __('global.select_country') }}</option>
-                                            @foreach (getLocations() as $location_data)
-                                                <option value="{{ $location_data->id }}"  {{ $location_data->id == $property_info->location_id ? 'selected' : '' }}> {{ $location_data->name }} </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label">{{ __('global.city') }} *</label>
-                                        <select class="form-control select2" name="city" id="city" required>
-                                            <option value="">{{ __('global.select_city') }}</option>
-                                            @foreach (getLocations() as $location_data)
-                                                <option value="{{ $location_data->id }}"  {{ $location_data->id == $property_info->location_id ? 'selected' : '' }}> {{ $location_data->name }} </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label">{{ __('global.district') }} *</label>
-                                        <select class="form-control select2" name="district" id="district" required>
-                                            <option value="">{{ __('global.select_district') }}</option>
-                                            @foreach (getLocations() as $location_data)
-                                                <option value="{{ $location_data->id }}"  {{ $location_data->id == $property_info->location_id ? 'selected' : '' }}> {{ $location_data->name }} </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label">{{ __('global.commune') }} *</label>
-                                        <select class="form-control select2" name="commune" id="commune" required>
-                                            <option value="">{{ __('global.select_commune') }}</option>
-                                            @foreach (getLocations() as $location_data)
-                                                <option value="{{ $location_data->id }}"  {{ $location_data->id == $property_info->location_id ? 'selected' : '' }}> {{ $location_data->name }} </option>
-                                            @endforeach
+                                            @if(isset($data->country))
+                                                <option value="{{ $data->country_id }}" selected>{{ $data->country->name }}</option>
+                                            @endif
                                         </select>
                                     </div>
                                 </div>
+
                                 <div class="row mb-3">
                                     <div class="col-md-4">
-                                        <label class="form-label">{{ __('global.city') }} *</label>
-                                        <select class="form-control select2" name="city" id="city" required>
+                                        <label class="form-label">{{ __('global.city') }}</label>
+                                        <select class="form-control select2" name="city_id" id="city" required>
                                             <option value="">{{ __('global.select_city') }}</option>
-                                            @foreach (getLocations() as $location_data)
-                                                <option value="{{ $location_data->id }}"  {{ $location_data->id == $property_info->location_id ? 'selected' : '' }}> {{ $location_data->name }} </option>
-                                            @endforeach
+                                            @if(isset($data->city))
+                                                <option value="{{ $data->city_id }}" selected>{{ $data->city->name }}</option>
+                                            @endif
                                         </select>
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="form-label">{{ __('global.district') }} *</label>
-                                        <select class="form-control select2" name="district" id="district" required>
+                                        <label class="form-label">{{ __('global.district') }}</label>
+                                        <select class="form-control select2" name="district_id" id="district" required>
                                             <option value="">{{ __('global.select_district') }}</option>
-                                            @foreach (getLocations() as $location_data)
-                                                <option value="{{ $location_data->id }}"  {{ $location_data->id == $property_info->location_id ? 'selected' : '' }}> {{ $location_data->name }} </option>
-                                            @endforeach
+                                            @if(isset($data->district))
+                                                <option value="{{ $data->district_id }}" selected>{{ $data->district->name }}</option>
+                                            @endif
                                         </select>
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="form-label">{{ __('global.commune') }} *</label>
-                                        <select class="form-control select2" name="commune" id="commune" required>
+                                        <label class="form-label">{{ __('global.commune') }}</label>
+                                        <select class="form-control select2" name="commune_id" id="commune" required>
                                             <option value="">{{ __('global.select_commune') }}</option>
-                                            @foreach (getLocations() as $location_data)
-                                                <option value="{{ $location_data->id }}"  {{ $location_data->id == $property_info->location_id ? 'selected' : '' }}> {{ $location_data->name }} </option>
-                                            @endforeach
+                                            @if(isset($data->commune))
+                                                <option value="{{ $data->commune_id }}" selected>{{ $data->commune->name }}</option>
+                                            @endif
                                         </select>
                                     </div>
                                 </div>

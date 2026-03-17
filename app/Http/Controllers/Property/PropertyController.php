@@ -22,7 +22,7 @@ class PropertyController extends Controller
 {
     public function index(PropertyDataTable $dataTable)
     {
-        return $dataTable->render('pages.properties.index');
+        return $dataTable->render('property.properties.index');
     }
 
     /**

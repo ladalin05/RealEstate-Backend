@@ -25,9 +25,8 @@
         />
     </div>
     <x-basic.modal id="action-modal" size="modal-xl">
-        <x-basic.form id="action-form" novalidate>
-        </x-basic.form>
+        <div id="action-form" novalidate>
+        </div>
     </x-basic.modal>
-
 
 </x-app-layout>

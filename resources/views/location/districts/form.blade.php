@@ -1,14 +1,14 @@
 <div class="py-1 px-4">
     <div class="text-center mb-2">
-        <div class="bg-light d-inline-block p-1 rounded-circle mb-1">
+        <div class="bg-light d-inline-block p-2 rounded-circle mb-1">
             <i class="fa-solid {{ isset($form->id) ? 'fa-pencil-square' : 'fa-plus-circle' }} fs-3 text-primary"></i>
         </div>
         <p class="text-muted small">
-            {{ isset($form->id) ? 'Modify the information for ' . $form->name : 'Please fill in the details to register a new country.' }}
+            {{ isset($form->id) ? 'Modify the information for ' . $form->name : 'Please fill in the details to register a new district.' }}
         </p>
     </div>
 
-    <form action="{{ $action }}" method="POST" id="district-form">
+    <form action="{{ $action }}" method="POST" id="district-form" class="ajax-form">
         @csrf
 
         <div class="mb-3">
@@ -57,7 +57,6 @@
                 </div>
             @enderror
         </div>
-            
         <div class="mb-2">
             <label for="status" class="form-label fw-bold text-dark small text-uppercase">STATUS</label>
             <select name="status" id="status" class="form-select custom-select">
@@ -75,9 +74,11 @@
             <div class="col-sm-4">
                 <button type="submit" class="btn btn-primary w-100 py-2 fw-bold shadow-sm">
                     <i class="bi bi-save2 me-2"></i> 
-                    {{ isset($form->id) ? 'Save Changes' : 'Create District' }}
+                    {{ isset($form->id) ? 'Save Changes' : 'Create Country' }}
                 </button>
             </div>
         </div>
     </form>
 </div>
+
+@include('location.script')

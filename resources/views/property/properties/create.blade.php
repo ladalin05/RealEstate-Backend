@@ -167,45 +167,35 @@
                                         <label class="form-label">{{ __('global.phone') }}</label>
                                         <div class="input-group">
                                             <span class="input-group-text"><i class="fa fa-phone"></i></span>
-                                            <input type="text" name="phone" class="form-control">
+                                            <input type="text" name="phone" class="form-control" 
+                                                value="{{ old('phone', $data->phone ?? '') }}">
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <label class="form-label">{{ __('global.country') }}</label>
-                                        <select class="form-control select2" name="country" id="country" required>
+                                        <select class="form-control select2" name="country_id" id="country" required>
                                             <option value="">{{ __('global.select_country') }}</option>
-                                            @foreach (getLocations() as $location_data)
-                                                <option value="{{ $location_data->id }}"> {{ $location_data->name }} </option>
-                                            @endforeach
                                         </select>
                                     </div>
                                 </div>
+
                                 <div class="row mb-3">
                                     <div class="col-md-4">
                                         <label class="form-label">{{ __('global.city') }}</label>
-                                        <select class="form-control select2" name="city" id="city" required>
+                                        <select class="form-control select2" name="city_id" id="city" required>
                                             <option value="">{{ __('global.select_city') }}</option>
-                                            @foreach (getLocations() as $location_data)
-                                                <option value="{{ $location_data->id }}"> {{ $location_data->name }} </option>
-                                            @endforeach
                                         </select>
                                     </div>
                                     <div class="col-md-4">
                                         <label class="form-label">{{ __('global.district') }}</label>
-                                        <select class="form-control select2" name="district" id="district" required>
+                                        <select class="form-control select2" name="district_id" id="district" required>
                                             <option value="">{{ __('global.select_district') }}</option>
-                                            @foreach (getLocations() as $location_data)
-                                                <option value="{{ $location_data->id }}"> {{ $location_data->name }} </option>
-                                            @endforeach
                                         </select>
                                     </div>
                                     <div class="col-md-4">
                                         <label class="form-label">{{ __('global.commune') }}</label>
-                                        <select class="form-control select2" name="commune" id="commune" required>
+                                        <select class="form-control select2" name="commune_id" id="commune" required>
                                             <option value="">{{ __('global.select_commune') }}</option>
-                                            @foreach (getLocations() as $location_data)
-                                                <option value="{{ $location_data->id }}"> {{ $location_data->name }} </option>
-                                            @endforeach
                                         </select>
                                     </div>
                                 </div>

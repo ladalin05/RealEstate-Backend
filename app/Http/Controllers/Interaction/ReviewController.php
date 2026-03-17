@@ -123,7 +123,7 @@ class ReviewController extends Controller
             }
         }
 
-        return view('pages.properties.create',compact('page_title'));
+        return view('property.properties.create',compact('page_title'));
         
     }
 
@@ -194,7 +194,7 @@ class ReviewController extends Controller
             }
         }
 
-        return view('pages.properties.edit', compact('page_title', 'property_info', 'gallery_images', 'type_list', 'location_list'));
+        return view('property.properties.edit', compact('page_title', 'property_info', 'gallery_images', 'type_list', 'location_list'));
     }
 
     /**
@@ -227,7 +227,7 @@ class ReviewController extends Controller
 
         $total_property = $property_list->count();
 
-        $property_view = view('pages.properties.view', compact('property_list'))->render();
+        $property_view = view('property.properties.view', compact('property_list'))->render();
 
         return response()->json([
             'property_view' => $property_view

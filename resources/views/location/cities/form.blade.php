@@ -68,4 +68,5 @@
         </div>
     </form>
 </div>
+
 @include('location.script')
