@@ -109,11 +109,11 @@ class DistrictController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy(Request $request)
     {
         try {
 
-            $district = District::findOrFail($id);
+            $district = District::findOrFail($request->id);
             $district->delete();
 
             return response()->json([

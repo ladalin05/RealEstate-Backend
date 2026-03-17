@@ -108,11 +108,11 @@ class CityController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy(Request $request)
     {
         try {
 
-            $city = City::findOrFail($id);
+            $city = City::findOrFail($request->id);
             $city->delete();
 
             return response()->json([

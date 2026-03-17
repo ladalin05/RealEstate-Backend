@@ -147,8 +147,8 @@ Route::middleware(['auth', 'abilities'])->group(function () {
         ], function () {
             Route::get('/', [CountryController::class, 'index'])->name('index');
             Route::match(['get', 'post'],'/add', [CountryController::class, 'create'])->name('add');
-            Route::match(['get', 'post'],'/edit/{id}', [CountryController::class, 'update'])->name('edit');
-            Route::get('/delete/{id}', [CountryController::class, 'destroy'])->name('deleted');
+            Route::match(['get', 'post'],'/edit', [CountryController::class, 'update'])->name('edit');
+            Route::get('/delete', [CountryController::class, 'destroy'])->name('deleted');
         });
         Route::group([
             'prefix' => 'cities',
@@ -156,8 +156,8 @@ Route::middleware(['auth', 'abilities'])->group(function () {
         ], function () {
             Route::get('/', [CityController::class, 'index'])->name('index');
             Route::match(['get', 'post'],'/add', [CityController::class, 'store'])->name('add');
-            Route::match(['get', 'post'],'/edit/{id}', [CityController::class, 'update'])->name('edit');
-            Route::get('/delete/{id}', [CityController::class, 'destroy'])->name('deleted');
+            Route::match(['get', 'post'],'/edit', [CityController::class, 'update'])->name('edit');
+            Route::get('/delete', [CityController::class, 'destroy'])->name('deleted');
         });
         Route::group([
             'prefix' => 'districts',
@@ -165,8 +165,8 @@ Route::middleware(['auth', 'abilities'])->group(function () {
         ], function () {
             Route::get('/', [DistrictController::class, 'index'])->name('index');
             Route::match(['get', 'post'],'/add', [DistrictController::class, 'store'])->name('add');
-            Route::match(['get', 'post'],'/edit/{id}', [DistrictController::class, 'update'])->name('edit');
-            Route::get('/delete/{id}', [DistrictController::class, 'destroy'])->name('deleted');
+            Route::match(['get', 'post'],'/edit', [DistrictController::class, 'update'])->name('edit');
+            Route::get('/delete', [DistrictController::class, 'destroy'])->name('deleted');
         });
         Route::group([
             'prefix' => 'communes',
@@ -174,8 +174,8 @@ Route::middleware(['auth', 'abilities'])->group(function () {
         ], function () {
             Route::get('/', [CommuneController::class, 'index'])->name('index');
             Route::match(['get', 'post'],'/add', [CommuneController::class, 'store'])->name('add');
-            Route::match(['get', 'post'],'/edit/{id}', [CommuneController::class, 'update'])->name('edit');
-            Route::get('/delete/{id}', [CommuneController::class, 'destroy'])->name('deleted');
+            Route::match(['get', 'post'],'/edit', [CommuneController::class, 'update'])->name('edit');
+            Route::get('/delete', [CommuneController::class, 'destroy'])->name('deleted');
         });
     });
 

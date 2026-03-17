@@ -109,11 +109,11 @@ class CommuneController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy(Request $request)
     {
         try {
 
-            $commune = Commune::findOrFail($id);
+            $commune = Commune::findOrFail($request->id);
             $commune->delete();
 
             return response()->json([

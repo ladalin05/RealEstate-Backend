@@ -676,3 +676,77 @@ function ajaxSubmit(formSelector) {
         }
     });
 }
+
+function showLoading() {
+    // You could trigger a spinner here
+}
+
+function addData(e) {
+    e.preventDefault();
+    var url = $(e.currentTarget).attr('href');
+    $.ajax({
+        url: url,
+        type: 'GET',
+        beforeSend: showLoading,
+        success: function (res) {
+            $('#action-modal #action-form').html('').removeClass('was-validated');
+            if (res.status == 'success') {
+                $('#action-modal .modal-title').text(res.title);
+                $('#action-modal #action-form').html(res.html);
+                $('#action-modal form').attr('action', url);
+                $('#action-modal').modal('show');
+            }
+        }
+    });
+}
+
+
+function editData(e) {
+    e.preventDefault();
+    var url = $(e.currentTarget).attr('href');
+    $.ajax({
+        url: url,
+        type: 'GET',
+        beforeSend: showLoading,
+        success: function (res) {
+            $('#action-modal #action-form').html('').removeClass('was-validated');
+            if (res.status == 'success') {
+                $('#action-modal .modal-title').text(res.title);
+                $('#action-modal #action-form').html(res.html);
+                $('#action-modal form').attr('action', url);
+                $('#action-modal').modal('show');
+            }
+        }
+    });
+}
+
+function deleteData(e) {
+    e.preventDefault();
+
+    let url = e.currentTarget.getAttribute('data-url');
+    if (!url) {
+        console.error("Delete URL not found");
+        return;
+    }
+    $.ajax({
+        url: url,
+        type: 'GET',
+        success: function (res) {
+            if (res.status === 'success') {
+                successAlert(res.message);
+                setTimeout(function () {
+                    if (res.redirect) {
+                        window.location.href = res.redirect;
+                    } else {
+                        location.reload();
+                    }
+                }, 2000);
+            } else {
+                errorAlert(res.message || 'Failed to delete');
+            }
+        },
+        error: function () {
+            errorAlert('Failed to delete');
+        }
+    });
+}
