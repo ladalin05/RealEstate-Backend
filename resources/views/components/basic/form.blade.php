@@ -39,58 +39,36 @@ $(document).ready(function () {
             data: data,
             contentType: false,
             processData: false,
+            cache: false,
+            dataType: 'json',
+            success: function (response) {
 
-            success: function (res) {
-
-                form.data('processing', false);
-
-                if (res.status === 'success') {
-
-                    swalInit.fire({
-                        icon: 'success',
-                        title: 'Success',
-                        text: res.message,
-                        timer: 1200,
-                        showConfirmButton: false
-                    });
-
-                    // ✅ Close modal if form inside modal
-                    let modal = form.closest('.modal');
-                    if (modal.length) {
-                        modal.modal('hide');
+                if (response.status === 'success') {
+                    successAlert(response.message);
+                    if (response.redirect) {
+                        window.location.href = response.redirect;
                     }
+                }
 
-                } else {
-
-                    swalInit.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: res.message || 'Something went wrong!'
-                    });
-
+                if (response.status === 'error') {
+                    errorAlert(response.message || 'An error occurred');
                 }
             },
 
             error: function (xhr) {
 
-                form.data('processing', false);
-
-                let message = 'Something went wrong!';
-
-                if (xhr.responseJSON && xhr.responseJSON.errors) {
-
-                    message = '';
-
-                    $.each(xhr.responseJSON.errors, function (key, value) {
-                        message += value + '<br>';
+                if (xhr.status === 422) {
+                    let errors = xhr.responseJSON.errors;
+                    console.log(errors);
+                    swalInit.fire({
+                        icon: 'warning',
+                        title: 'Validation Error',
+                        text: errorMessage
                     });
+                } else {
+                    let errors = xhr.responseJSON.message;
+                    errorAlert(errors || 'An unexpected error occurred');
                 }
-
-                swalInit.fire({
-                    icon: 'error',
-                    title: 'Validation Error',
-                    html: message
-                });
             }
         });
     });

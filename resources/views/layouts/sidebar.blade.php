@@ -74,7 +74,7 @@
 
                         @if (!empty($menu->children) && $menu->children->count() > 0)
                             <ul class="ms-3 nav-group-sub collapse">
-                                @foreach ($menu->children as $child)
+                                @foreach ($menu->children->sortBy('order') as $child)
                                     @if (!empty($has_menus) && !in_array($child->id, $has_menus))
                                         @continue
                                     @endif

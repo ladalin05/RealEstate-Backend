@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Admin\Settings;
 use App\Models\Admin\ContentPage;
 use App\Models\Admin\ContentPageSection;
-use App\Models\UserInform;
+use App\Models\UserManagement\UserInform;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Mail\Mailables\Content;
@@ -23,10 +23,10 @@ class SettingsController extends Controller
         $settings = Settings::where('user_id',$id)->first();
         $user_info = UserInform::where('user_id',$id)->first();
         if($settings){
-            return view('pages.settings.update',compact('page_title', 'user_info', 'settings' ));
+            return view('setting.settings.update',compact('page_title', 'user_info', 'settings' ));
         }
 
-        return view('pages.settings.create',compact('page_title'));
+        return view('setting.settings.create',compact('page_title'));
     }
 
     public function general_setting_create(Request $request)

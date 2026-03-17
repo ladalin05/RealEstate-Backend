@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Models\Type;
+use App\Models\Property\PropertyType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -13,7 +13,7 @@ class CategoryController extends Controller
 {
     public function list(Request $request)
     {
-        $category = Type::query()->orderBy('id', 'DESC')->get();
+        $category = PropertyType::query()->orderBy('id', 'DESC')->get();
 
         return response()->json([
             'status' => 'success',

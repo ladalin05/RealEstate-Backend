@@ -2,11 +2,11 @@
 
 use Illuminate\Support\Facades\DB;
 
-use App\Models\Type;
-use App\Models\Location;
+use App\Models\Property\PropertyType;
+use App\Models\Location\Location;
 use App\Models\Admin\Menu;
 use App\Models\SubscriptionPlan;
-use App\Models\Admin\PostViews;
+use App\Models\Property\PropertyViews;
 use App\Models\UserManagement\User;
 use App\Models\Admin\Permission;
 use Illuminate\Auth\Events\Login;
@@ -83,16 +83,18 @@ if (!function_exists('uploadImage')) {
 }   
 
 if (! function_exists('isActiveMenu')) {
-    function isActiveMenu($routeName)
+    function isActiveMenu($route)
     {
-        if (empty($routeName)) {
+        if (empty($route)) {
             return '';
         }
 
         $current = Route::currentRouteName();
-        $routeName = trim($routeName, '/'); 
+        $baseRoute = substr($current, 0, strrpos($current, '.'));
+        $route = trim($route, '/'); 
+        $routeName = substr($route, 0, strrpos($route, '.'));
 
-        return strpos($current, $routeName) !== false ? 'active' : '';
+        return strpos($baseRoute, $routeName) !== false ? 'active' : '';
     }
 }
 
@@ -117,7 +119,7 @@ if (!function_exists('updateImage')) {
 if (!function_exists('getTypes')) {
     function getTypes()
     {
-        $type_info = Type::where('status', 1)->get();
+        $type_info = PropertyType::where('status', 1)->get();
         return $type_info;
     }
 }
@@ -155,25 +157,24 @@ if (!function_exists('getSubPlanById')) {
 }
 
 if (!function_exists('post_views_save')) {
-    function post_views_save($post_id,$post_type,$user_id=null)
+    function post_views_save($property_id,$user_id=null)
     {       
 
         $today_date = date('Y-m-d H:i:s');
-        $view_info = PostViews::where('post_id', '=', $post_id)->where('post_type', '=', $post_type)->where('date', '==', $today_date)->first();   
+        $view_info = PropertyViews::where('property_id', '=', $property_id)->where('date', '==', $today_date)->first();   
 
         if($view_info)
         { 
-            $view_obj = PostViews::findOrFail($view_info->id);        
-            $view_obj->increment('post_views');     
+            $view_obj = PropertyViews::findOrFail($view_info->id);        
+            $view_obj->increment('property_views');     
             $view_obj->save();
              
         }
         else
         {
-            PostViews::create([
-                'post_id' => $post_id,
-                'post_type' => $post_type,
-                'post_views' => 1,
+            PropertyViews::create([
+                'post_id' => $property_id,
+                'views' => 1,
                 'date' => $today_date,
             ]);
         }

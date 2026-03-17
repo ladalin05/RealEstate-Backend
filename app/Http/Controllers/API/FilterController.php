@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Models\Type;
-use App\Models\Location;
+use App\Models\Property\PropertyType;
+use App\Models\Location\Location;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -14,7 +14,7 @@ class FilterController extends Controller
 {
     public function filter_data(Request $request)
     {
-        $types = Type::select('type_name as name','id as value')->orderBy('id', 'DESC')->get();
+        $types = PropertyType::select('type_name as name','id as value')->orderBy('id', 'DESC')->get();
         $locations = Location::select('name', 'id as value')->orderBy('id', 'DESC')->get();
         $data = [
             'types' => $types,

@@ -1,16 +1,25 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\TypesController;
-use App\Http\Controllers\TypeController;
 use App\Http\Controllers\ReportsController;
-use App\Http\Controllers\TransactionController;
-use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\LocationController;
-use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Admin\RoleController;
-use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Property\AmenityController;
+use App\Http\Controllers\Property\FeatureController;
+use App\Http\Controllers\Property\PropertyController;
+use App\Http\Controllers\Property\PropertyTypeController;
+use App\Http\Controllers\Interaction\InquiryController;
+use App\Http\Controllers\Interaction\ReviewController;
+use App\Http\Controllers\Location\CityController;
+use App\Http\Controllers\Location\CommuneController;
+use App\Http\Controllers\Location\CountryController;
+use App\Http\Controllers\Location\DistrictController;
+use App\Http\Controllers\UserManagement\UserController;
+use App\Http\Controllers\UserManagement\RoleController;
+use App\Http\Controllers\UserManagement\AgentController;
+use App\Http\Controllers\UserManagement\AgencyController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -29,6 +38,7 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', 'abilities'])->group(function () {
     
+    //User Management
     Route::group([
         'prefix' => 'users-management',
         'as' => 'users-management.'
@@ -60,11 +70,22 @@ Route::middleware(['auth', 'abilities'])->group(function () {
             'prefix' => 'agents',
             'as' => 'agents.'
         ], function () {
-            Route::get('/', [RoleController::class, 'index'])->name('index');
-            Route::get('/add', [RoleController::class, 'add'])->name('add');
-            Route::get('/edit/{id}', [RoleController::class, 'edit'])->name('edit');
-            Route::post('/save/{id?}', [RoleController::class, 'save'])->name('save');
-            Route::delete('/delete/{id}', [RoleController::class, 'delete'])->name('delete');
+            Route::get('/', [AgentController::class, 'index'])->name('index');
+            Route::get('/add', [AgentController::class, 'add'])->name('add');
+            Route::get('/edit/{id}', [AgentController::class, 'edit'])->name('edit');
+            Route::post('/save/{id?}', [AgentController::class, 'save'])->name('save');
+            Route::delete('/delete/{id}', [AgentController::class, 'delete'])->name('delete');
+        });
+        
+        Route::group([
+            'prefix' => 'agencies',
+            'as' => 'agencies.'
+        ], function () {
+            Route::get('/', [AgencyController::class, 'index'])->name('index');
+            Route::get('/add', [AgencyController::class, 'add'])->name('add');
+            Route::get('/edit/{id}', [AgencyController::class, 'edit'])->name('edit');
+            Route::post('/save/{id?}', [AgencyController::class, 'save'])->name('save');
+            Route::delete('/delete/{id}', [AgencyController::class, 'delete'])->name('delete');
         });
     });
 
@@ -88,30 +109,30 @@ Route::middleware(['auth', 'abilities'])->group(function () {
             'prefix' => 'types',
             'as' => 'types.'
         ], function () {
-            Route::get('/', [TypeController::class, 'index'])->name('index');
-            Route::match(['get', 'post'], 'add', [TypeController::class, 'create'])->name('add');
-            Route::match(['get', 'post'], 'edit/{id}', [TypeController::class, 'edit'])->name('edit');
-            Route::get('/delete/{id}', [TypeController::class, 'delete'])->name('deleted');
+            Route::get('/', [PropertyTypeController::class, 'index'])->name('index');
+            Route::match(['get', 'post'], 'add', [PropertyTypeController::class, 'create'])->name('add');
+            Route::match(['get', 'post'], 'edit/{id}', [PropertyTypeController::class, 'edit'])->name('edit');
+            Route::get('/delete/{id}', [PropertyTypeController::class, 'delete'])->name('deleted');
         });
 
         Route::group([
             'prefix' => 'amenities',
             'as' => 'amenities.'
         ], function () {
-            Route::get('/', [TypeController::class, 'index'])->name('index');
-            Route::match(['get', 'post'], 'add', [TypeController::class, 'create'])->name('add');
-            Route::match(['get', 'post'], 'edit/{id}', [TypeController::class, 'edit'])->name('edit');
-            Route::get('/delete/{id}', [TypeController::class, 'delete'])->name('deleted');
+            Route::get('/', [AmenityController::class, 'index'])->name('index');
+            Route::match(['get', 'post'], 'add', [AmenityController::class, 'create'])->name('add');
+            Route::match(['get', 'post'], 'edit/{id}', [AmenityController::class, 'edit'])->name('edit');
+            Route::get('/delete/{id}', [AmenityController::class, 'delete'])->name('deleted');
         });
 
         Route::group([
             'prefix' => 'features',
             'as' => 'features.'
         ], function () {
-            Route::get('/', [TypeController::class, 'index'])->name('index');
-            Route::match(['get', 'post'], 'add', [TypeController::class, 'create'])->name('add');
-            Route::match(['get', 'post'], 'edit/{id}', [TypeController::class, 'edit'])->name('edit');
-            Route::get('/delete/{id}', [TypeController::class, 'delete'])->name('deleted');
+            Route::get('/', [FeatureController::class, 'index'])->name('index');
+            Route::match(['get', 'post'], 'add', [FeatureController::class, 'create'])->name('add');
+            Route::match(['get', 'post'], 'edit/{id}', [FeatureController::class, 'edit'])->name('edit');
+            Route::get('/delete/{id}', [FeatureController::class, 'delete'])->name('deleted');
         });
     });
 
@@ -120,10 +141,42 @@ Route::middleware(['auth', 'abilities'])->group(function () {
         'prefix' => 'location',
         'as' => 'location.'
     ], function () {
-        Route::get('/', [LocationController::class, 'index'])->name('index');
-        Route::match(['get', 'post'],'/add', [LocationController::class, 'store'])->name('add');
-        Route::match(['get', 'post'],'/edit/{id}', [LocationController::class, 'update'])->name('edit');
-        Route::get('/delete/{id}', [LocationController::class, 'destroy'])->name('deleted');
+        Route::group([
+            'prefix' => 'countries',
+            'as' => 'countries.'
+        ], function () {
+            Route::get('/', [CountryController::class, 'index'])->name('index');
+            Route::match(['get', 'post'],'/add', [CountryController::class, 'create'])->name('add');
+            Route::match(['get', 'post'],'/edit/{id}', [CountryController::class, 'update'])->name('edit');
+            Route::get('/delete/{id}', [CountryController::class, 'destroy'])->name('deleted');
+        });
+        Route::group([
+            'prefix' => 'cities',
+            'as' => 'cities.'
+        ], function () {
+            Route::get('/', [CityController::class, 'index'])->name('index');
+            Route::match(['get', 'post'],'/add', [CityController::class, 'store'])->name('add');
+            Route::match(['get', 'post'],'/edit/{id}', [CityController::class, 'update'])->name('edit');
+            Route::get('/delete/{id}', [CityController::class, 'destroy'])->name('deleted');
+        });
+        Route::group([
+            'prefix' => 'districts',
+            'as' => 'districts.'
+        ], function () {
+            Route::get('/', [DistrictController::class, 'index'])->name('index');
+            Route::match(['get', 'post'],'/add', [DistrictController::class, 'store'])->name('add');
+            Route::match(['get', 'post'],'/edit/{id}', [DistrictController::class, 'update'])->name('edit');
+            Route::get('/delete/{id}', [DistrictController::class, 'destroy'])->name('deleted');
+        });
+        Route::group([
+            'prefix' => 'communes',
+            'as' => 'communes.'
+        ], function () {
+            Route::get('/', [CommuneController::class, 'index'])->name('index');
+            Route::match(['get', 'post'],'/add', [CommuneController::class, 'store'])->name('add');
+            Route::match(['get', 'post'],'/edit/{id}', [CommuneController::class, 'update'])->name('edit');
+            Route::get('/delete/{id}', [CommuneController::class, 'destroy'])->name('deleted');
+        });
     });
 
     // Customer Interaction
@@ -135,23 +188,24 @@ Route::middleware(['auth', 'abilities'])->group(function () {
             'prefix' => 'inquiries',
             'as' => 'inquiries.'
         ], function () {
-            Route::get('/', [PropertyController::class, 'index'])->name('index');
-            Route::match(['get', 'post'], '/add', [PropertyController::class, 'create'])->name('add');
-            Route::match(['get', 'post'], '/edit/{id}', [PropertyController::class, 'edit'])->name('edit');
-            Route::get('/delete/{id}', [PropertyController::class, 'destroy'])->name('deleted');
+            Route::get('/', [InquiryController::class, 'index'])->name('index');
+            Route::match(['get', 'post'], '/add', [InquiryController::class, 'create'])->name('add');
+            Route::match(['get', 'post'], '/edit/{id}', [InquiryController::class, 'edit'])->name('edit');
+            Route::get('/delete/{id}', [InquiryController::class, 'destroy'])->name('deleted');
         });
 
         Route::group([
             'prefix' => 'reviews',
             'as' => 'reviews.'
         ], function () {
-            Route::get('/', [PropertyController::class, 'index'])->name('index');
-            Route::match(['get', 'post'], '/add', [PropertyController::class, 'create'])->name('add');
-            Route::match(['get', 'post'], '/edit/{id}', [PropertyController::class, 'edit'])->name('edit');
-            Route::get('/delete/{id}', [PropertyController::class, 'destroy'])->name('deleted');
+            Route::get('/', [ReviewController::class, 'index'])->name('index');
+            Route::match(['get', 'post'], '/add', [ReviewController::class, 'create'])->name('add');
+            Route::match(['get', 'post'], '/edit/{id}', [ReviewController::class, 'edit'])->name('edit');
+            Route::get('/delete/{id}', [ReviewController::class, 'destroy'])->name('deleted');
         });
     });
 
+    //Report
     Route::group([
         'prefix' => 'reports',
         'as' => 'reports.'

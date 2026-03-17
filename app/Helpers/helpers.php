@@ -7,8 +7,8 @@ use App\Models\Admin\Settings;
 use App\Models\UserManagement\Page;
 use Illuminate\Support\Facades\Auth;
 use App\Models\WebAds;
-use App\Models\Favourite;
-use App\Models\Admin\PostViews;
+use App\Models\Property\Favourite;
+use App\Models\Property\PropertyViews;
 
 if (!function_exists('yesNo')) {
     function yesNo($instance)
@@ -192,16 +192,6 @@ if (! function_exists('number_format_short')) {
         }
 
         return $n_format . $suffix;
-    }
-}
-
-
-if (!function_exists('post_views_count')) {
-    function post_views_count($post_id,$post_type)
-    {
-        $view_count = PostViews::where('post_id', '=', $post_id)->where('post_type', '=', $post_type)->sum('post_views');
-
-        return $view_count;
     }
 }
 
@@ -406,7 +396,7 @@ if (!function_exists('check_favourite')) {
     {       
         if($user_id)
         {
-             $fav_obj = Favourite::where('post_type', '=', $post_type)->where('post_id', '=', $post_id)->where('user_id', '=', $user_id)->first();
+             $fav_obj = Favourite::where('post_type', '=', $post_type)->where('property_id', '=', $post_id)->where('user_id', '=', $user_id)->first();
 
              if($fav_obj)
              {
@@ -426,10 +416,10 @@ if (!function_exists('check_favourite')) {
 }
 
 
-if (!function_exists('post_views_count')) {
-    function post_views_count($post_id,$post_type)
+if (!function_exists('property_views_count')) {
+    function property_views_count($property_id)
     {
-        $view_count = PostViews::where('post_id', '=', $post_id)->where('post_type', '=', $post_type)->sum('post_views');
+        $view_count = PropertyViews::where('property_id', '=', $property_id)->sum('property_id');
 
         return $view_count;
     }

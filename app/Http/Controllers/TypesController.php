@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Type;
-use App\Models\Property;
+use App\Models\Property\PropertyType;
+use App\Models\Property\Property;
 use Illuminate\Support\Facades\Request;
 use App\Http\Controllers\Controller;
 
@@ -13,7 +13,7 @@ class TypesController extends Controller
  	  
     public function types()
     {    
-        $type_list= Type::where('status',1)->orderby('type_name')->paginate(12);
+        $type_list= PropertyType::where('status',1)->orderby('type_name')->paginate(12);
 
         return view('pages.types.list',compact('type_list'));              
          
@@ -21,7 +21,7 @@ class TypesController extends Controller
 
     public function types_property($type_slug, $type_id)
     {
-        $type_info = Type::findOrFail($type_id);
+        $type_info = PropertyType::findOrFail($type_id);
         $sort_by = request('sort_by', 'New');
 
         $sortOptions = [

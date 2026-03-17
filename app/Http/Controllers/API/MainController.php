@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 use App\Models\Admin\Settings;
-use App\Models\UserInform;
+use App\Models\UserManagement\UserInform;
 use App\Http\Controllers\Controller;
 use App\Models\UserManagement\User;
 

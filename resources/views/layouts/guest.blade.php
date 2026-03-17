@@ -19,6 +19,7 @@
     <link href="{{ asset('assets/css/main.css') }}" id="stylesheet" rel="stylesheet" type="text/css">
     <link href="{{ asset('assets/css/login.css') }}" id="stylesheet" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="{{ asset('fontawesome/css/all.min.css') }}">
+    <link rel="stylesheet" href="{{asset('assets/extend/select2/css/select2.min.css')}}">
 
     <!-- Scripts -->
     <script src="{{ asset('assets/js/bootstrap/bootstrap.bundle.min.js') }}"></script>
@@ -50,6 +51,7 @@
         <!-- /main content -->
     </div>
     <!-- /page content -->
+    <script src="{{ asset('assets/extend/select2/js/select2.min.js') }}"></script>
     <script>
         $(document).ready(function() {
             $('.password-toggle').click(function() {

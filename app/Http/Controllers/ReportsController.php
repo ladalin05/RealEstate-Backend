@@ -15,9 +15,9 @@ class ReportsController extends Controller
     { 
         $list = Reports::orderBy('id','DESC')->get();
         $page_title=trans('global.reports');
-        $report_list = view('pages.reports.list',compact('list'))->render();
+        $report_list = view('reports.reports.list',compact('list'))->render();
 
-        return view('pages.reports.index',compact('page_title','list','report_list'));
+        return view('reports.reports.index',compact('page_title','list','report_list'));
     }
 
     public function report_filter(Request $request)
@@ -27,7 +27,7 @@ class ReportsController extends Controller
                             return $query->where('message', 'like', '%' . $search_text . '%');
                         })
                         ->get();
-        $report_list = view('pages.reports.list',compact('list'))->render();
+        $report_list = view('report.reports.list',compact('list'))->render();
         return response()->json($report_list);
     }
 
