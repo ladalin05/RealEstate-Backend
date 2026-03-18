@@ -10,7 +10,8 @@
 
         <div class="header-actions">
             <a href="{{ route('users-management.agencies.add') }}"
-               class="btn btn-add-user text-white">
+               class="btn btn-add-user text-white"
+               onclick="addData(event)" >
                 <i class="ph ph-plus-circle me-1"></i>
                 {{ __('global.add_agency') }}
             </a>
@@ -23,4 +24,10 @@
             :data="$dataTable">
         </x-basic.datatables>
     </div>
+
+    <x-basic.modal id="action-modal" size="modal-xl">
+        <div id="action-form" novalidate>
+        </div>
+    </x-basic.modal>
+
 </x-app-layout>

@@ -290,7 +290,7 @@
                                             @foreach (getAmenity() as $amenity)
                                                 <option value="{{ $amenity->id }}"
                                                     {{ in_array($amenity->id, $selectedAmenities) ? 'selected' : '' }}>
-                                                    {{ $amenity->{'name_'.App::getLocale()} }}
+                                                    {{ $amenity->{'name_'.app()->getLocale()} }}
                                                 </option>
                                             @endforeach
                                         </select>
@@ -302,7 +302,7 @@
                                             @foreach (getFeature() as $feature)
                                                 <option value="{{ $feature->id }}"
                                                     {{ in_array($feature->id, $selectedFeatures) ? 'selected' : '' }}>
-                                                    {{ $feature->{'name_'.App::getLocale()} }}
+                                                    {{ $feature->{'name_'.app()->getLocale()} }}
                                                 </option>
                                             @endforeach
                                         </select>

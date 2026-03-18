@@ -15,6 +15,6 @@ class InquiryController extends Controller
 {
     public function index(InquiryDataTable $dataTable)
     {
-        return $dataTable->render('pages.inquiries.index');
+        return $dataTable->render('interaction.inquiries.index');
     }
 }

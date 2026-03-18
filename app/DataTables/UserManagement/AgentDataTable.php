@@ -15,12 +15,12 @@ class AgentDataTable extends DataTable
             ->eloquent($query)
             ->addIndexColumn()
 
-            ->addColumn('name', function ($row) {
-                return $row->user?->name ?? '-';
+            ->editColumn('name', function ($row) {
+                return $row->{'user_name_'.app()->getLocale()} ?? '-';
             })
 
-            ->addColumn('agency', function ($row) {
-                return $row->agency?->name ?? '-';
+            ->editColumn('agency', function ($row) {
+                return $row->agency_name ?? '-';
             })
 
             ->editColumn('rating', function ($row) {
@@ -35,8 +35,14 @@ class AgentDataTable extends DataTable
     public function query(Agent $model)
     {
         return $model->newQuery()
-            ->with(['user','agency'])
-            ->select('agents.*');
+                    ->join('users', 'agents.user_id', '=', 'users.id')
+                    ->leftJoin('agencies', 'agents.agency_id', '=', 'agencies.id')
+                    ->select(
+                        'agents.*',
+                        'users.name_en as user_name_en',
+                        'users.name_kh as user_name_kh',
+                        'agencies.name as agency_name'
+                    );
     }
 
     public function html()

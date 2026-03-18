@@ -15,6 +15,7 @@ use App\Models\Location\Country;
 use App\Models\Location\District;
 use App\Models\Property\Amenity;
 use App\Models\Property\Feature;
+use App\Models\UserManagement\Agency;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
@@ -130,14 +131,6 @@ if (!function_exists('getTypes')) {
     }
 }
 
-if (!function_exists('getLocations')) {
-    function getLocations()
-    {
-        $location_info = Location::where('status', 1)->get();
-        return $location_info;
-    }
-}
-
 if (!function_exists('getPlans')) {
     function getPlans()
     {
@@ -162,8 +155,8 @@ if (!function_exists('getSubPlanById')) {
     }
 }
 
-if (!function_exists('post_views_save')) {
-    function post_views_save($property_id,$user_id=null)
+if (!function_exists('property_views_save')) {
+    function property_views_save($property_id,$user_id=null)
     {       
 
         $today_date = date('Y-m-d H:i:s');
@@ -179,7 +172,7 @@ if (!function_exists('post_views_save')) {
         else
         {
             PropertyViews::create([
-                'post_id' => $property_id,
+                'property_id' => $property_id,
                 'views' => 1,
                 'date' => $today_date,
             ]);
@@ -187,7 +180,6 @@ if (!function_exists('post_views_save')) {
  
     }
 }
-
 
 if (!function_exists('getCountry')) {
     function getCountry()
@@ -235,3 +227,19 @@ if (!function_exists('getFeature')) {
             ->get();
     }
 }
+
+if (!function_exists('getUser')) {
+    function getUser()
+    {
+        return User::all();
+    }
+}
+
+if (!function_exists('getAgency')) {
+    function getAgency()
+    {
+        return Agency::all();
+    }
+}
+
+

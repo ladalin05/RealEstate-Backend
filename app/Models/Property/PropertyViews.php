@@ -8,7 +8,7 @@ class PropertyViews extends Model
 {
     protected $table = 'property_views';
 
-    protected $fillable = ['user_id', 'post_id','post_type', 'date'];
+    protected $fillable = ['user_id', 'property_id','views', 'date'];
 
 
 	public $timestamps = false;  

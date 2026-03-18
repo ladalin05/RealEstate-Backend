@@ -71,10 +71,9 @@ Route::middleware(['auth', 'abilities'])->group(function () {
             'as' => 'agents.'
         ], function () {
             Route::get('/', [AgentController::class, 'index'])->name('index');
-            Route::get('/add', [AgentController::class, 'add'])->name('add');
-            Route::get('/edit/{id}', [AgentController::class, 'edit'])->name('edit');
-            Route::post('/save/{id?}', [AgentController::class, 'save'])->name('save');
-            Route::delete('/delete/{id}', [AgentController::class, 'delete'])->name('delete');
+            Route::match(['get', 'post'], '/add', [AgentController::class, 'create'])->name('add');
+            Route::match(['get', 'post'], '/edit', [AgentController::class, 'update'])->name('edit');
+            Route::delete('/delete', [AgentController::class, 'delete'])->name('delete');
         });
         
         Route::group([
@@ -82,10 +81,9 @@ Route::middleware(['auth', 'abilities'])->group(function () {
             'as' => 'agencies.'
         ], function () {
             Route::get('/', [AgencyController::class, 'index'])->name('index');
-            Route::get('/add', [AgencyController::class, 'add'])->name('add');
-            Route::get('/edit/{id}', [AgencyController::class, 'edit'])->name('edit');
-            Route::post('/save/{id?}', [AgencyController::class, 'save'])->name('save');
-            Route::delete('/delete/{id}', [AgencyController::class, 'delete'])->name('delete');
+            Route::match(['get', 'post'], '/add', [AgencyController::class, 'create'])->name('add');
+            Route::match(['get', 'post'], '/edit', [AgencyController::class, 'update'])->name('edit');
+            Route::delete('/delete', [AgencyController::class, 'delete'])->name('delete');
         });
     });
 

@@ -274,7 +274,7 @@
                                         <select name="amenities[]" class="form-control select2-multiple" multiple="multiple">
                                             <option value="">Select Amenity</option>
                                             @foreach (getAmenity() as $amenity)
-                                                <option value="{{$amenity?->id}}">{{ $amenity ? $amenity->{'name_'.App::getLocale()} : '' }}</option>
+                                                <option value="{{$amenity?->id}}">{{ $amenity ? $amenity->{'name_'.app()->getLocale()} : '' }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -284,7 +284,7 @@
                                         <select name="features[]" class="form-control select2-multiple" multiple="multiple">
                                             <option value="">Select Feature</option>
                                             @foreach (getFeature() as $feature)
-                                                <option value="{{$feature?->id}}">{{ $feature ? $feature->{'name_'.App::getLocale()} : '' }}</option>
+                                                <option value="{{$feature?->id}}">{{ $feature ? $feature->{'name_'.app()->getLocale()} : '' }}</option>
                                             @endforeach
                                         </select>
                                         </select>

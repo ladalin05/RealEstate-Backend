@@ -31,7 +31,7 @@ class AgencyDataTable extends DataTable
                 return '-';
             })
 
-            ->addColumn('action', fn($row) => view('user-management.agencies.action', compact('row')))
+            ->addColumn('action', fn($row) => view('user-management.agency.action', compact('row')))
 
             ->rawColumns(['logo','website','action']);
     }

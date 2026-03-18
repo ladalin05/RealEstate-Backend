@@ -78,7 +78,7 @@
                             <div class="list-item d-flex align-items-center p-3 border-bottom">
                                 <div class="flex-grow-1">
                                     <p class="mb-0 text-dark font-weight-600 small">{{ Str::limit($lp->title, 35) }}</p>
-                                    <span class="text-muted extra-small"><i class="fa fa-eye mr-1"></i>{{ number_format_short(post_views_count($lp->id, "Property")) }} views</span>
+                                    <span class="text-muted extra-small"><i class="fa fa-eye mr-1"></i>{{ number_format_short(property_views_count($lp->id, "Property")) }} views</span>
                                 </div>
                                 <span class="badge badge-soft-primary">New</span>
                             </div>
