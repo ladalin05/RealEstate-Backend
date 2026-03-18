@@ -281,5 +281,8 @@ return [
     'commune_management' => 'Commune Management',
     'district_management' => 'District Management',
     'property_type_management' => 'Property Type Management',
+    'add_role' => 'Add Role',
+    'permissions_assignment' => 'Permissions Assignment',
+    'create_role' => 'Create Role',
 
 ];

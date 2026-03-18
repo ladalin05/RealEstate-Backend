@@ -411,7 +411,7 @@
                 // Gallery logic
                 $('#add-gallery-image').on('click', function () {
                     $('#gallery-images-wrapper').append(`
-                        <div class="gallery-image-item">
+                        <div class="gallery-image-item mb-3">
                             <div class="row align-items-center">
                                 <div class="col-md-8">
                                     <input type="file" name="gallery_image[]" accept="image/*" class="gallery-file d-none">
@@ -419,7 +419,9 @@
                                 </div>
                                 <div class="col-md-4 text-end">
                                     <button type="button" class="btn btn-dark select-gallery" style="height: 36px">Select</button>
-                                    <button type="button" class="btn btn-outline-danger remove-gallery" style="height: 36px"><i class="fa fa-trash"></i></button>
+                                    <button type="button" class="btn btn-outline-danger remove-gallery" style="height: 36px">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
                                 </div>
                             </div>
                             <div class="preview mt-2"></div>
@@ -427,15 +429,36 @@
                     `);
                 });
 
+                // Trigger file input
                 $(document).on('click', '.select-gallery', function() {
                     $(this).closest('.gallery-image-item').find('.gallery-file').click();
                 });
 
+                // Handle file change + preview
                 $(document).on('change', '.gallery-file', function() {
-                    let fileName = $(this).val().split('\\').pop();
-                    $(this).siblings('.gallery-image-name').val(fileName);
+                    let input = this;
+                    let file = input.files[0];
+
+                    if (file) {
+                        let fileName = file.name;
+
+                        // Set file name
+                        $(input).closest('.gallery-image-item')
+                                .find('.gallery-image-name')
+                                .val(fileName);
+
+                        // Show preview
+                        let reader = new FileReader();
+                        reader.onload = function(e) {
+                            $(input).closest('.gallery-image-item')
+                                    .find('.preview')
+                                    .html(`<img src="${e.target.result}" width="120" height="90" style="object-fit:cover;border-radius:6px;">`);
+                        }
+                        reader.readAsDataURL(file);
+                    }
                 });
 
+                // Remove item
                 $(document).on('click', '.remove-gallery', function() {
                     $(this).closest('.gallery-image-item').remove();
                 });

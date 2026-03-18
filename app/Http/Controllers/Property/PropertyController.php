@@ -327,12 +327,24 @@ class PropertyController extends Controller
         ]);
     }
 
-    public function destroy($id)
+    public function delete(Request $request)
     {
-        $property = Property::findOrFail($id);
-        $property->delete();
+        try {
+            $feature = Property::findOrFail($request->id);
+            $feature->delete();
 
-        return redirect()->route('property.properties.index')->with('flash_message', __('global.deleted_property_successfully'));
+            return response()->json([
+                'status'   => 'success',
+                'message'  => 'Property deleted successfully',
+                'redirect' => route('property.properties.index'),
+            ]);
+
+        } catch (\Throwable $e) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**

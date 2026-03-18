@@ -1,16 +1,19 @@
 <x-app-layout>
     <x-basic.breadcrumb>
-        <x-slot name="path_name">
-                {{ __('global.roles') }}
+        <x-slot name="title">
+            <h2 class="mb-0">{{ __('global.roles') }}</h2>
+            <span style="color:#646B72;font-size:14px;">
+                Manage your roles
+            </span>
         </x-slot>
-        <x-slot name="action">
-            <x-basic.option>
-                <a href="{{ route('users-management.roles.add') }}" class="dropdown-item">
-                    <i class="ph ph-plus-circle me-2"></i>
-                    {{ __('global.add_new') }}
-                </a>
-            </x-basic.option>
-        </x-slot>
+
+        <div class="header-actions">
+            <a href="{{ route('users-management.roles.add') }}"
+               class="btn btn-add-user text-white">
+                <i class="ph ph-plus-circle me-1"></i>
+                {{ __('global.add_role') }}
+            </a>
+        </div>
     </x-basic.breadcrumb>
     <!-- Content area -->
     <div class="content">
