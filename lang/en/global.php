@@ -284,5 +284,7 @@ return [
     'add_role' => 'Add Role',
     'permissions_assignment' => 'Permissions Assignment',
     'create_role' => 'Create Role',
+    'post_category_management' => 'Post Category Management',
+    'post_management' => 'Post Management',
 
 ];

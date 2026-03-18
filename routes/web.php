@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Blog\PostCategoryController;
+use App\Http\Controllers\Blog\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\SettingsController;
@@ -214,20 +216,25 @@ Route::middleware(['auth', 'abilities'])->group(function () {
 
     // Blog
     Route::group([
-        'prefix' => 'posts',
-        'as' => 'posts.'
+        'prefix' => 'blogs',
+        'as' => 'blogs.'
     ], function () {
-        Route::get('/', [TransactionController::class, 'index'])->name('index');
-        Route::post('/filter', [TransactionController::class, 'transaction_filter'])->name('filter');
-        Route::post('/export', [TransactionController::class, 'transaction_export'])->name('export');
+        Route::group([
+            'prefix' => 'posts',
+            'as' => 'posts.'
+        ], function () {
+            Route::get('/', [PostController::class, 'index'])->name('index');
+            Route::match(['get', 'post'], '/create', [PostController::class, 'create'])->name('add');
+            Route::match(['get', 'post'], '/update', [PostController::class, 'update'])->name('edit');
+        });
         Route::group([
             'prefix' => 'categories',
             'as' => 'categories.'
         ], function () {
-            Route::get('/', [SettingsController::class, 'general_settings'])->name('index');
-            Route::post('/create', [SettingsController::class, 'general_setting_create'])->name('create');
-            Route::post('/update', [SettingsController::class, 'general_setting_update'])->name('update');
-    });
+            Route::get('/', [PostCategoryController::class, 'index'])->name('index');
+            Route::match(['get', 'post'], '/create', [PostCategoryController::class, 'create'])->name('add');
+            Route::match(['get', 'post'], '/update', [PostCategoryController::class, 'update'])->name('edit');
+        });
     });
     
     // Web Settings
@@ -235,14 +242,21 @@ Route::middleware(['auth', 'abilities'])->group(function () {
         'prefix' => 'settings',
         'as' => 'settings.'
     ], function () {
-        Route::get('/', [SettingsController::class, 'content_page'])->name('index');
+        Route::group([
+            'prefix' => 'settings',
+            'as' => 'settings.',
+        ], function () {
+            Route::get('/', [SettingsController::class, 'general_settings'])->name('index');
+            Route::match(['get', 'post'], '/create', [SettingsController::class, 'create'])->name('create');
+            Route::match(['get', 'post'], '/update', [SettingsController::class, 'update'])->name('update');
+        });
         Route::group([
             'prefix' => 'banners',
             'as' => 'banners.',
         ], function () {
-            Route::get('/', [SettingsController::class, 'content_page'])->name('index');
-            Route::match(['get', 'post'], '/create', [SettingsController::class, 'content_page_create'])->name('create');
-            Route::match(['get', 'post'], '/update', [SettingsController::class, 'content_page_update'])->name('update');
+            Route::get('/', [SettingsController::class, 'index'])->name('index');
+            Route::match(['get', 'post'], '/create', [SettingsController::class, 'create'])->name('add');
+            Route::match(['get', 'post'], '/update', [SettingsController::class, 'update'])->name('edit');
         });
 
     });

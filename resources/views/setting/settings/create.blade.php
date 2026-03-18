@@ -100,7 +100,7 @@
                         </div>
 
                         <div class="card-body p-4 p-lg-5">
-                            <form action="{{ route('settings.general.create') }}" method="POST" enctype="multipart/form-data">
+                            <form action="{{ route('settings.settings.create') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 
                                 <div class="row g-5">
