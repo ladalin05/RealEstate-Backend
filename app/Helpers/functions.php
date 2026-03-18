@@ -13,6 +13,8 @@ use App\Models\Location\City;
 use App\Models\Location\Commune;
 use App\Models\Location\Country;
 use App\Models\Location\District;
+use App\Models\Property\Amenity;
+use App\Models\Property\Feature;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
@@ -214,6 +216,22 @@ if (!function_exists('getCommune')) {
     function getCommune($district_id = null)
     {
         return Commune::select('id', 'name', 'district_id')
+            ->get();
+    }
+}
+
+if (!function_exists('getAmenity')) {
+    function getAmenity()
+    {
+        return Amenity::where('status', 1)->select('id', 'name_en', 'name_kh')
+            ->get();
+    }
+}
+
+if (!function_exists('getFeature')) {
+    function getFeature()
+    {
+        return Feature::where('status', 1)->select('id', 'name_en', 'name_kh')
             ->get();
     }
 }

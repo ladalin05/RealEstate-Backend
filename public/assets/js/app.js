@@ -778,34 +778,3 @@ function editData(e) {
         }
     });
 }
-
-function deleteData(e) {
-    e.preventDefault();
-
-    let url = e.currentTarget.getAttribute('data-url');
-    if (!url) {
-        console.error("Delete URL not found");
-        return;
-    }
-    $.ajax({
-        url: url,
-        type: 'GET',
-        success: function (res) {
-            if (res.status === 'success') {
-                successAlert(res.message);
-                setTimeout(function () {
-                    if (res.redirect) {
-                        window.location.href = res.redirect;
-                    } else {
-                        location.reload();
-                    }
-                }, 2000);
-            } else {
-                errorAlert(res.message || 'Failed to delete');
-            }
-        },
-        error: function () {
-            errorAlert('Failed to delete');
-        }
-    });
-}

@@ -1,43 +1,16 @@
-
 <div class="d-flex gap-2">
-    <a href="{{route('property.amenities.edit', $row->id)}}" class="btn btn-sm btn-success">
-        <i class="fa fa-edit"></i>
+    <a
+        href="{{route('property.amenities.edit', ['id' => $row->id])}}"
+        class="btn btn-success btn-sm text-white"
+        onclick="editData(event)">
+        <i class="ph ph-pencil-simple me-1"></i>
+        Edit
     </a>
 
-    <button class="btn btn-sm btn-danger data_remove"
-        data-id="{{$row->id}}">
+    <button type="button"
+        class="btn btn-danger btn-sm data_remove"
+        data-url="{{route('property.amenities.deleted', ['id' => $row->id])}}"
+        onclick="deleteData(event)">
         <i class="fa fa-trash"></i>
     </button>
 </div>
-
-<script>
-    // DELETE
-    $(document).on("click",".data_remove", function(){
-
-        let id = $(this).data("id");
-
-        Swal.fire({
-            title: '{{ __("global.dlt_warning") }}',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: '{{ __("global.dlt_confirm") }}'
-        }).then((result) => {
-
-            if(result.isConfirmed){
-
-                $.post("{{ URL::to('admin/ajax_delete') }}", {
-                    _token: "{{ csrf_token() }}",
-                    id: id,
-                    action_for: "type_delete"
-                }, function(res){
-
-                    if(res.status == '1'){
-                        $('#type-table').DataTable().ajax.reload();
-                        Swal.fire('Deleted!', '', 'success');
-                    }
-                });
-
-            }
-        });
-    });
-</script>

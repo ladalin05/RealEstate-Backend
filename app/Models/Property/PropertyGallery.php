@@ -8,7 +8,7 @@ class PropertyGallery extends Model
 {
     protected $table = 'property_gallery';
 
-    protected $fillable = ['post_id','image'];
+    protected $fillable = ['property_id','image'];
  
 	
     public $timestamps = false;

@@ -38,7 +38,7 @@ class PropertyTypeDataTable extends DataTable
 
     public function query(PropertyType $model)
     {
-        return $model->newQuery()->select('types.*');
+        return $model->newQuery()->select('property_type.*');
     }
 
     public function html()

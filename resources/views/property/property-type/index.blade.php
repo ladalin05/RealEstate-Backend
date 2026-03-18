@@ -2,17 +2,18 @@
 
     <x-basic.breadcrumb>
         <x-slot name="title">
-            <h2 class="mb-0">{{ __('global.type_management') }}</h2>
+            <h2 class="mb-0">{{ __('global.property_type_management') }}</h2>
             <span style="color:#646B72;font-size:14px;">
-                Manage your types
+                Manage your property types
             </span>
         </x-slot>
 
         <div class="header-actions">
             <a href="{{ route('property.types.add') }}"
-               class="btn btn-add-user text-white">
+               class="btn btn-add-user text-white"
+               onclick="addData(event)" >
                 <i class="ph ph-plus-circle me-1"></i>
-                {{ __('global.add_type') }}
+                {{ __('global.add_new') }}
             </a>
         </div>
     </x-basic.breadcrumb>
@@ -24,24 +25,9 @@
         </x-basic.datatables>
     </div>
 
-    @push('scripts')
-
-    <script>
-
-    // STATUS TOGGLE
-    $(document).on("change",".enable_disable", function(){
-
-        let id = $(this).data("id");
-        let status = $(this).prop("checked");
-
-        $.post("{{ URL::to('admin/ajax_status') }}", {
-            _token: "{{ csrf_token() }}",
-            id: id,
-            value: status,
-            action_for: "type_status"
-        });
-    });
-    </script>
-    @endpush
+    <x-basic.modal id="action-modal" size="modal-xl">
+        <div id="action-form" novalidate>
+        </div>
+    </x-basic.modal>
 
 </x-app-layout>

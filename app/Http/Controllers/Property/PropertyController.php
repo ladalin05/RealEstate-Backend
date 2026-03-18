@@ -15,6 +15,10 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
 use App\Models\UserManagement\User;
 use App\Http\Controllers\Controller;
+use App\Models\Location\PropertyLocation;
+use App\Models\Property\Amenity;
+use App\Models\Property\PropertyAmenity;
+use App\Models\Property\PropertyFeature;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 
@@ -65,49 +69,92 @@ class PropertyController extends Controller
 
     public function create(Request $request)
     {
-        $page_title=__('global.add_property');
-        if($request->isMethod('post')){
-            try {
+        try {
+            $page_title=__('global.add_property');
+            if($request->isMethod('post')){
                 // Validation rules
                 $request->validate([
                     'type' => 'required',
                     'title' => 'required',
-                    'location' => 'required',
                 ]);
 
-                $featured_image = null;
-                if ($request->hasFile('image')) {
-                    $featured_image = uploadImage($request->file('image'), null, 'images/property/feature');
+                $main_image = null;
+                if ($request->hasFile('main_image')) {
+                    $main_image = uploadImage($request->file('main_image'), null, 'images/property/feature');
                 }
                 
                 $floor_plan_image = null;
-                if($request->floor_plan_image != null){
-                        $featured_image = uploadImage($request->file('floor_plan_image'), null, 'images/property/floor_plan');
+                if($request->hasFile('floor_plan_image')){
+                    $floor_plan_image = uploadImage($request->file('floor_plan_image'), null, 'images/property/floor_plan');
+                }
+
+                $property_images = [];
+                if ($request->hasFile('gallery_image')) {
+                    foreach ($request->file('gallery_image') as $image) {
+                        $path = uploadImage($image, null, 'images/property/property_image');
+                        $property_images[] = $path;
                     }
+                }
+
 
                 $property_inf = Property::create([
-                                'type_id' => $request->type,
                                 'user_id' => Auth::user()->id,
+                                'type_id' => $request->type,
                                 'title' => addslashes($request->title),
                                 'slug' => Str::slug($request->title, '-'),
                                 'description' => addslashes($request->description),
                                 'phone' => $request->phone,
-                                'location_id' => $request->location,
-                                'address' => $request->address,
-                                'latitude' => $request->latitude,
-                                'longitude' => $request->longitude,
-                                'purpose' => $request->purpose,
-                                'bedrooms' => $request->bedrooms,
-                                'bathrooms' => $request->bathrooms,
+                                'purpose' => $request->purpose ?? 'sale', // default to 'sale' if null
+                                'bedrooms' => $request->bedrooms ?? 0,
+                                'bathrooms' => $request->bathrooms ?? 0,
                                 'area' => $request->area,
-                                'furnishing' => $request->furnishing,
-                                'amenities' => addslashes($request->amenities),
+                                'furnishing' => $request->furnishing ?? 'unfurnished',
                                 'price' => $request->price,
-                                'verified' => $request->verified,
-                                'image' => $featured_image != null ? $featured_image : 'upload/placeholder_img.jpg',
-                                'floor_plan_image' => $floor_plan_image,
-                                'status' => $request->status,
+                                'verified' => $request->verified ?? 0,
+                                'featured' => $request->featured ?? 0, // new field in schema
+                                'status' => $request->status ?? 1,
+                                'main_image' => $main_image ?? 'upload/placeholder_img.jpg',
+                                'floor_plan_image' => $floor_plan_image ?? null,
                             ]);
+                    if(!empty($property_images)) {
+                        foreach($property_images as $property_img){
+                            PropertyGallery::create([
+                                'property_id' => $property_inf->id,
+                                'image' => $property_img
+                            ]);
+                        }
+                    }
+
+                    if($request->country_id != null){
+                        $property_location = PropertyLocation::create([
+                                                                    'property_id' => $property_inf->id,
+                                                                    'country_id' => $request->country_id,
+                                                                    'city_id' => $request->city_id,
+                                                                    'district_id' => $request->district_id,
+                                                                    'commune_id' => $request->commune_id,
+                                                                    'address' => $request->address,
+                                                                    'latitude' => $request->latitude,
+                                                                    'longitude' => $request->longitude,
+                                                                ]);
+                    }
+
+                    if($request->amenities){
+                        foreach($request->amenities as $amenity){
+                            PropertyAmenity::create([
+                                'property_id' => $property_inf->id,
+                                'amenity_id' => $amenity
+                            ]);
+                        }
+                    }
+                    
+                    if($request->features){
+                        foreach($request->features as $feature){
+                            PropertyFeature::create([
+                                'property_id' => $property_inf->id,
+                                'feature_id' => $feature
+                            ]);
+                        }
+                    }
                 
                     return response()->json([
                         'status'  => 'success',
@@ -115,88 +162,134 @@ class PropertyController extends Controller
                         'redirect' => route('property.properties.index'),
                     ]);
 
-            } catch (\Throwable $e) {
-                return response()->json([
-                    'status'  => 'error',
-                    'message' => $e->getMessage()
-                ], 500);
             }
+        } catch (\Throwable $e) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => $e->getMessage()
+            ], 500);
         }
 
         return view('property.properties.create',compact('page_title'));
         
     }
 
-    public function edit(Request $request, $id)
+    public function update(Request $request)
     {
-        $page_title = __('global.edit_property');
-        $property_info = Property::findOrFail($id);
-        $gallery_images = PropertyGallery::where('post_id',$property_info->id)->orderBy('id')->get();
-        $type_list = PropertyType::orderBy('type_name')->get();  
-        $location_list = Location::orderBy('name')->get();
-        if ($request->isMethod('post')) {
-            try {
+        try {
+            $page_title = __('global.update_property');
+            $property = Property::findOrFail($request->id);
+
+            if ($request->isMethod('post')) {
                 // Validation rules
                 $request->validate([
+                    'id' => 'required|exists:properties,id',
                     'type' => 'required',
                     'title' => 'required',
-                    'location' => 'required',
                 ]);
-                $featured_image = updateImage($request->file('feature_image'), $property_info->image, 'images/property/feature');
-                $floor_plan_image = updateImage($request->file('floor_plan_image'), $property_info->floor_plan_image, 'images/property/floor_plan');
 
-                $property_info->type_id = $request->type;
-                $property_info->user_id = Auth::user()->id;
-                $property_info->title = addslashes($request->title);
-                $property_info->slug = Str::slug($request->title, '-');
-                $property_info->description = addslashes($request->description);
-                $property_info->phone = $request->phone;
-                $property_info->location_id = $request->location;
-                $property_info->address = $request->address;
-                $property_info->latitude = $request->latitude;
-                $property_info->longitude = $request->longitude;
-                $property_info->purpose = $request->purpose;
-                $property_info->bedrooms = $request->bedrooms;
-                $property_info->bathrooms = $request->bathrooms;
-                $property_info->area = $request->area;
-                $property_info->furnishing = $request->furnishing;
-                $property_info->amenities = addslashes($request->amenities);
-                $property_info->price = $request->price;
-                $property_info->verified = $request->verified;
-                $property_info->image = $featured_image != null ? $featured_image : 'upload/placeholder_img.jpg';
-                $property_info->floor_plan_image = $floor_plan_image;
-                $property_info->status = $request->status;
-                $property_info->save();
+                // Handle main image
+                if ($request->hasFile('main_image')) {
+                    $main_image = uploadImage($request->file('main_image'), null, 'images/property/feature');
+                } else {
+                    $main_image = $property->main_image; // keep old image
+                }
 
+                // Handle floor plan image
+                if ($request->hasFile('floor_plan_image')) {
+                    $floor_plan_image = uploadImage($request->file('floor_plan_image'), null, 'images/property/floor_plan');
+                } else {
+                    $floor_plan_image = $property->floor_plan_image; // keep old image
+                }
+
+                // Update property data
+                $property->update([
+                    'type_id' => $request->type,
+                    'title' => addslashes($request->title),
+                    'slug' => Str::slug($request->title, '-'),
+                    'description' => addslashes($request->description),
+                    'phone' => $request->phone,
+                    'purpose' => $request->purpose ?? 'sale',
+                    'bedrooms' => $request->bedrooms ?? 0,
+                    'bathrooms' => $request->bathrooms ?? 0,
+                    'area' => $request->area,
+                    'furnishing' => $request->furnishing ?? 'unfurnished',
+                    'price' => $request->price,
+                    'verified' => $request->verified ?? 0,
+                    'featured' => $request->featured ?? 0,
+                    'status' => $request->status ?? 1,
+                    'main_image' => $main_image,
+                    'floor_plan_image' => $floor_plan_image,
+                ]);
+
+                // Handle gallery images
                 if ($request->hasFile('gallery_image')) {
-                    PropertyGallery::where('post_id', $property_info->id)->delete();
-                    foreach ($request->file('gallery_image') as $file) {
-                        $gallary_images = updateImage($request->file('feature_image'), $property_info->image, 'images/property/gallery');
+                    // Optionally delete old gallery images
+                    PropertyGallery::where('property_id', $property->id)->delete();
+
+                    foreach ($request->file('gallery_image') as $image) {
+                        $path = uploadImage($image, null, 'images/property/property_image');
                         PropertyGallery::create([
-                            'post_id' => $property_info->id,
-                            'image'   => $gallary_images
+                            'property_id' => $property->id,
+                            'image' => $path
                         ]);
-                        
+                    }
+                }
+
+                // Handle property location
+                if ($request->country_id != null) {
+                    PropertyLocation::updateOrCreate(
+                        ['property_id' => $property->id],
+                        [
+                            'country_id' => $request->country_id,
+                            'city_id' => $request->city_id,
+                            'district_id' => $request->district_id,
+                            'commune_id' => $request->commune_id,
+                            'address' => $request->address,
+                            'latitude' => $request->latitude,
+                            'longitude' => $request->longitude,
+                        ]
+                    );
+                }
+
+                // Handle amenities
+                if ($request->amenities) {
+                    PropertyAmenity::where('property_id', $property->id)->delete();
+                    foreach ($request->amenities as $amenity) {
+                        PropertyAmenity::create([
+                            'property_id' => $property->id,
+                            'amenity_id' => $amenity
+                        ]);
+                    }
+                }
+
+                // Handle features
+                if ($request->features) {
+                    PropertyFeature::where('property_id', $property->id)->delete();
+                    foreach ($request->features as $feature) {
+                        PropertyFeature::create([
+                            'property_id' => $property->id,
+                            'feature_id' => $feature
+                        ]);
                     }
                 }
 
                 return response()->json([
-                    'status'  => 'success',
-                    'message' => __('global.updated_property_successfully'),
+                    'status' => 'success',
+                    'message' => __('global.update_property_successfully'),
                     'redirect' => route('property.properties.index'),
                 ]);
-
-            } catch (\Throwable $e) {
-                return response()->json([
-                    'status'  => 'error',
-                    'message' => $e->getMessage()
-                ], 500);
             }
+
+        } catch (\Throwable $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
         }
 
-        return view('property.properties.edit', compact('page_title', 'property_info', 'gallery_images', 'type_list', 'location_list'));
+        return view('property.properties.edit', compact('page_title', 'property'));
     }
-
     /**
      * Search properties based on filters.
      */

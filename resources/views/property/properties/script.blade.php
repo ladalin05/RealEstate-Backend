@@ -3,13 +3,15 @@
     $(document).ready(function () {
 
         // ✅ Load Country first
-        $.get('/get-country', function (data) {
-            $('#country').html('<option value="">Select Country</option>');
+        $('#country').focus(function () {
+            $.get('/get-country', function (data) {
+                $('#country').html('<option value="">Select Country</option>');
 
-            data.forEach(item => {
-                $('#country').append(
-                    `<option value="${item.id}">${item.name}</option>`
-                );
+                data.forEach(item => {
+                    $('#country').append(
+                        `<option value="${item.id}">${item.name}</option>`
+                    );
+                });
             });
         });
 

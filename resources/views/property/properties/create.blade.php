@@ -87,7 +87,6 @@
             border-radius: 8px;
             margin-top: 15px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            display: none; /* Hidden until file is selected */
         }
 
         .section-divider {
@@ -117,7 +116,7 @@
                     </div>
 
                     {{-- Updated Route for Store --}}
-                    <form action="{{ route('property.properties.add') }}" method="POST" id="addProperty" enctype="multipart/form-data">
+                    <form action="{{ route('property.properties.add') }}" method="POST" id="addProperty" enctype="multipart/form-data"  class="ajax-form">
                         @csrf
 
                         <div class="card">
@@ -256,8 +255,8 @@
                                     <div class="col-md-3">
                                         <label class="form-label">{{ __('global.verified') }}</label>
                                         <select class="form-control" name="verified">
-                                            <option value="NO">No</option>
-                                            <option value="YES">Yes</option>
+                                            <option value="1">Yes</option>
+                                            <option value="0">No</option>
                                         </select>
                                     </div>
                                     <div class="col-md-3">
@@ -272,22 +271,21 @@
                                     <div class="col-6">
                                         <label class="form-label"><strong>{{ __('global.amenities') }}</strong></label>
                                         <select name="amenities[]" class="form-control select2-multiple" multiple="multiple">
-                                            <option value="wifi">WiFi</option>
-                                            <option value="parking">Parking</option>
-                                            <option value="swimming_pool">Swimming Pool</option>
-                                            <option value="gym">Gym</option>
-                                            <option value="security">Security</option>
+                                            <option value="">Select Amenity</option>
+                                            @foreach (getAmenity() as $amenity)
+                                                <option value="{{$amenity?->id}}">{{ $amenity ? $amenity->{'name_'.App::getLocale()} : '' }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
 
                                     <div class="col-6">
                                         <label class="form-label"><strong>{{ __('global.features') }}</strong></label>
                                         <select name="features[]" class="form-control select2-multiple" multiple="multiple">
-                                            <option value="balcony">Balcony</option>
-                                            <option value="air_conditioning">Air Conditioning</option>
-                                            <option value="garden">Garden</option>
-                                            <option value="elevator">Elevator</option>
-                                            <option value="furnished">Furnished</option>
+                                            <option value="">Select Feature</option>
+                                            @foreach (getFeature() as $feature)
+                                                <option value="{{$feature?->id}}">{{ $feature ? $feature->{'name_'.App::getLocale()} : '' }}</option>
+                                            @endforeach
+                                        </select>
                                         </select>
                                     </div>
                                 </div>
@@ -303,10 +301,10 @@
                                     <div class="col-md-6 mb-4">
                                         <label class="form-label">Main Image</label>
                                         <div class="image-upload-wrapper">
-                                            <input type="file" name="feature_image" id="feature_image" class="d-none" accept="image/*">
-                                            <button type="button" class="btn btn-dark mb-2" id="feature-image-btn">Select Image</button>
+                                            <input type="file" name="main_image" id="main_image" class="d-none" accept="image/*">
+                                            <button type="button" class="btn btn-dark mb-2" id="main-image-btn">Select Image</button>
                                             <p class="small text-muted mb-0">Recommended: 800x480px</p>
-                                            <img id="feature-image-preview" src="#" class="img-preview-custom">
+                                            <img id="main-image-preview" src="#" class="img-preview-custom">
                                         </div>
                                     </div>
 
@@ -350,10 +348,6 @@
     @push('scripts')
         @include('property.properties.script')
         <script>
-        $(document).on('submit', '#addProperty', function (event) {
-            event.preventDefault();
-            ajaxSubmit('#addProperty');
-        });
         $(document).ready(function () {
 
             $('.select2-multiple').select2({
@@ -363,7 +357,7 @@
             });
             
             // Trigger file inputs
-            $('#feature-image-btn').click(() => $('#feature_image').click());
+            $('#main-image-btn').click(() => $('#main_image').click());
             $('#floor-plan-image-btn').click(() => $('#floor_plan_image').click());
 
             // Simple Preview Logic
@@ -377,7 +371,7 @@
                 }
             }
 
-            $("#feature_image").change(function() { readURL(this, '#feature-image-preview'); });
+            $("#main_image").change(function() { readURL(this, '#main-image-preview'); });
             $("#floor_plan_image").change(function() { readURL(this, '#floor-plan-image-preview'); });
 
             // Gallery logic

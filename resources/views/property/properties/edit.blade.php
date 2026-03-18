@@ -116,7 +116,7 @@
                         
                     </div>
 
-                    <form action="{{ route('property.properties.dit', $property_info->id) }}" method="POST" id="editProperty" enctype="multipart/form-data">
+                    <form action="{{ route('property.properties.edit', ['id' => $property->id]) }}" method="POST" id="editProperty" enctype="multipart/form-data" class="ajax-form">
                         @csrf
 
                         <div class="card">
@@ -127,22 +127,22 @@
                                 <div class="row mb-4">
                                     <div class="col-md-6">
                                         <label class="form-label">{{ __('global.property_title') }}*</label>
-                                        <input type="text" name="title" value="{{ $property_info->title }}" class="form-control" placeholder="e.g. Luxury Villa in Downtown">
+                                        <input type="text" name="title" value="{{ $property->title }}" class="form-control" placeholder="e.g. Luxury Villa in Downtown">
                                     </div>
                                     <div class="col-md-3">
                                         <label class="form-label">{{ __('global.type') }}*</label>
                                         <select class="form-control select2" name="type" id="type">
                                             <option value="">{{ __('global.select_type') }}</option>
                                             @foreach (getTypes() as $type_data)
-                                                <option value="{{ $type_data->id }}" {{ $type_data->id == $property_info->type_id ? 'selected' : '' }}> {{ $type_data->type_name }} </option>
+                                                <option value="{{ $type_data->id }}" {{ $type_data->id == $property->type_id ? 'selected' : '' }}> {{ $type_data->type_name }} </option>
                                             @endforeach
                                         </select>
                                     </div>
                                     <div class="col-md-3">
                                         <label class="form-label">{{ __('global.purpose') }}</label>
                                         <select class="form-control" name="purpose" id="purpose">
-                                            <option value="Sale" {{ $property_info->purpose == 'Sale' ? 'selected' : '' }}>Sale</option>
-                                            <option value="Rent" {{ $property_info->purpose == 'Rent' ? 'selected' : '' }}>Rent</option>
+                                            <option value="Sale" {{ $property->purpose == 'Sale' ? 'selected' : '' }}>Sale</option>
+                                            <option value="Rent" {{ $property->purpose == 'Rent' ? 'selected' : '' }}>Rent</option>
                                         </select>
                                     </div>
                                 </div>
@@ -150,7 +150,7 @@
                                 <div class="row">
                                     <div class="col-12">
                                         <label class="form-label">{{ __('global.description') }}</label>
-                                        <textarea id="elm1" name="description" class="form-control tinymce">{{ $property_info->description }}</textarea>
+                                        <textarea id="elm1" name="description" class="form-control tinymce">{{ $property->description }}</textarea>
                                     </div>
                                 </div>
                             </div>
@@ -167,15 +167,15 @@
                                         <div class="input-group">
                                             <span class="input-group-text"><i class="fa fa-phone"></i></span>
                                             <input type="text" name="phone" class="form-control" 
-                                                value="{{ old('phone', $data->phone ?? '') }}">
+                                                value="{{ old('phone', $property->phone ?? '') }}">
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <label class="form-label">{{ __('global.country') }}</label>
                                         <select class="form-control select2" name="country_id" id="country" required>
                                             <option value="">{{ __('global.select_country') }}</option>
-                                            @if(isset($data->country))
-                                                <option value="{{ $data->country_id }}" selected>{{ $data->country->name }}</option>
+                                            @if(isset($property?->location))
+                                                <option value="{{ $property?->location?->country_id }}" selected>{{ $property?->location?->country?->name }}</option>
                                             @endif
                                         </select>
                                     </div>
@@ -186,8 +186,8 @@
                                         <label class="form-label">{{ __('global.city') }}</label>
                                         <select class="form-control select2" name="city_id" id="city" required>
                                             <option value="">{{ __('global.select_city') }}</option>
-                                            @if(isset($data->city))
-                                                <option value="{{ $data->city_id }}" selected>{{ $data->city->name }}</option>
+                                            @if(isset($property?->location))
+                                                <option value="{{ $property?->location?->city_id }}" selected>{{ $property?->location?->city?->name }}</option>
                                             @endif
                                         </select>
                                     </div>
@@ -195,8 +195,8 @@
                                         <label class="form-label">{{ __('global.district') }}</label>
                                         <select class="form-control select2" name="district_id" id="district" required>
                                             <option value="">{{ __('global.select_district') }}</option>
-                                            @if(isset($data->district))
-                                                <option value="{{ $data->district_id }}" selected>{{ $data->district->name }}</option>
+                                            @if(isset($property?->location))
+                                                <option value="{{ $property?->location?->district_id }}" selected>{{ $property?->location?->district?->name }}</option>
                                             @endif
                                         </select>
                                     </div>
@@ -204,8 +204,8 @@
                                         <label class="form-label">{{ __('global.commune') }}</label>
                                         <select class="form-control select2" name="commune_id" id="commune" required>
                                             <option value="">{{ __('global.select_commune') }}</option>
-                                            @if(isset($data->commune))
-                                                <option value="{{ $data->commune_id }}" selected>{{ $data->commune->name }}</option>
+                                            @if(isset($property?->location))
+                                                <option value="{{ $property?->location?->commune_id }}" selected>{{ $property?->location?->commune?->name }}</option>
                                             @endif
                                         </select>
                                     </div>
@@ -213,17 +213,17 @@
                                 <div class="row mb-3">
                                     <div class="col-md-12">
                                         <label class="form-label">{{ __('global.address') }}</label>
-                                        <input type="text" name="address" value="{{ stripslashes($property_info->address ?? '') }}" class="form-control">
+                                        <input type="text" name="address" value="{{ stripslashes($property?->location?->address ?? '') }}" class="form-control">
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <label class="form-label">Latitude</label>
-                                        <input type="text" name="latitude" value="{{ $property_info->latitude }}" class="form-control">
+                                        <input type="text" name="latitude" value="{{ $property?->location?->latitude }}" class="form-control">
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Longitude</label>
-                                        <input type="text" name="longitude" value="{{ $property_info->longitude }}" class="form-control">
+                                        <input type="text" name="longitude" value="{{ $property?->location?->longitude }}" class="form-control">
                                     </div>
                                 </div>
                             </div>
@@ -237,22 +237,22 @@
                                 <div class="row mb-3">
                                     <div class="col-md-3">
                                         <label class="form-label">{{ __('global.bedrooms') }}</label>
-                                        <input type="number" name="bedrooms" value="{{ $property_info->bedrooms }}" class="form-control">
+                                        <input type="number" name="bedrooms" value="{{ $property->bedrooms }}" class="form-control">
                                     </div>
                                     <div class="col-md-3">
                                         <label class="form-label">{{ __('global.bathrooms') }}</label>
-                                        <input type="number" name="bathrooms" value="{{ $property_info->bathrooms }}" class="form-control">
+                                        <input type="number" name="bathrooms" value="{{ $property->bathrooms }}" class="form-control">
                                     </div>
                                     <div class="col-md-3">
                                         <label class="form-label">{{ __('global.area') }} (sq ft)</label>
-                                        <input type="text" name="area" value="{{ $property_info->area }}" class="form-control">
+                                        <input type="text" name="area" value="{{ $property->area }}" class="form-control">
                                     </div>
                                     <div class="col-md-3">
                                         <label class="form-label">{{ __('global.furnishing') }}</label>
                                         <select class="form-control" name="furnishing">
-                                            <option value="Unfurnished" {{ $property_info->furnishing == 'Unfurnished' ? 'selected' : '' }}>Unfurnished</option>
-                                            <option value="Semi-Furnished" {{ $property_info->furnishing == 'Semi-Furnished' ? 'selected' : '' }}>Semi-Furnished</option>
-                                            <option value="Furnished" {{ $property_info->furnishing == 'Furnished' ? 'selected' : '' }}>Furnished</option>
+                                            <option value="Unfurnished" {{ $property->furnishing == 'Unfurnished' ? 'selected' : '' }}>Unfurnished</option>
+                                            <option value="Semi-Furnished" {{ $property->furnishing == 'Semi-Furnished' ? 'selected' : '' }}>Semi-Furnished</option>
+                                            <option value="Furnished" {{ $property->furnishing == 'Furnished' ? 'selected' : '' }}>Furnished</option>
                                         </select>
                                     </div>
                                 </div>
@@ -261,28 +261,51 @@
                                         <label class="form-label">{{ __('global.price') }}</label>
                                         <div class="input-group">
                                             <span class="input-group-text">$</span>
-                                            <input type="number" name="price" value="{{ $property_info->price }}" class="form-control">
+                                            <input type="number" name="price" value="{{ $property->price }}" class="form-control">
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <label class="form-label">{{ __('global.verified') }}</label>
                                         <select class="form-control" name="verified">
-                                            <option value="NO" {{ $property_info->verified == 'NO' ? 'selected' : '' }}>No</option>
-                                            <option value="YES" {{ $property_info->verified == 'YES' ? 'selected' : '' }}>Yes</option>
+                                            <option value="NO" {{ $property->verified == 'NO' ? 'selected' : '' }}>No</option>
+                                            <option value="YES" {{ $property->verified == 'YES' ? 'selected' : '' }}>Yes</option>
                                         </select>
                                     </div>
                                     <div class="col-md-3">
                                         <label class="form-label">Status</label>
                                         <select class="form-control" name="status">
-                                            <option value="1" {{ $property_info->status == 1 ? 'selected' : '' }}>Active</option>
-                                            <option value="0" {{ $property_info->status == 0 ? 'selected' : '' }}>Inactive</option>
+                                            <option value="1" {{ $property->status == 1 ? 'selected' : '' }}>Active</option>
+                                            <option value="0" {{ $property->status == 0 ? 'selected' : '' }}>Inactive</option>
                                         </select>
                                     </div>
                                 </div>
+                                @php
+                                    $selectedAmenities = $property->amenities->pluck('id')->toArray();
+                                    $selectedFeatures = $property->features->pluck('id')->toArray();
+                                @endphp
                                 <div class="row">
-                                    <div class="col-12">
-                                        <label class="form-label">{{ __('global.amenities') }}</label>
-                                        <input type="text" name="amenities" value="{{ $property_info->amenities }}" class="form-control" data-role="tagsinput" placeholder="Add and press Enter">
+                                    <div class="col-6">
+                                        <label class="form-label"><strong>{{ __('global.amenities') }}</strong></label>
+                                        <select name="amenities[]" class="form-control select2-multiple" multiple="multiple">
+                                            @foreach (getAmenity() as $amenity)
+                                                <option value="{{ $amenity->id }}"
+                                                    {{ in_array($amenity->id, $selectedAmenities) ? 'selected' : '' }}>
+                                                    {{ $amenity->{'name_'.App::getLocale()} }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <label class="form-label"><strong>{{ __('global.features') }}</strong></label>
+                                        <select name="features[]" class="form-control select2-multiple" multiple="multiple">
+                                            @foreach (getFeature() as $feature)
+                                                <option value="{{ $feature->id }}"
+                                                    {{ in_array($feature->id, $selectedFeatures) ? 'selected' : '' }}>
+                                                    {{ $feature->{'name_'.App::getLocale()} }}
+                                                </option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -300,7 +323,7 @@
                                             <input type="file" name="main_image" id="main_image" class="d-none" accept="image/*">
                                             <button type="button" class="btn btn-dark mb-2" id="main-image-btn">Change Image</button>
                                             <p class="small text-muted mb-0">Recommended: 800x480px</p>
-                                            <img id="main-image-preview" src="{{ $property_info->image ? asset('storage/' . $property_info->image) : asset('/upload/placeholder_img.jpg')  }}" class="img-preview-custom">
+                                            <img id="main-image-preview" src="{{ ($property->main_image && file_exists(public_path('storage/' . $property->main_image))) ? asset('storage/' . $property->main_image) : asset('/upload/placeholder_img.jpg')  }}" class="img-preview-custom">
                                         </div>
                                     </div>
 
@@ -310,7 +333,7 @@
                                             <input type="file" name="floor_plan_image" id="floor_plan_image" class="d-none" accept="image/*">
                                             <button type="button" class="btn btn-dark mb-2" id="floor-plan-image-btn">Change Plan</button>
                                             <p class="small text-muted mb-0">Upload architecture layout</p>
-                                            <img id="floor-plan-image-preview" src="{{ asset('/' . $property_info->floor_plan_image) }}" class="img-preview-custom">
+                                            <img id="floor-plan-image-preview" src="{{ ($property->floor_plan_image && file_exists(public_path('storage/' . $property->floor_plan_image))) ? asset('storage/' . $property->floor_plan_image) : asset('/upload/placeholder_img.jpg') }}" class="img-preview-custom">
                                         </div>
                                     </div>
                                 </div>
@@ -320,26 +343,31 @@
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <label class="form-label mb-0">{{ __('global.gallery_images') }}</label>
                                     <button type="button" id="add-gallery-image" class="btn btn-outline-primary btn-sm">
-                                        <i class="fa fa-plus"></i> Add More Image
+                                        <i class="fa fa-plus"></i> Add Image
                                     </button>
                                 </div>
                                 
                                 <div id="gallery-images-wrapper">
-                                    <div class="gallery-image-item">
-                                        <div class="row align-items-center">
-                                            <div class="col-md-8">
-                                                <input type="file" name="gallery_image[]" accept="image/*" class="gallery-file d-none">
-                                                <input type="text" class="form-control gallery-image-name bg-white" readonly placeholder="No file selected">
+                                    @foreach ($property->property_image as $image)
+                                        <div class="gallery-image-item">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-8">
+                                                    <input type="file" name="gallery_image[]" accept="image/*" class="gallery-file d-none">
+                                                    <input type="text" class="form-control gallery-image-name bg-white" readonly value="{{ $image->image }}">
+                                                </div>
+                                                <div class="col-md-4 text-end">
+                                                    <button type="button" class="btn btn-dark select-gallery" style="height: 36px">Select</button>
+                                                    <button type="button" class="btn btn-outline-danger remove-gallery" style="height: 36px"><i class="fa fa-trash"></i></button>
+                                                </div>
                                             </div>
-                                            <div class="col-md-4 text-end">
-                                                <button type="button" class="btn btn-dark select-gallery" style="height: 36px">Select</button>
-                                                <button type="button" class="btn btn-outline-danger remove-gallery" style="height: 36px"><i class="fa fa-trash"></i></button>
+                                            <div class="preview mt-2">
+                                                <img src="{{ $image->$image }}" class="img-preview-custom" style="display:block;">
                                             </div>
                                         </div>
-                                        <div class="preview mt-2"></div>
-                                    </div>
+                                    @endforeach
                                 </div>
                             </div>
+                            
                             {{-- Actions --}}
                             <div class="card-footer d-flex justify-content-end">
                                 <button type="submit" class="btn btn-primary btn-lg shadow">
@@ -357,9 +385,10 @@
         @include('property.properties.script')
         <script>
             $(document).ready(function () {
-                $(document).on('submit', '#editProperty', function (event) {
-                    event.preventDefault();
-                    ajaxSubmit('#editProperty');
+                $('.select2-multiple').select2({
+                    placeholder: "Select options",
+                    allowClear: true,
+                    width: '100%'
                 });
                 // Trigger file inputs
                 $('#main-image-btn').click(() => $('#main_image').click());

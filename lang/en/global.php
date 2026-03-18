@@ -280,5 +280,6 @@ return [
     'city_management' => 'City Management',
     'commune_management' => 'Commune Management',
     'district_management' => 'District Management',
+    'property_type_management' => 'Property Type Management',
 
 ];

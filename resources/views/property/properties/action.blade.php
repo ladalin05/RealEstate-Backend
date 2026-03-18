@@ -2,9 +2,9 @@
 <div class="d-flex gap-2">
     <a
         href="{{route('property.properties.edit', ['id' => $row->id])}}"
-        class="btn btn-success btn-sm text-white"
-        onclick="editData(event)">
+        class="btn btn-success btn-sm text-white">
         <i class="ph ph-pencil-simple me-1"></i>
+        Edit
     </a>
 
     <button type="button"

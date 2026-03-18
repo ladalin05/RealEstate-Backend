@@ -11,102 +11,139 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Session;
 use App\DataTables\Property\FeatureDataTable;
+use App\Models\Property\Feature;
 
 class FeatureController extends Controller
 {
     public function index(FeatureDataTable $dataTable)
     {
-        return $dataTable->render('pages.features.index');
+        return $dataTable->render('property.features.index');
     }
 
+    // Create new feature
     public function create(Request $request)
     {
-        if ($request->isMethod('post')) {
+        try {
+            // Show form (GET)
+            if ($request->isMethod('get')) {
+                $title  = __('global.add_new');
+                $form   = new Feature();
+                $action = route('property.features.add');
 
-            try {
-                $request->validate([
-                    'type_name'  => 'required',
-                    'status'     => 'required',
-                ]);
-
-                $type_image = null;
-                if ($request->hasFile('type_image')) {
-                    $type_image = uploadImage($request->file('type_image'), null, 'images/types');
-                };
-                $type_slug = Str::slug($request->type_name, '-', null);
-                $data_obj = PropertyType::create([
-                    'type_name'  => addslashes($request->type_name),
-                    'type_slug'  => $type_slug,
-                    'type_image' => $type_image,
-                    'status'     => $request->status ?? 0,
-                ]);
-            
                 return response()->json([
-                    'status'  => 'success',
-                    'message' => __('global.create_type_successfully'),
-                    'redirect' => route('property.types.index'),
+                    'title'  => $title,
+                    'status' => 'success',
+                    'html'   => view('property.features.form', compact('title', 'form', 'action'))->render(),
+                    'modal'  => 'action-modal',
                 ]);
-
-            } catch (\Throwable $e) {
-                return response()->json([
-                    'status'  => 'error',
-                    'message' => $e->getMessage()
-                ], 500);
             }
+
+            // Store data (POST)
+            if ($request->isMethod('post')) {
+                $request->validate([
+                    'name_en' => 'required|string|max:255',
+                    'name_kh' => 'nullable|string|max:255',
+                ]);
+
+                Feature::create([
+                    'name_en' => addslashes($request->name_en),
+                    'name_kh' => addslashes($request->name_kh),
+                    'icon'    => $request->icon,
+                    'status'  => $request->status ?? 1,
+                ]);
+
+                return response()->json([
+                    'status'   => 'success',
+                    'message'  => 'Feature created successfully',
+                    'redirect' => route('property.features.index'),
+                ]);
+            }
+
+            return response()->json([
+                'status'  => 'error',
+                'message' => __('messages.405'),
+            ]);
+
+        } catch (\Throwable $e) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => $e->getMessage(),
+            ], 500);
         }
-
-        $page_title = __('global.create_types');
-        return view('pages.type.create', compact('page_title'));
-
     }
 
-    public function edit($page_id, Request $request)
+    // Update existing feature
+    public function update(Request $request)
     {
-        $page_title = __('global.edit_type');
-        $data_obj = PropertyType::findOrFail($request->id);
-
-        if ($request->isMethod('post')) {
-            try {
-                $request->validate([
-                    'type_name'  => 'required',
-                    'status'     => 'required',
-                ]);
-                
-                $type_image = updateImage($request->file('type_image'), $data_obj->type_image, 'images/types');
-
-                $type_slug = Str::slug($request->type_name, '-', null);
-
-                $data_obj->type_name  = addslashes($request->type_name);
-                $data_obj->type_slug  = $type_slug;
-                $data_obj->type_image = $type_image;
-                $data_obj->status     = $request->status ?? 0;
-
-                $data_obj->save(); // save changes
+        try {
+            // Show edit form (GET)
+            if ($request->isMethod('get')) {
+                $title  = __('global.edit');
+                $form   = Feature::findOrFail($request->id);
+                $action = route('property.features.edit', ['id' => $request->id]);
 
                 return response()->json([
-                    'status'  => 'success',
-                    'message' => __('global.updated_type_successfully'),
-                    'redirect' => route('property.types.index'),
+                    'title'  => $title,
+                    'status' => 'success',
+                    'html'   => view('property.features.form', compact('title', 'form', 'action'))->render(),
+                    'modal'  => 'action-modal',
                 ]);
-
-            } catch (\Throwable $e) {
-                return response()->json([
-                    'status'  => 'error',
-                    'message' => $e->getMessage()
-                ], 500);
             }
-        }
 
-        return view('pages.type.edit', compact('page_title', 'data_obj'));
+            // Update data (POST)
+            if ($request->isMethod('post')) {
+                $request->validate([
+                    'name_en' => 'required|string|max:255',
+                    'name_kh' => 'nullable|string|max:255',
+                    'icon'    => 'nullable|string|max:255',
+                    'status'  => 'required|in:0,1',
+                ]);
+
+                $feature = Feature::findOrFail($request->id);
+                $feature->name_en = addslashes($request->name_en);
+                $feature->name_kh = addslashes($request->name_kh);
+                $feature->icon    = $request->icon;
+                $feature->status  = $request->status ?? 1;
+                $feature->save();
+
+                return response()->json([
+                    'status'   => 'success',
+                    'message'  => 'Feature updated successfully',
+                    'redirect' => route('property.features.index'),
+                ]);
+            }
+
+            return response()->json([
+                'status'  => 'error',
+                'message' => __('messages.405'),
+            ]);
+
+        } catch (\Throwable $e) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
-    public function delete($id)
+    // Delete feature
+    public function delete(Request $request)
     {
+        try {
+            $feature = Feature::findOrFail($request->id);
+            $feature->delete();
 
-        $data_obj = PropertyType::findOrFail($id);
-        $data_obj->delete();
+            return response()->json([
+                'status'   => 'success',
+                'message'  => 'Feature deleted successfully',
+                'redirect' => route('property.features.index'),
+            ]);
 
-        Session::flash('flash_message', __('global.delete_type_successfully'));
-        return redirect()->route('property.types.index');
+        } catch (\Throwable $e) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 }

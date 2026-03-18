@@ -14,12 +14,16 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
 
     <!-- Styles -->
+    <link href="{{ asset('assets/css/icons/icomoon/styles.min.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ asset('assets/css/icons/fontawesome/styles.min.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ asset('assets/icons/v6.7.2/css/all.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ asset('assets/css/bootstrap.min.css') }}?v=11" rel="stylesheet" type="text/css">
+    <link href="{{ asset('assets/css/bootstrap_limitless.min.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ asset('assets/icons/phosphor/regular/style.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ asset('assets/css/all.min.css') }}" id="stylesheet" rel="stylesheet" type="text/css">
     <link href="{{ asset('assets/css/main.css') }}" id="stylesheet" rel="stylesheet" type="text/css">
     <link href="{{ asset('assets/css/login.css') }}" id="stylesheet" rel="stylesheet" type="text/css">
     <link href="{{ asset('assets/css/style.css') }}" id="stylesheet" rel="stylesheet" type="text/css">
-    <link rel="stylesheet" href="{{ asset('fontawesome/css/all.min.css') }}">
     <link rel="stylesheet" href="{{asset('assets/extend/select2/css/select2.min.css')}}">
 
     <!-- Scripts -->

@@ -20,14 +20,14 @@ class PropertyController extends Controller
     public function getProperty(Request $request)
     {
         $property = Property::query()
-                            ->join('types', 'property.type_id', '=', 'types.id')
+                            ->join('property_type', 'property.type_id', '=', 'property_type.id')
                             ->leftJoin('locations', 'property.location_id', '=', 'locations.id')
                             ->leftJoin('users', 'property.user_id', '=', 'users.id')
                             ->leftJoin('user_inform', 'users.id', '=', 'user_inform.user_id')
                             ->leftJoin('favourite', 'property.id', '=', 'favourite.post_id')
                             ->select(
                                 'property.*',
-                                'types.type_name',
+                                'property_type.type_name',
                                 'locations.name as location_name',
                                 'users.name_en as user_name',
                                 'user_inform.image as user_image',
@@ -50,14 +50,14 @@ class PropertyController extends Controller
     
     public function getPropertyDetails($id)
     {
-        $property = Property::join('types', 'property.type_id', '=', 'types.id')
+        $property = Property::join('property_type', 'property.type_id', '=', 'property_type.id')
                             ->leftJoin('locations', 'property.location_id', '=', 'locations.id')
                             ->leftJoin('users', 'property.user_id', '=', 'users.id')
                             ->leftJoin('user_inform', 'users.id', '=', 'user_inform.user_id')
                             ->leftJoin('favourite', 'property.id', '=', 'favourite.post_id')
                             ->select(
                                 'property.*',
-                                'types.type_name',
+                                'property_type.type_name',
                                 'locations.name as location_name',
                                 'users.name_en as user_name',
                                 'user_inform.image as user_image',
@@ -80,14 +80,14 @@ class PropertyController extends Controller
             ->orderBy('id')
             ->get();
 
-        $latest_list = Property::join('types', 'property.type_id', '=', 'types.id')
+        $latest_list = Property::join('property_type', 'property.type_id', '=', 'property_type.id')
                             ->leftJoin('locations', 'property.location_id', '=', 'locations.id')
                             ->leftJoin('users', 'property.user_id', '=', 'users.id')
                             ->leftJoin('user_inform', 'users.id', '=', 'user_inform.user_id')
                             ->leftJoin('favourite', 'property.id', '=', 'favourite.post_id')
                             ->select(
                                 'property.*',
-                                'types.type_name',
+                                'property_type.type_name',
                                 'locations.name as location_name',
                                 'users.name_en as user_name',
                                 'user_inform.image as user_image',
@@ -101,14 +101,14 @@ class PropertyController extends Controller
                             ->limit(5)
                             ->get();
 
-        $related_list = Property::join('types', 'property.type_id', '=', 'types.id')
+        $related_list = Property::join('property_type', 'property.type_id', '=', 'property_type.id')
                             ->leftJoin('locations', 'property.location_id', '=', 'locations.id')
                             ->leftJoin('users', 'property.user_id', '=', 'users.id')
                             ->leftJoin('user_inform', 'users.id', '=', 'user_inform.user_id')
                             ->leftJoin('favourite', 'property.id', '=', 'favourite.post_id')
                             ->select(
                                 'property.*',
-                                'types.type_name',
+                                'property_type.type_name',
                                 'locations.name as location_name',
                                 'users.name_en as user_name',
                                 'user_inform.image as user_image',

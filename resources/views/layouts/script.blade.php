@@ -182,4 +182,53 @@
             });
         });
     }
+    
+        function deleteData(e) {
+            e.preventDefault();
+
+            let url = e.currentTarget.getAttribute('data-url');
+            if (!url) {
+                console.error("Delete URL not found");
+                return;
+            }
+
+            swalInit.fire({
+                title: "{{ __('messages.are_you_sure') }}",
+                text: "{{ __('messages.you_want_to_delete') }}",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "{{ __('messages.yes_delete') }}",
+                cancelButtonText: "{{ __('messages.no_cancel') }}",
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: "btn btn-primary",
+                    cancelButton: "btn btn-danger"
+                }
+            }).then(function(result) {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: url,
+                        type: 'GET',
+                        success: function (res) {
+                            if (res.status === 'success') {
+                                successAlert(res.message);
+                                setTimeout(function () {
+                                    if (res.redirect) {
+                                        window.location.href = res.redirect;
+                                    } else {
+                                        location.reload();
+                                    }
+                                }, 2000);
+                            } else {
+                                errorAlert(res.message || 'Failed to delete');
+                            }
+                        },
+                        error: function () {
+                            errorAlert('Failed to delete');
+                        }
+                    });
+                }
+            });
+        }
+    </script>
 </script>

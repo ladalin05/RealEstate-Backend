@@ -2,111 +2,151 @@
 
 namespace App\Http\Controllers\Property;
 
-use Exception;
-use Illuminate\Support\Str;
-use App\Models\Property\PropertyType;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Session;
 use App\DataTables\Property\AmenityDataTable;
+use App\Models\Property\Amenity;
 
 class AmenityController extends Controller
 {
     public function index(AmenityDataTable $dataTable)
     {
-        return $dataTable->render('pages.amenities.index');
+        return $dataTable->render('property.amenities.index');
     }
 
     public function create(Request $request)
     {
-        if ($request->isMethod('post')) {
+        try {
+            // ✅ Show form (GET)
+            if ($request->isMethod('get')) {
 
-            try {
-                $request->validate([
-                    'type_name'  => 'required',
-                    'status'     => 'required',
-                ]);
+                $title  = __('global.add_new');
+                $form   = new Amenity();
+                $action = route('property.amenities.add');
 
-                $type_image = null;
-                if ($request->hasFile('type_image')) {
-                    $type_image = uploadImage($request->file('type_image'), null, 'images/types');
-                };
-                $type_slug = Str::slug($request->type_name, '-', null);
-                $data_obj = PropertyType::create([
-                    'type_name'  => addslashes($request->type_name),
-                    'type_slug'  => $type_slug,
-                    'type_image' => $type_image,
-                    'status'     => $request->status ?? 0,
-                ]);
-            
                 return response()->json([
-                    'status'  => 'success',
-                    'message' => __('global.create_type_successfully'),
-                    'redirect' => route('property.types.index'),
+                    'title'  => $title,
+                    'status' => 'success',
+                    'html'   => view('property.amenities.form', compact('title', 'form', 'action'))->render(),
+                    'modal'  => 'action-modal',
                 ]);
-
-            } catch (\Throwable $e) {
-                return response()->json([
-                    'status'  => 'error',
-                    'message' => $e->getMessage()
-                ], 500);
             }
-        }
 
-        $page_title = __('global.create_types');
-        return view('pages.type.create', compact('page_title'));
+            // ✅ Store data (POST)
+            if ($request->isMethod('post')) {
 
-    }
-
-    public function edit($page_id, Request $request)
-    {
-        $page_title = __('global.edit_type');
-        $data_obj = PropertyType::findOrFail($request->id);
-
-        if ($request->isMethod('post')) {
-            try {
                 $request->validate([
-                    'type_name'  => 'required',
-                    'status'     => 'required',
+                    'name_en' => 'required|string|max:255',
+                    'name_kh' => 'nullable|string|max:255',
+                    'icon'    => 'nullable|string|max:255', // fontawesome class
+                    'status'  => 'required|in:0,1',
                 ]);
-                
-                $type_image = updateImage($request->file('type_image'), $data_obj->type_image, 'images/types');
 
-                $type_slug = Str::slug($request->type_name, '-', null);
-
-                $data_obj->type_name  = addslashes($request->type_name);
-                $data_obj->type_slug  = $type_slug;
-                $data_obj->type_image = $type_image;
-                $data_obj->status     = $request->status ?? 0;
-
-                $data_obj->save(); // save changes
+                Amenity::create([
+                    'name_en' => addslashes($request->name_en),
+                    'name_kh' => addslashes($request->name_kh),
+                    'icon'    => $request->icon, // ex: fa fa-wifi
+                    'status'  => $request->status ?? 1,
+                ]);
 
                 return response()->json([
                     'status'  => 'success',
-                    'message' => __('global.updated_type_successfully'),
-                    'redirect' => route('property.types.index'),
+                    'message' => 'Amenity created successfully',
+                    'redirect'=> route('property.amenities.index'),
                 ]);
-
-            } catch (\Throwable $e) {
-                return response()->json([
-                    'status'  => 'error',
-                    'message' => $e->getMessage()
-                ], 500);
             }
-        }
 
-        return view('pages.type.edit', compact('page_title', 'data_obj'));
+            return response()->json([
+                'status' => 'error',
+                'message' => __('messages.405'),
+            ]);
+
+        } catch (\Throwable $e) {
+
+            return response()->json([
+                'status'  => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
-    public function delete($id)
+    public function update(Request $request)
     {
+        try {
 
-        $data_obj = PropertyType::findOrFail($id);
-        $data_obj->delete();
+            // ✅ Show edit form (GET)
+            if ($request->isMethod('get')) {
 
-        Session::flash('flash_message', __('global.delete_type_successfully'));
-        return redirect()->route('property.types.index');
+                $title  = __('global.edit');
+                $form   = Amenity::findOrFail($request->id);
+                $action = route('property.amenities.edit', ['id' => $request->id]);
+
+                return response()->json([
+                    'title'  => $title,
+                    'status' => 'success',
+                    'html'   => view('property.amenities.form', compact('title', 'form', 'action'))->render(),
+                    'modal'  => 'action-modal',
+                ]);
+            }
+
+            // ✅ Update data (POST)
+            if ($request->isMethod('post')) {
+
+                $request->validate([
+                    'name_en' => 'required|string|max:255',
+                    'name_kh' => 'nullable|string|max:255',
+                    'icon'    => 'nullable|string|max:255',
+                    'status'  => 'required|in:0,1',
+                ]);
+
+                $amenity = Amenity::findOrFail($request->id);
+
+                $amenity->name_en = addslashes($request->name_en);
+                $amenity->name_kh = addslashes($request->name_kh);
+                $amenity->icon    = $request->icon;
+                $amenity->status  = $request->status ?? 1;
+                $amenity->save();
+
+                return response()->json([
+                    'status'  => 'success',
+                    'message' => 'Amenity updated successfully',
+                    'redirect'=> route('property.amenities.index'),
+                ]);
+            }
+
+            return response()->json([
+                'status' => 'error',
+                'message' => __('messages.405'),
+            ]);
+
+        } catch (\Throwable $e) {
+
+            return response()->json([
+                'status'  => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function delete(Request $request)
+    {
+        try {
+
+            $amenity = Amenity::findOrFail($request->id);
+            $amenity->delete();
+
+            return response()->json([
+                'status'   => 'success',
+                'message'  => 'Amenity deleted successfully',
+                'redirect' => route('property.amenities.index'),
+            ]);
+
+        } catch (\Throwable $e) {
+
+            return response()->json([
+                'status'  => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 }

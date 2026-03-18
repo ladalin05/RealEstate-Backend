@@ -7,7 +7,7 @@ use App\Models\UserManagement\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Location\Location;
-
+use App\Models\Location\PropertyLocation;
 
 class Property extends Model
 {
@@ -18,14 +18,10 @@ class Property extends Model
     protected $fillable = [
         'user_id',
         'type_id',
-        'location_id',
         'title',
         'slug',
         'description',
         'phone',
-        'address',
-        'latitude',
-        'longitude',
         'purpose',
         'bedrooms',
         'bathrooms',
@@ -57,16 +53,21 @@ class Property extends Model
 
     public function location()
     {
-        return $this->belongsTo(Location::class);
+        return $this->hasOne(PropertyLocation::class, 'property_id', 'id');
     }
-
+    
     public function amenities()
     {
-        return $this->belongsToMany(Amenity::class, 'property_amenities');
+        return $this->belongsToMany(Amenity::class, 'property_amenities', 'property_id', 'amenity_id');
     }
 
     public function features()
     {
-        return $this->belongsToMany(Feature::class, 'property_features');
+        return $this->belongsToMany(Feature::class, 'property_features', 'property_id', 'feature_id');
+    }
+
+    public function property_image()
+    {
+        return $this->hasMany(PropertyGallery::class, 'property_id', 'id');
     }
 }

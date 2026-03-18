@@ -100,7 +100,7 @@ Route::middleware(['auth', 'abilities'])->group(function () {
         ], function () {
             Route::get('/', [PropertyController::class, 'index'])->name('index');
             Route::match(['get', 'post'], '/add', [PropertyController::class, 'create'])->name('add');
-            Route::match(['get', 'post'], '/edit/{id}', [PropertyController::class, 'edit'])->name('edit');
+            Route::match(['get', 'post'], '/edit', [PropertyController::class, 'update'])->name('edit');
             Route::get('/delete/{id}', [PropertyController::class, 'destroy'])->name('deleted');
             Route::get('/search', [PropertyController::class, 'property_filter'])->name('filter');
         });
@@ -110,8 +110,8 @@ Route::middleware(['auth', 'abilities'])->group(function () {
             'as' => 'types.'
         ], function () {
             Route::get('/', [PropertyTypeController::class, 'index'])->name('index');
-            Route::match(['get', 'post'], 'add', [PropertyTypeController::class, 'create'])->name('add');
-            Route::match(['get', 'post'], 'edit/{id}', [PropertyTypeController::class, 'edit'])->name('edit');
+            Route::match(['get', 'post'], '/add', [PropertyTypeController::class, 'create'])->name('add');
+            Route::match(['get', 'post'], '/edit', [PropertyTypeController::class, 'update'])->name('edit');
             Route::get('/delete/{id}', [PropertyTypeController::class, 'delete'])->name('deleted');
         });
 
@@ -120,8 +120,8 @@ Route::middleware(['auth', 'abilities'])->group(function () {
             'as' => 'amenities.'
         ], function () {
             Route::get('/', [AmenityController::class, 'index'])->name('index');
-            Route::match(['get', 'post'], 'add', [AmenityController::class, 'create'])->name('add');
-            Route::match(['get', 'post'], 'edit/{id}', [AmenityController::class, 'edit'])->name('edit');
+            Route::match(['get', 'post'], '/add', [AmenityController::class, 'create'])->name('add');
+            Route::match(['get', 'post'], '/edit', [AmenityController::class, 'update'])->name('edit');
             Route::get('/delete/{id}', [AmenityController::class, 'delete'])->name('deleted');
         });
 
@@ -130,8 +130,8 @@ Route::middleware(['auth', 'abilities'])->group(function () {
             'as' => 'features.'
         ], function () {
             Route::get('/', [FeatureController::class, 'index'])->name('index');
-            Route::match(['get', 'post'], 'add', [FeatureController::class, 'create'])->name('add');
-            Route::match(['get', 'post'], 'edit/{id}', [FeatureController::class, 'edit'])->name('edit');
+            Route::match(['get', 'post'], '/add', [FeatureController::class, 'create'])->name('add');
+            Route::match(['get', 'post'], '/edit', [FeatureController::class, 'update'])->name('edit');
             Route::get('/delete/{id}', [FeatureController::class, 'delete'])->name('deleted');
         });
     });
