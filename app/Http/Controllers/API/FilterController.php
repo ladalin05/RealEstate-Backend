@@ -9,13 +9,15 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
+use App\Models\Location\City;
+use App\Models\Location\PropertyLocation;
 
 class FilterController extends Controller
 {
     public function filter_data(Request $request)
     {
         $types = PropertyType::select('type_name as name','id as value')->orderBy('id', 'DESC')->get();
-        $locations = Location::select('name', 'id as value')->orderBy('id', 'DESC')->get();
+        $locations = City::select('name', 'id as value')->orderBy('id', 'DESC')->get();
         $data = [
             'types' => $types,
             'locations' => $locations

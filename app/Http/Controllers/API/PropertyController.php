@@ -20,24 +20,29 @@ class PropertyController extends Controller
     public function getProperty(Request $request)
     {
         $property = Property::query()
-                            ->join('property_type', 'property.type_id', '=', 'property_type.id')
-                            ->leftJoin('locations', 'property.location_id', '=', 'locations.id')
-                            ->leftJoin('users', 'property.user_id', '=', 'users.id')
-                            ->leftJoin('user_inform', 'users.id', '=', 'user_inform.user_id')
-                            ->leftJoin('favourite', 'property.id', '=', 'favourite.post_id')
+                            ->join('property_type', 'properties.type_id', '=', 'property_type.id')
+                            ->leftJoin('property_views', 'properties.id', '=', 'property_views.property_id')
+                            ->leftJoin('property_locations', 'properties.id', '=', 'property_locations.property_id')
+                            ->leftJoin('countries', 'property_locations.country_id', '=', 'countries.id')
+                            ->leftJoin('cities', 'property_locations.city_id', '=', 'cities.id')
+                            ->leftJoin('favourite', 'properties.id', '=', 'favourite.property_id')
+                            ->leftJoin('users', 'properties.user_id', '=', 'users.id')
                             ->select(
-                                'property.*',
+                                'properties.*',
                                 'property_type.type_name',
-                                'locations.name as location_name',
-                                'users.name_en as user_name',
-                                'user_inform.image as user_image',
-                                DB::raw("(SELECT MAX(pv.post_views) FROM post_views pv WHERE pv.post_id = property.id) AS post_views"),
-                                DB::raw("(SELECT MAX(pv.date) FROM post_views pv WHERE pv.post_id = property.id) AS post_date"),
-                                DB::raw("IF(favourite.id IS NOT NULL, 1, 0) as is_favourite")
+                                'users.avatar as user_image',
+                                'users.name_en as user_name_en',
+                                'users.name_kh as user_name_kh',
+                                'countries.name as country',
+                                'cities.name as city',
+                                DB::raw("CONCAT(countries.name, ', ', cities.name, ', ', property_locations.address) as address"),
+                                DB::raw("(SELECT MAX(pv.views) FROM property_views pv WHERE pv.property_id = properties.id) AS post_views"),
+                                DB::raw("(SELECT MAX(pv.date) FROM property_views pv WHERE pv.property_id = properties.id) AS post_date"),
+                                DB::raw("IF(favourite.property_id IS NOT NULL, 1, 0) as is_favourite")
                             )
-                            ->where('property.status', 1)
-                            ->orderBy('property.featured')
-                            ->orderBy('property.id', 'DESC')
+                            ->where('properties.status', 1)
+                            ->orderBy('properties.id', 'DESC')
+                            ->distinct()
                             ->get();
               
 
@@ -50,23 +55,45 @@ class PropertyController extends Controller
     
     public function getPropertyDetails($id)
     {
-        $property = Property::join('property_type', 'property.type_id', '=', 'property_type.id')
-                            ->leftJoin('locations', 'property.location_id', '=', 'locations.id')
-                            ->leftJoin('users', 'property.user_id', '=', 'users.id')
-                            ->leftJoin('user_inform', 'users.id', '=', 'user_inform.user_id')
-                            ->leftJoin('favourite', 'property.id', '=', 'favourite.post_id')
-                            ->select(
-                                'property.*',
-                                'property_type.type_name',
-                                'locations.name as location_name',
-                                'users.name_en as user_name',
-                                'user_inform.image as user_image',
-                                DB::raw("(SELECT MAX(pv.post_views) FROM post_views pv WHERE pv.post_id = property.id) AS post_views"),
-                                DB::raw("(SELECT MAX(pv.date) FROM post_views pv WHERE pv.post_id = property.id) AS post_date"),
-                                DB::raw("IF(favourite.id IS NOT NULL, 1, 0) as is_favourite")
-                            )
-                            ->where('property.status', 1)
-                            ->where('property.id', $id)
+        $property = Property::join('property_type', 'properties.type_id', '=', 'property_type.id')
+                            ->leftJoin('property_views', 'properties.id', '=', 'property_views.property_id')
+                            ->leftJoin('property_locations', 'properties.id', '=', 'property_locations.property_id')
+                            ->leftJoin('countries', 'property_locations.country_id', '=', 'countries.id')
+                            ->leftJoin('cities', 'property_locations.city_id', '=', 'cities.id')
+                            ->leftJoin('districts', 'property_locations.district_id', '=', 'districts.id')
+                            ->leftJoin('communes', 'property_locations.commune_id', '=', 'communes.id')
+                            ->leftJoin('favourite', 'properties.id', '=', 'favourite.property_id')
+                            ->leftJoin('users', 'properties.user_id', '=', 'users.id')
+                            ->selectRaw("
+                                        properties.*,
+                                        property_type.type_name,
+                                        users.avatar as user_image,
+                                        users.name_en as user_name,
+                                        CONCAT(countries.name, ', ', cities.name, ', ', ', districts.name, ', ', ', communes.name, ', ', property_locations.address) as address,
+
+                                        (SELECT MAX(pv.views)
+                                            FROM property_views pv
+                                            WHERE pv.property_id = properties.id) AS post_views,
+
+                                        (SELECT MAX(pv.date)
+                                            FROM property_views pv
+                                            WHERE pv.property_id = properties.id) AS post_date,
+
+                                        IF(favourite.property_id IS NOT NULL, 1, 0) as is_favourite,
+
+                                        (SELECT GROUP_CONCAT(DISTINCT a.name_en)
+                                            FROM property_amenities pa
+                                            JOIN amenities a ON pa.amenity_id = a.id
+                                            WHERE pa.property_id = properties.id) AS amenities,
+
+                                        (SELECT GROUP_CONCAT(DISTINCT f.name_en)
+                                            FROM property_features pf
+                                            JOIN features f ON pf.feature_id = f.id
+                                            WHERE pf.property_id = properties.id) AS features
+                            ")
+                            ->where('properties.status', 1)
+                            ->where('properties.id', $id)
+                            ->distinct()
                             ->first();
 
         if (!$property) {
@@ -76,54 +103,63 @@ class PropertyController extends Controller
             ], 404);
         }
 
-        $gallery_images = PropertyGallery::where('post_id', $property->id)
+        $gallery_images = PropertyGallery::where('property_id', $property->id)
             ->orderBy('id')
             ->get();
 
-        $latest_list = Property::join('property_type', 'property.type_id', '=', 'property_type.id')
-                            ->leftJoin('locations', 'property.location_id', '=', 'locations.id')
-                            ->leftJoin('users', 'property.user_id', '=', 'users.id')
-                            ->leftJoin('user_inform', 'users.id', '=', 'user_inform.user_id')
-                            ->leftJoin('favourite', 'property.id', '=', 'favourite.post_id')
+        $latest_list = Property::join('property_type', 'properties.type_id', '=', 'property_type.id')
+                            ->leftJoin('property_views', 'properties.id', '=', 'property_views.property_id')
+                            ->leftJoin('property_locations', 'properties.id', '=', 'property_locations.property_id')
+                            ->leftJoin('countries', 'property_locations.country_id', '=', 'countries.id')
+                            ->leftJoin('cities', 'property_locations.city_id', '=', 'cities.id')
+                            ->leftJoin('favourite', 'properties.id', '=', 'favourite.property_id')
+                            ->leftJoin('users', 'properties.user_id', '=', 'users.id')
                             ->select(
-                                'property.*',
+                                'properties.*',
                                 'property_type.type_name',
-                                'locations.name as location_name',
+                                'users.avatar as user_image',
                                 'users.name_en as user_name',
-                                'user_inform.image as user_image',
-                                DB::raw("(SELECT MAX(pv.post_views) FROM post_views pv WHERE pv.post_id = property.id) AS post_views"),
-                                DB::raw("(SELECT MAX(pv.date) FROM post_views pv WHERE pv.post_id = property.id) AS post_date"),
-                                DB::raw("IF(favourite.id IS NOT NULL, 1, 0) as is_favourite")
+                                'countries.name as country',
+                                'cities.name as city',
+                                DB::raw("CONCAT(countries.name, ', ', cities.name, ', ', property_locations.address) as address"),
+                                DB::raw("(SELECT MAX(pv.views) FROM property_views pv WHERE pv.property_id = properties.id) AS post_views"),
+                                DB::raw("(SELECT MAX(pv.date) FROM property_views pv WHERE pv.property_id = properties.id) AS post_date"),
+                                DB::raw("IF(favourite.property_id IS NOT NULL, 1, 0) as is_favourite")
                             )
-                            ->where('property.status', 1)
-                            ->where('property.id', $id)
+                            ->where('properties.status', 1)
                             ->orderBy('id', 'DESC')
+                            ->distinct()
                             ->limit(5)
                             ->get();
 
-        $related_list = Property::join('property_type', 'property.type_id', '=', 'property_type.id')
-                            ->leftJoin('locations', 'property.location_id', '=', 'locations.id')
-                            ->leftJoin('users', 'property.user_id', '=', 'users.id')
-                            ->leftJoin('user_inform', 'users.id', '=', 'user_inform.user_id')
-                            ->leftJoin('favourite', 'property.id', '=', 'favourite.post_id')
+        $related_list = Property::join('property_type', 'properties.type_id', '=', 'property_type.id')
+                            ->leftJoin('property_views', 'properties.id', '=', 'property_views.property_id')
+                            ->leftJoin('property_locations', 'properties.id', '=', 'property_locations.property_id')
+                            ->leftJoin('countries', 'property_locations.country_id', '=', 'countries.id')
+                            ->leftJoin('cities', 'property_locations.city_id', '=', 'cities.id')
+                            ->leftJoin('favourite', 'properties.id', '=', 'favourite.property_id')
+                            ->leftJoin('users', 'properties.user_id', '=', 'users.id')
                             ->select(
-                                'property.*',
+                                'properties.*',
                                 'property_type.type_name',
-                                'locations.name as location_name',
+                                'users.avatar as user_image',
                                 'users.name_en as user_name',
-                                'user_inform.image as user_image',
-                                DB::raw("(SELECT MAX(pv.post_views) FROM post_views pv WHERE pv.post_id = property.id) AS post_views"),
-                                DB::raw("(SELECT MAX(pv.date) FROM post_views pv WHERE pv.post_id = property.id) AS post_date"),
-                                DB::raw("IF(favourite.id IS NOT NULL, 1, 0) as is_favourite")
+                                'countries.name as country',
+                                'cities.name as city',
+                                DB::raw("CONCAT(countries.name, ', ', cities.name, ', ', property_locations.address) as address"),
+                                DB::raw("(SELECT MAX(pv.views) FROM property_views pv WHERE pv.property_id = properties.id) AS post_views"),
+                                DB::raw("(SELECT MAX(pv.date) FROM property_views pv WHERE pv.property_id = properties.id) AS post_date"),
+                                DB::raw("IF(favourite.property_id IS NOT NULL, 1, 0) as is_favourite")
                             )
-                            ->where('property.status', 1)
+                            ->where('properties.status', 1)
                             ->where('type_id', $property->type_id)
                             ->orderBy('id', 'DESC')
+                            ->distinct()
                             ->limit(5)
                             ->get();
 
         // Save views
-        post_views_save($id, 'Property');
+        property_views_save($id);
 
         return response()->json([
             'success'        => true,
@@ -140,14 +176,13 @@ class PropertyController extends Controller
         try {
             $request->validate([
                 'user_id' => 'required',
-                'post_id' => 'required',
+                'property_id' => 'required',
             ]);
-            $isFavorite = Favourite::where('user_id',$request->user_id)->where('post_id', $request->post_id)->first();
+            $isFavorite = Favourite::where('user_id',$request->user_id)->where('property_id', $request->property_id)->first();
             if(!$isFavorite){
-                $favorit = Favourite::create([
+                Favourite::create([
                             'user_id' =>  $request->user_id,
-                            'post_id' => $request->post_id,
-                            'post_type' => 'Property',
+                            'property_id' => $request->property_id,
                         ]);
             } else {
                 $isFavorite->delete();
@@ -157,9 +192,9 @@ class PropertyController extends Controller
                 'success' => true,
             ]);
         } catch (\Throwable $e) {
-                \Log::error($e->getMessage());
-                            dd($e->getMessage());
-                Session::flash('error_flash_message', $e->getMessage());
+                return response()->json([
+                    'message' => $e->getMessage(),
+                ]);
             }
     }
 

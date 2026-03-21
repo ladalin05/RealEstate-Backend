@@ -88,7 +88,7 @@
         .btn-save:hover { transform: translateY(-2px); }
     </style>
 
-    <div class="content py-5">
+    <div class="content">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-11">
@@ -105,7 +105,7 @@
                                 
                                 <div class="row g-5">
                                     <div class="col-md-6">
-                                        <h5 class="section-title"><i class="bi bi-gear-fill"></i> General Settings</h5>
+                                        <h5 class="section-title"><i class="fa-regular fa-gear"></i> General Settings</h5>
                                         
                                         <div class="mb-4">
                                             <label for="web_name" class="form-label">Website Name</label>
@@ -143,7 +143,7 @@
                                     </div>
 
                                     <div class="col-md-6">
-                                        <h5 class="section-title"><i class="bi bi-person-rolodex"></i> Contact Details</h5>
+                                        <h5 class="section-title"><i class="fa-regular fa-address-book"></i> Contact Details</h5>
                                         
                                         <div class="mb-4">
                                             <label for="contact_email" class="form-label">Public Contact Email</label>
@@ -160,29 +160,29 @@
                                             <input type="text" class="form-control" id="location" name="location" placeholder="City, Country">
                                         </div>
 
-                                        <h5 class="section-title"><i class="bi bi-share-fill"></i> Social Profiles</h5>
+                                        <h5 class="section-title"><i class="fa-regular fa-share-nodes"></i> Social Profiles</h5>
                                         <div class="row g-3">
                                             <div class="col-6">
                                                 <div class="input-group">
-                                                    <span class="input-group-text bg-white"><i class="bi bi-facebook text-primary"></i></span>
+                                                    <span class="input-group-text bg-white"><i class="fa-brands fa-facebook-f text-primary"></i></span>
                                                     <input type="url" name="facebook" class="form-control" placeholder="Facebook">
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group">
-                                                    <span class="input-group-text bg-white"><i class="bi bi-instagram text-danger"></i></span>
+                                                    <span class="input-group-text bg-white"><i class="fa-brands fa-instagram text-danger"></i></span>
                                                     <input type="url" name="instagram" class="form-control" placeholder="Instagram">
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group">
-                                                    <span class="input-group-text bg-white"><i class="bi bi-twitter-x"></i></span>
+                                                    <span class="input-group-text bg-white"><i class="fa-brands fa-twitter"></i></span>
                                                     <input type="url" name="twitter" class="form-control" placeholder="X / Twitter">
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group">
-                                                    <span class="input-group-text bg-white"><i class="bi bi-youtube text-danger"></i></span>
+                                                    <span class="input-group-text bg-white"><i class="fa-brands fa-youtube text-danger"></i></span>
                                                     <input type="url" name="youtube" class="form-control" placeholder="YouTube">
                                                 </div>
                                             </div>

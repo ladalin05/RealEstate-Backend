@@ -8,7 +8,7 @@ class Favourite extends Model
 {
     protected $table = 'favourite';
 
-    protected $fillable = ['user_id', 'post_id', 'post_type'];
+    protected $fillable = ['user_id', 'property_id'];
 
 
 	public $timestamps = false;  

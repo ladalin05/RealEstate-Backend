@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Session;
 class ReportsController extends Controller
 {
  
-    public function index()
+    public function property_report()
     { 
         $list = Reports::orderBy('id','DESC')->get();
         $page_title=trans('global.reports');

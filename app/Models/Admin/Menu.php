@@ -10,7 +10,7 @@ class Menu extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'menus';
+    protected $table = 'admin_menus';
 
     protected $fillable = [
         'name_en',

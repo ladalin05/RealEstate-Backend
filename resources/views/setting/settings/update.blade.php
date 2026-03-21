@@ -17,123 +17,133 @@
                         <div class="card-body">
                             <form action="{{ route('settings.general.update', ['id'=>$settings->id]) }}" method="POST" enctype="multipart/form-data">
                                 @csrf
-                                <div class="row">
+
+                                <div class="row g-5">
                                     <div class="col-md-6">
-                                        <legend class="float-none w-auto px-1 fs-5">General Settings</legend>
-                                        <fieldset class="border p-3 mb-4">
-                                            <div class="mb-3">
-                                                <label for="web_name" class="form-label">Website Name</label>
-                                                <input type="text" class="form-control @error('web_name') is-invalid @enderror" id="web_name" name="web_name" value="{{ old('web_name', $settings->web_name ?? '') }}" required>
-                                                @error('web_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                                            </div>
+                                        <h5 class="section-title"><i class="fa-regular fa-gear"></i> General Settings</h5>
+                                        
+                                        <div class="mb-4">
+                                            <label for="web_name" class="form-label">Website Name</label>
+                                            <input type="text"
+                                                class="form-control @error('web_name') is-invalid @enderror"
+                                                id="web_name"
+                                                name="web_name"
+                                                value="{{ old('web_name', $setting->web_name) }}"
+                                                required>
+                                            @error('web_name')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
 
-                                            <div class="mb-3">
-                                                <label for="web_logo" class="form-label">Website Logo</label>
-                                                <input type="file" class="form-control @error('web_logo') is-invalid @enderror" id="web_logo" name="web_logo"   accept="image/*">
-                                                
-                                                <div class="form-group row my-3">
-                                                    <div class="col-sm-8">
-                                                        <img id="web_logo_preview" src="{{ $settings->web_logo != null ? asset($settings->web_logo) : '#' }}" style="max-width:150px; {{ $settings->web_logo != null ? '' : 'display:none;' }}" class="img-thumbnail">
-                                                    </div>
+                                        <div class="row mb-4">
+                                            {{-- Logo --}}
+                                            <div class="col-6">
+                                                <label class="form-label">Website Logo</label>
+                                                <input type="file" class="form-control" id="web_logo" name="web_logo">
+
+                                                <div class="preview-container mt-2">
+                                                    @if($setting->web_logo && file_exists(public_path('storage/'.$setting->web_logo)))
+                                                        <img src="{{ asset('storage/'.$setting->web_logo) }}"
+                                                            class="img-thumbnail-custom"
+                                                            id="web_logo_preview">
+                                                    @else
+                                                        <img id="web_logo_preview" style="display:none;" class="img-thumbnail-custom">
+                                                    @endif
                                                 </div>
-                                                @error('web_logo') <div class="invalid-feedback">{{ $message }} </div>@enderror
                                             </div>
-                                            
-                                            <div class="mb-3">
-                                                <label for="favicon" class="form-label">Favicon</label>
-                                                <input type="file" class="form-control @error('favicon') is-invalid @enderror" id="favicon" name="favicon" value="{{$settings->favicon}}" accept="image/*">
-                                                <div class="form-group row my-3">
-                                                    <div class="col-sm-8">
-                                                        <img id="favicon_preview" src="{{ $settings->favicon != null ? asset($settings->favicon) : '#' }}" style="max-width:150px; {{ $settings->favicon != null ? '' : 'display:none;' }}" class="img-thumbnail">
-                                                    </div>
+
+                                            {{-- Favicon --}}
+                                            <div class="col-6">
+                                                <label class="form-label">Favicon</label>
+                                                <input type="file" class="form-control" id="favicon" name="favicon">
+
+                                                <div class="preview-container mt-2">
+                                                    @if($setting->favicon && file_exists(public_path('storage/'.$setting->favicon)))
+                                                        <img src="{{ asset('storage/'.$setting->favicon) }}"
+                                                            class="img-thumbnail-custom"
+                                                            id="favicon_preview">
+                                                    @else
+                                                        <img id="favicon_preview" style="display:none;" class="img-thumbnail-custom">
+                                                    @endif
                                                 </div>
-                                                @error('favicon') <div class="invalid-feedback">{{ $message }} </div>@enderror
                                             </div>
+                                        </div>
 
-                                            <div class="mb-3">
-                                                <label for="web_email" class="form-label">Email</label>
-                                                <input type="email" class="form-control @error('web_email') is-invalid @enderror" id="web_email" name="web_email" value="{{ old('web_email', $settings->web_email ?? '') }}">
-                                                @error('web_email')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                                            </div>
-                                            
-                                            <div class="mb-3">
-                                                <label for="description" class="form-label">Description</label>
-                                                <textarea class="form-control @error('description') is-invalid @enderror" style="height: 120px !important; width: 100%;" id="description" name="description" rows="3">{{ old('description', $settings->description ?? '') }}</textarea>
-                                                <div class="form-text">Recommended length: 150-160 characters.</div>
-                                                @error('description')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                                            </div>
+                                        <div class="mb-4">
+                                            <label for="web_email" class="form-label">System Email</label>
+                                            <input type="email"
+                                                class="form-control"
+                                                id="web_email"
+                                                name="web_email"
+                                                value="{{ old('web_email', $setting->web_email) }}">
+                                        </div>
 
-                                        </fieldset>
+                                        <div class="mb-0">
+                                            <label for="description" class="form-label">Meta Description</label>
+                                            <textarea class="form-control"
+                                                    id="description"
+                                                    name="description"
+                                                    rows="4">{{ old('description', $setting->description) }}</textarea>
+                                        </div>
                                     </div>
+
                                     <div class="col-md-6">
-                                        <legend class="float-none w-auto px-1 fs-5">Contact Us</legend>
-                                        <fieldset class="border p-3 mb-4">
-                                            <div class="mb-3">
-                                                <label for="image" class="form-label">Image</label>
-                                                <input type="file" class="form-control @error('image') is-invalid @enderror" id="image" name="image"   accept="image/*">
-                                                
-                                                <div class="form-group row my-3">
-                                                    <div class="col-sm-8">
-                                                        <img id="image_preview" src="{{ $user_info->image != null ? asset($user_info->image) : '#' }}" style="max-width:150px; {{ $user_info->image != null ? '' : 'display:none;' }}" class="img-thumbnail">
-                                                    </div>
-                                                </div>
-                                                @error('image') <div class="invalid-feedback">{{ $message }} </div>@enderror
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="contact_email" class="form-label">Contact Email</label>
-                                                <input type="email" class="form-control @error('contact_email') is-invalid @enderror" id="contact_email" name="contact_email" value="{{ $user_info->contact_email }}">
-                                                @error('contact_email')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                                            </div>
+                                        <h5 class="section-title"><i class="fa-regular fa-address-book"></i> Contact Details</h5>
 
-                                            <div class="mb-3">
-                                                <label for="contact_phone" class="form-label">Contact Phone</label>
-                                                <input type="tel" class="form-control @error('contact_phone') is-invalid @enderror" id="contact_phone" name="contact_phone" placeholder="+855 123 456 789" value="{{ $user_info->contact_phone }}">
-                                                @error('contact_phone')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                                            </div>
+                                        <div class="mb-4">
+                                            <label class="form-label">Public Contact Email</label>
+                                            <input type="email"
+                                                class="form-control"
+                                                name="contact_email"
+                                                value="{{ old('contact_email', $setting->contact_email) }}">
+                                        </div>
 
-                                            <div class="mb-3">
-                                                <label for="contact_address" class="form-label">Contact Address</label>
-                                                <input type="text" class="form-control @error('contact_address') is-invalid @enderror" id="contact_address" name="contact_address" value="{{ $user_info->contact_address }}">
-                                                @error('contact_address')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                                            </div>
+                                        <div class="mb-4">
+                                            <label class="form-label">Phone Number</label>
+                                            <input type="text"
+                                                class="form-control"
+                                                id="contact_phone"
+                                                name="contact_phone"
+                                                value="{{ old('contact_phone', $setting->contact_phone) }}">
+                                        </div>
 
-                                            <div class="mb-3">
-                                                <label for="location" class="form-label">Location</label>
-                                                <input type="text" class="form-control @error('location') is-invalid @enderror" id="location" name="location" value="{{ $user_info->contact_location }}">
-                                                @error('location')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                                            </div>
-                                        </fieldset>
-                                        <legend class="float-none w-auto px-1 fs-5">Social Links</legend>
-                                        <fieldset class="border p-3 mb-4">
-                                            <div class="mb-3">
-                                                <label for="facebook" class="form-label">Facebook URL</label>
-                                                <input type="url" class="form-control @error('facebook') is-invalid @enderror" id="facebook" name="facebook" value="{{ $user_info->facebook ?? '' }}">
-                                                @error('facebook')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                                            </div>
+                                        <div class="mb-5">
+                                            <label class="form-label">Business Location</label>
+                                            <input type="text"
+                                                class="form-control"
+                                                name="location"
+                                                value="{{ old('location', $setting->location) }}">
+                                        </div>
 
-                                            <div class="mb-3">
-                                                <label for="instagram" class="form-label">Instagram URL</label>
-                                                <input type="url" class="form-control @error('instagram') is-invalid @enderror" id="instagram" name="instagram" value="{{ $user_info->instagram ?? '' }}">
-                                                @error('instagram')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                                            </div>
+                                        <h5 class="section-title"><i class="fa-regular fa-share-nodes"></i> Social Profiles</h5>
 
-                                            <div class="mb-3">
-                                                <label for="twitter" class="form-label">X (Twitter) URL</label>
-                                                <input type="url" class="form-control @error('twitter') is-invalid @enderror" id="twitter" name="twitter" value="{{ $user_info->twitter ?? '' }}">
-                                                @error('twitter')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                        <div class="row g-3">
+                                            <div class="col-6">
+                                                <input type="url" name="facebook" class="form-control"
+                                                    value="{{ old('facebook', $setting->facebook) }}" placeholder="Facebook">
                                             </div>
-
-                                            <div class="mb-3">
-                                                <label for="youtube" class="form-label">Youtube URL</label>
-                                                <input type="url" class="form-control @error('youtube') is-invalid @enderror" id="youtube" name="youtube" value="{{ $user_info->youtube ?? '' }}">
-                                                @error('youtube')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                            <div class="col-6">
+                                                <input type="url" name="instagram" class="form-control"
+                                                    value="{{ old('instagram', $setting->instagram) }}" placeholder="Instagram">
                                             </div>
-                                        </fieldset>
+                                            <div class="col-6">
+                                                <input type="url" name="twitter" class="form-control"
+                                                    value="{{ old('twitter', $setting->twitter) }}" placeholder="Twitter">
+                                            </div>
+                                            <div class="col-6">
+                                                <input type="url" name="youtube" class="form-control"
+                                                    value="{{ old('youtube', $setting->youtube) }}" placeholder="YouTube">
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="d-grid justify-content-end gap-2">
-                                    <button type="submit" class="btn btn-success btn-lg">
-                                        <i class="bi bi-save me-2"></i> Save Settings
+
+                                <hr class="my-5 opacity-10">
+
+                                <div class="d-flex justify-content-end">
+                                    <button type="reset" class="btn btn-light me-3 px-4">Discard Changes</button>
+                                    <button type="submit" class="btn btn-success btn-save shadow-sm">
+                                        Update Settings
                                     </button>
                                 </div>
                             </form>

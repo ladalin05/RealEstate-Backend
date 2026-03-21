@@ -10,13 +10,17 @@ use Illuminate\Support\Str;
 use App\Models\Admin\Settings;
 use App\Models\UserManagement\UserInform;
 use App\Http\Controllers\Controller;
+use App\Models\Menu;
 use App\Models\UserManagement\User;
 
 class MainController extends Controller
 {
     public function getMenu(Request $request)
     {
-        $menus = Page::query()->where('status',1)->orderBy('page_order', 'ASC')->get();
+        $menus = Menu::join('menu_items', 'menus.id', 'menu_items.menu_id')
+                    ->select('menu_items.id as id', 'menus.slug as slug', 'menu_items.title as menu_title', 'menu_items.link as menu_link')
+                    ->orderBy('menu_items.order', 'ASC')
+                    ->get();
 
         return response()->json([
             'status' => 'success',

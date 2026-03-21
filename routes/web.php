@@ -210,7 +210,10 @@ Route::middleware(['auth', 'abilities'])->group(function () {
         'prefix' => 'reports',
         'as' => 'reports.'
     ], function () {
-        Route::get('/', [ReportsController::class, 'index'])->name('index');
+        Route::get('/property-report', [ReportsController::class, 'property_report'])->name('prop-report');
+        Route::get('/sales-report', [ReportsController::class, 'sale_report'])->name('sale-report');
+        Route::get('/agent-report', [ReportsController::class, 'agent_report'])->name('agent-report');
+        Route::get('/investment-report', [ReportsController::class, 'invest_report'])->name('invest-report');
         Route::get('/filter', [ReportsController::class, 'report_filter'])->name('filter');
     });
 
