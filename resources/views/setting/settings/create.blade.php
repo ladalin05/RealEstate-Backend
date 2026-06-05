@@ -100,7 +100,7 @@
                         </div>
 
                         <div class="card-body p-4 p-lg-5">
-                            <form action="{{ route('settings.settings.create') }}" method="POST" enctype="multipart/form-data">
+                            <form action="{{ route('settings.settings.create') }}" method="POST" enctype="multipart/form-data"   class="ajax-form">
                                 @csrf
                                 
                                 <div class="row g-5">
@@ -193,9 +193,9 @@
                                 <hr class="my-5 opacity-10">
 
                                 <div class="d-flex justify-content-end">
-                                    <button type="reset" class="btn btn-light me-3 px-4">Discard Changes</button>
-                                    <button type="submit" class="btn btn-success btn-save shadow-sm">
-                                        Update Settings
+                                    <button type="reset" class="btn btn-light me-3 px-4">Cancel</button>
+                                    <button type="submit" class="btn btn-primary btn-save shadow-sm">
+                                        Save Changes
                                     </button>
                                 </div>
                             </form>

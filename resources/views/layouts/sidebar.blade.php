@@ -43,7 +43,7 @@
     </style>
 @endpush
 <!-- Main sidebar -->
-<div class="sidebar sidebar-main sidebar-expand-lg">
+<div class="sidebar sidebar-main sidebar-expand-lg" style="background-color: #ffff !important;">
     <!-- Sidebar content -->
     <div class="sidebar-content">
 

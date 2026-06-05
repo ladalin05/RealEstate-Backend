@@ -1,138 +1,198 @@
 <x-app-layout>
     <style>
-        .card-body label {
-            color: #797979 ;
+        :root {
+            --primary-bg: #f8f9fa;
+            --card-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            --accent-color: #4e73df;
         }
-    </style>
-    <div class="content">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="card-box">
-                        <div class="row mb-4">
-                            <div class="col-sm-6">
-                                <h4 class="mb-0">Website Settings</h4>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <form action="{{ route('settings.general.update', ['id'=>$settings->id]) }}" method="POST" enctype="multipart/form-data">
-                                @csrf
 
+        body { background-color: var(--primary-bg); }
+
+        .settings-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+        }
+
+        .card-header-custom {
+            background: #fff;
+            padding: 1.5rem;
+            border-bottom: 1px solid #edf2f9;
+        }
+
+        .section-title {
+            font-weight: 700;
+            color: #334155;
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title i {
+            width: 35px;
+            height: 35px;
+            background: rgba(78, 115, 223, 0.1);
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            margin-right: 12px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            border: 1px solid #d1d9e6;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.25rem rgba(78, 115, 223, 0.1);
+        }
+
+        .preview-container {
+            background: #f1f5f9;
+            border: 2px dashed #cbd5e1;
+            border-radius: 10px;
+            padding: 10px;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .img-thumbnail-custom {
+            max-width: 120px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-save {
+            padding: 12px 30px;
+            font-weight: 600;
+            border-radius: 10px;
+            letter-spacing: 0.5px;
+            transition: transform 0.2s;
+        }
+
+        .btn-save:hover { transform: translateY(-2px); }
+    </style>
+
+    <div class="content">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-11">
+                    
+                    <div class="card settings-card">
+                        <div class="card-header-custom d-flex justify-content-between align-items-center">
+                            <h4 class="mb-0 fw-bold">Edit Website Configuration</h4>
+                            <span class="badge bg-soft-primary text-primary">System Settings</span>
+                        </div>
+
+                        <div class="card-body p-4 p-lg-5">
+                            <form action="{{ route('settings.settings.update', ['id' => $settings->id]) }}" method="POST" enctype="multipart/form-data" class="ajax-form">
+                                @csrf
+                                
                                 <div class="row g-5">
                                     <div class="col-md-6">
                                         <h5 class="section-title"><i class="fa-regular fa-gear"></i> General Settings</h5>
                                         
                                         <div class="mb-4">
                                             <label for="web_name" class="form-label">Website Name</label>
-                                            <input type="text"
-                                                class="form-control @error('web_name') is-invalid @enderror"
-                                                id="web_name"
-                                                name="web_name"
-                                                value="{{ old('web_name', $setting->web_name) }}"
-                                                required>
-                                            @error('web_name')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
+                                            <input type="text" class="form-control @error('web_name') is-invalid @enderror" id="web_name" name="web_name" 
+                                                   value="{{ old('web_name', $settings->web_name) }}" placeholder="e.g. My Awesome Brand" required>
+                                            @error('web_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                         </div>
 
                                         <div class="row mb-4">
-                                            {{-- Logo --}}
                                             <div class="col-6">
                                                 <label class="form-label">Website Logo</label>
-                                                <input type="file" class="form-control" id="web_logo" name="web_logo">
-
+                                                <input type="file" class="form-control" id="web_logo" name="web_logo" accept="image/*">
                                                 <div class="preview-container mt-2">
-                                                    @if($setting->web_logo && file_exists(public_path('storage/'.$setting->web_logo)))
-                                                        <img src="{{ asset('storage/'.$setting->web_logo) }}"
-                                                            class="img-thumbnail-custom"
-                                                            id="web_logo_preview">
-                                                    @else
-                                                        <img id="web_logo_preview" style="display:none;" class="img-thumbnail-custom">
-                                                    @endif
+                                                    <img id="web_logo_preview" src="{{ $settings->web_logo ? asset('storage/' . $settings->web_logo) : '#' }}" 
+                                                         style="{{ $settings->web_logo ? '' : 'display:none;' }}" class="img-thumbnail-custom">
                                                 </div>
                                             </div>
-
-                                            {{-- Favicon --}}
                                             <div class="col-6">
                                                 <label class="form-label">Favicon</label>
-                                                <input type="file" class="form-control" id="favicon" name="favicon">
-
+                                                <input type="file" class="form-control" id="favicon" name="favicon" accept="image/*">
                                                 <div class="preview-container mt-2">
-                                                    @if($setting->favicon && file_exists(public_path('storage/'.$setting->favicon)))
-                                                        <img src="{{ asset('storage/'.$setting->favicon) }}"
-                                                            class="img-thumbnail-custom"
-                                                            id="favicon_preview">
-                                                    @else
-                                                        <img id="favicon_preview" style="display:none;" class="img-thumbnail-custom">
-                                                    @endif
+                                                    <img id="favicon_preview" src="{{ $settings->favicon ? asset('storage/' . $settings->favicon) : '#' }}" 
+                                                         style="{{ $settings->favicon ? '' : 'display:none;' }}" class="img-thumbnail-custom">
                                                 </div>
                                             </div>
                                         </div>
 
                                         <div class="mb-4">
                                             <label for="web_email" class="form-label">System Email</label>
-                                            <input type="email"
-                                                class="form-control"
-                                                id="web_email"
-                                                name="web_email"
-                                                value="{{ old('web_email', $setting->web_email) }}">
+                                            <input type="email" class="form-control @error('web_email') is-invalid @enderror" id="web_email" name="web_email" 
+                                                   value="{{ old('web_email', $settings->web_email) }}">
                                         </div>
 
                                         <div class="mb-0">
                                             <label for="description" class="form-label">Meta Description</label>
-                                            <textarea class="form-control"
-                                                    id="description"
-                                                    name="description"
-                                                    rows="4">{{ old('description', $setting->description) }}</textarea>
+                                            <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description" rows="4" 
+                                                      placeholder="Brief site summary...">{{ old('description', $settings->description) }}</textarea>
+                                            <div class="form-text mt-2 text-muted small">SEO Best Practice: 150-160 characters.</div>
                                         </div>
                                     </div>
 
                                     <div class="col-md-6">
                                         <h5 class="section-title"><i class="fa-regular fa-address-book"></i> Contact Details</h5>
-
+                                        
                                         <div class="mb-4">
-                                            <label class="form-label">Public Contact Email</label>
-                                            <input type="email"
-                                                class="form-control"
-                                                name="contact_email"
-                                                value="{{ old('contact_email', $setting->contact_email) }}">
+                                            <label for="contact_email" class="form-label">Public Contact Email</label>
+                                            <input type="email" class="form-control" id="contact_email" name="contact_email" 
+                                                   value="{{ old('contact_email', $settings->contact_email) }}" placeholder="support@brand.com">
                                         </div>
 
                                         <div class="mb-4">
-                                            <label class="form-label">Phone Number</label>
-                                            <input type="text"
-                                                class="form-control"
-                                                id="contact_phone"
-                                                name="contact_phone"
-                                                value="{{ old('contact_phone', $setting->contact_phone) }}">
+                                            <label for="contact_phone" class="form-label">Phone Number</label>
+                                            <input type="tel" class="form-control" id="contact_phone" name="contact_phone" 
+                                                   value="{{ old('contact_phone', $settings->contact_phone) }}" placeholder="+855 123 456 789">
                                         </div>
 
                                         <div class="mb-5">
-                                            <label class="form-label">Business Location</label>
-                                            <input type="text"
-                                                class="form-control"
-                                                name="location"
-                                                value="{{ old('location', $setting->location) }}">
+                                            <label for="location" class="form-label">Business Location</label>
+                                            <input type="text" class="form-control" id="location" name="location" 
+                                                   value="{{ old('location', $settings->location) }}" placeholder="City, Country">
                                         </div>
 
                                         <h5 class="section-title"><i class="fa-regular fa-share-nodes"></i> Social Profiles</h5>
-
                                         <div class="row g-3">
                                             <div class="col-6">
-                                                <input type="url" name="facebook" class="form-control"
-                                                    value="{{ old('facebook', $setting->facebook) }}" placeholder="Facebook">
+                                                <div class="input-group">
+                                                    <span class="input-group-text bg-white"><i class="fa-brands fa-facebook-f text-primary"></i></span>
+                                                    <input type="url" name="facebook" class="form-control" value="{{ old('facebook', $settings->facebook) }}" placeholder="Facebook">
+                                                </div>
                                             </div>
                                             <div class="col-6">
-                                                <input type="url" name="instagram" class="form-control"
-                                                    value="{{ old('instagram', $setting->instagram) }}" placeholder="Instagram">
+                                                <div class="input-group">
+                                                    <span class="input-group-text bg-white"><i class="fa-brands fa-instagram text-danger"></i></span>
+                                                    <input type="url" name="instagram" class="form-control" value="{{ old('instagram', $settings->instagram) }}" placeholder="Instagram">
+                                                </div>
                                             </div>
                                             <div class="col-6">
-                                                <input type="url" name="twitter" class="form-control"
-                                                    value="{{ old('twitter', $setting->twitter) }}" placeholder="Twitter">
+                                                <div class="input-group">
+                                                    <span class="input-group-text bg-white"><i class="fa-brands fa-twitter"></i></span>
+                                                    <input type="url" name="twitter" class="form-control" value="{{ old('twitter', $settings->twitter) }}" placeholder="X / Twitter">
+                                                </div>
                                             </div>
                                             <div class="col-6">
-                                                <input type="url" name="youtube" class="form-control"
-                                                    value="{{ old('youtube', $setting->youtube) }}" placeholder="YouTube">
+                                                <div class="input-group">
+                                                    <span class="input-group-text bg-white"><i class="fa-brands fa-youtube text-danger"></i></span>
+                                                    <input type="url" name="youtube" class="form-control" value="{{ old('youtube', $settings->youtube) }}" placeholder="YouTube">
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -141,61 +201,49 @@
                                 <hr class="my-5 opacity-10">
 
                                 <div class="d-flex justify-content-end">
-                                    <button type="reset" class="btn btn-light me-3 px-4">Discard Changes</button>
-                                    <button type="submit" class="btn btn-success btn-save shadow-sm">
-                                        Update Settings
+                                    <a href="{{ url()->previous() }}" class="btn btn-light me-3 px-4">Cancel</a>
+                                    <button type="submit" class="btn btn-primary btn-save shadow-sm">
+                                        Save Changes
                                     </button>
                                 </div>
                             </form>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
     </div>
-    
+
     @push('scripts')
         <script>
+            // Your existing JavaScript logic remains compatible with this UI
             $(document).ready(function() {
                 function setupImageUpload(inputId, previewId) {
                     $(inputId).on('change', function(e) {
                         const file = e.target.files[0];
                         const preview = $(previewId);
-
                         if (file) {
                             const reader = new FileReader();
-                            reader.onload = function(event) {
-                                preview.attr('src', event.target.result);
-                                preview.show();
+                            reader.onload = (event) => {
+                                preview.attr('src', event.target.result).fadeIn();
                             };
                             reader.readAsDataURL(file);
-                        } else {
-                            preview.attr('src', '#');
-                            preview.hide();
                         }
                     });
                 }
+                setupImageUpload('#web_logo', '#web_logo_preview');
+                setupImageUpload('#favicon', '#favicon_preview');
 
-                    // Initialize both uploads
-                setupImageUpload( '#web_logo', '#web_logo_preview');
-                setupImageUpload( '#favicon', '#favicon_preview');
-                setupImageUpload( '#image', '#image_preview');
-                
-
+                // Auto-formatting for phone remains same
                 $('#contact_phone').on('input', function() {
-                    let value = $(this).val();
-                    let numbers = value.replace(/\D/g, '');
-                    numbers = numbers.substring(0, 12);
-
-                    let formatted = '';
-                    if (numbers.length >= 1) formatted += '+' + numbers.substring(0, 3);
+                    let numbers = $(this).val().replace(/\D/g, '').substring(0, 12);
+                    let formatted = numbers.length >= 1 ? '+' + numbers.substring(0, 3) : '';
                     if (numbers.length >= 4) formatted += ' ' + numbers.substring(3, 6);
                     if (numbers.length >= 7) formatted += ' ' + numbers.substring(6, 9);
                     if (numbers.length >= 10) formatted += ' ' + numbers.substring(9, 12);
-
                     $(this).val(formatted);
                 });
-
             });
         </script>
     @endpush

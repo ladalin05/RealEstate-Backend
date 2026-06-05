@@ -44,6 +44,24 @@
                     <i class="bi bi-exclamation-triangle-fill me-1"></i> {{ $message }}
                 </div>
             @enderror
+        </div><div class="mb-3">
+            <label for="image" class="form-label fw-bold text-dark small text-uppercase">City Thumbnail</label>
+            <div class="d-flex align-items-center gap-3">
+                <div class="border rounded bg-light d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; overflow: hidden;">
+                    @if(isset($form->image))
+                        <img id="preview-img" src="{{ asset('storage/' . $form->image) }}" class="img-fluid object-fit-cover" style="height: 100%;">
+                    @else
+                        <img id="preview-img" src="https://via.placeholder.com/80?text=No+Image" class="img-fluid object-fit-cover">
+                    @endif
+                </div>
+                <div class="flex-grow-1">
+                    <input type="file" name="image" id="image-input" class="form-control form-control-sm @error('image') is-invalid @enderror" accept="image/*">
+                    <div class="form-text mt-1 small">Recommended: Square image, max 2MB.</div>
+                </div>
+            </div>
+            @error('image')
+                <div class="text-danger small mt-1">{{ $message }}</div>
+            @enderror
         </div>
         <div class="mb-2">
             <label for="status" class="form-label fw-bold text-dark small text-uppercase">STATUS</label>
@@ -70,3 +88,11 @@
 </div>
 
 @include('location.script')
+<script>
+    document.getElementById('image-input').onchange = evt => {
+        const [file] = evt.target.files;
+        if (file) {
+            document.getElementById('preview-img').src = URL.createObjectURL(file);
+        }
+    }
+</script>

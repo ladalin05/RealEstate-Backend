@@ -250,8 +250,8 @@ Route::middleware(['auth', 'abilities'])->group(function () {
             'as' => 'settings.',
         ], function () {
             Route::get('/', [SettingsController::class, 'general_settings'])->name('index');
-            Route::match(['get', 'post'], '/create', [SettingsController::class, 'create'])->name('create');
-            Route::match(['get', 'post'], '/update', [SettingsController::class, 'update'])->name('update');
+            Route::match(['get', 'post'], '/create', [SettingsController::class, 'general_setting_create'])->name('create');
+            Route::match(['get', 'post'], '/update', [SettingsController::class, 'general_setting_update'])->name('update');
         });
         Route::group([
             'prefix' => 'banners',

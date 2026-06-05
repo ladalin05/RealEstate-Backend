@@ -37,11 +37,15 @@ Route::prefix('category')->group(function () {
 Route::prefix('menus')->group(function () {
     Route::get('/', [MainController::class, 'getMenu']);
 });
+
+Route::get('/get-setting', [MainController::class, 'getSetting']);
+
 Route::get('/get-contact', [MainController::class, 'getContact']);
 
 Route::prefix('property')->group(function () {
     Route::get('/', [PropertyController::class, 'getProperty']);
     Route::get('/detail/{id}', [PropertyController::class, 'getPropertyDetails']);
+    Route::get('/get-by-city', [PropertyController::class, 'getPropertyByCity']);
     Route::post('/favourite', [PropertyController::class, 'is_favourit']);
 });
 
