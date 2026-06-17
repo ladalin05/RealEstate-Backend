@@ -3,13 +3,25 @@
 namespace App\Http\Controllers\Location;
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use App\Models\Location\Commune;
 use App\Models\Location\District;
-use App\Http\Controllers\Controller;
+use App\Services\BaseService;
 use App\DataTables\Location\CommuneDataTable;
+use App\Http\Requests\Location\StoreCommuneRequest;
+use App\Http\Requests\Location\UpdateCommuneRequest;
 
 class CommuneController extends Controller
 {
+
+    private BaseService $service;
+
+    public function __construct()
+    {
+        $this->service = new class extends BaseService {
+            protected function getQuery() { return Commune::query(); }
+        };
+    }
 
     public function index(CommuneDataTable $dataTable)
     {
@@ -20,51 +32,29 @@ class CommuneController extends Controller
     {
         try {
 
-            if ($request->isMethod('get')) {
-                
-                $title = __('global.add_new');
-                $form = new Commune();
-                $action = route('location.communes.add');
-                return response()->json([
-                    'title' => $title,
-                    'status' => 'success',
-                    'message' => 'success',
-                    'html' => view('location.communes.form', compact('title', 'form', 'action'))->render(),
-                    'modal' => 'action-modal',
-                ]);
-            }
-
             if ($request->isMethod('post')) {
+                $formRequest = new StoreCommuneRequest();
+                $this->service->create($formRequest->validated());
 
-                $request->validate([
-                    'district_id' => 'required',
-                    'name' => 'required'
-                ]);
-
-                Commune::create([
-                    'district_id' => $request->district_id,
-                    'name' => $request->name,
-                    'status' => $request->status
-                ]);
-
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'Commune created successfully',
-                    'redirect' => route('location.communes.index'),
-                ]);
+                return $this->redirectResponse(
+                    message: __('global.create_commune_successfully'),
+                    route:   route('location.communes.index'),
+                );
             }
-            
-            return response()->json([
-                'status' => 'error',
-                'message' => __('messages.405'),
-            ]);
+
+            return $this->modalResponse(
+                title:  __('global.add_new'),
+                view:   'location.communes.form',
+                data:   ['form' => new Commune()],
+                action: route('location.communes.add'),
+            );
 
         } catch (\Exception $e) {
 
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage()
-            ], 500);
+            return $this->errorResponse(
+                message: $e->getMessage(),
+                status: 500
+            );
 
         }
     }
@@ -73,48 +63,31 @@ class CommuneController extends Controller
     {
         try {
 
-            if ($request->isMethod('get')) {
-
-                $title = __('global.edit');
-                $form = Commune::findOrFail($request->id);
-                $action = route('location.communes.edit', ['id' => $request->id]);
-                return response()->json([
-                    'title' => $title,
-                    'status' => 'success',
-                    'message' => 'success',
-                    'html' => view('location.communes.form', compact('title', 'form', 'action'))->render(),
-                    'modal' => 'action-modal',
-                ]);
-            }
-
-            if ($request->isMethod('post')) {
-
-                $commune = Commune::findOrFail($request->id);
-
-                $commune->update([
-                    'district_id' => $request->district_id,
-                    'name' => $request->name,
-                    'status' => $request->status
-                ]);
-
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'Commune updated successfully',
-                    'redirect' => route('location.communes.index'),
-                ]);
-            }
+            $commune = Commune::findOrFail($request->id);
             
-            return response()->json([
-                'status' => 'error',
-                'message' => __('messages.405'),
-            ]);
+            if ($request->isMethod('post')) {
+                $formRequest = new UpdateCommuneRequest();
+                $this->service->update($formRequest->validated(), $request->id);
+
+                return $this->redirectResponse(
+                    message: __('global.update_commune_successfully'),
+                    route:   route('location.communes.index'),
+                );
+            }
+
+            return $this->modalResponse(
+                title:  __('global.edit'),
+                view:   'location.communes.form',
+                data:   ['form' => $commune],
+                action: route('location.communes.edit', ['id' => $request->id]),
+            ); 
 
         } catch (\Exception $e) {
 
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage()
-            ], 500);
+            return $this->errorResponse(
+                message: $e->getMessage(),
+                status: 500
+            );
 
         }
     }
@@ -126,18 +99,17 @@ class CommuneController extends Controller
             $commune = Commune::findOrFail($request->id);
             $commune->delete();
 
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Commune deleted successfully',
-                'redirect' => route('location.communes.index'),
-            ]);
+            return $this->redirectResponse(
+                message: __('global.deleted_commune_successfully'),
+                route:   route('location.communes.index'),
+            );
 
         } catch (\Throwable $e) {
 
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage()
-            ], 500);
+            return $this->errorResponse(
+                message: $e->getMessage(),
+                status: 500
+            );
 
         }
     }

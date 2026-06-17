@@ -16,26 +16,26 @@ class CountryDataTable extends DataTable
             ->addIndexColumn()
 
             ->addColumn('status', function ($row) {
-
                 $checked = $row->status ? 'checked' : '';
 
                 return '
                 <div class="form-check form-switch">
                     <input type="checkbox"
                         class="form-check-input enable_disable"
-                        data-id="'.$row->id.'"
-                        '.$checked.'>
+                        data-id="' . $row->id . '"
+                        ' . $checked . '>
                 </div>';
             })
 
             ->addColumn('action', fn($row) => view('location.countries.action', compact('row')))
 
-            ->rawColumns(['status','action']);
+            ->rawColumns(['status', 'action']);
     }
 
     public function query(Country $model)
     {
-        return $model->newQuery()->select('countries.*');
+        return $model->newQuery()
+            ->select('countries.id', 'countries.name', 'countries.code', 'countries.status');
     }
 
     public function html()
@@ -52,14 +52,13 @@ class CountryDataTable extends DataTable
                 Button::make('pdf'),
                 Button::make('print'),
                 Button::make('reset'),
-                Button::make('reload')
+                Button::make('reload'),
             ]);
     }
 
     protected function getColumns()
     {
         return [
-
             Column::computed('DT_RowIndex')
                 ->title('#')
                 ->searchable(false)
@@ -67,6 +66,9 @@ class CountryDataTable extends DataTable
 
             Column::make('name')
                 ->title('Country Name'),
+
+            Column::make('code')
+                ->title('ISO Code'),
 
             Column::make('status')
                 ->title('Status')

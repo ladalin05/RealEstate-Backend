@@ -22,6 +22,8 @@ use App\Http\Controllers\UserManagement\UserController;
 use App\Http\Controllers\UserManagement\RoleController;
 use App\Http\Controllers\UserManagement\AgentController;
 use App\Http\Controllers\UserManagement\AgencyController;
+use App\Http\Controllers\Admin\CMSController;
+use App\Http\Controllers\Admin\UploadController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -96,13 +98,12 @@ Route::middleware(['auth', 'abilities'])->group(function () {
     ], function () {
         Route::group([
             'prefix' => 'properties',
-            'as' => 'properties.'
+            'as'     => 'properties.'
         ], function () {
-            Route::get('/', [PropertyController::class, 'index'])->name('index');
-            Route::match(['get', 'post'], '/add', [PropertyController::class, 'create'])->name('add');
-            Route::match(['get', 'post'], '/edit', [PropertyController::class, 'update'])->name('edit');
-            Route::get('/delete', [PropertyController::class, 'delete'])->name('deleted');
-            Route::get('/search', [PropertyController::class, 'property_filter'])->name('filter');
+            Route::get('/',                         [PropertyController::class, 'index'])->name('index');
+            Route::match(['get', 'post'], '/add',   [PropertyController::class, 'create'])->name('add');
+            Route::match(['get', 'post'], '/edit',  [PropertyController::class, 'update'])->name('edit');
+            Route::get('/delete',                   [PropertyController::class, 'delete'])->name('deleted');
         });
 
         Route::group([
@@ -263,6 +264,35 @@ Route::middleware(['auth', 'abilities'])->group(function () {
         });
 
     });
+
+    // File Upload & Delete
+    Route::post('/uploads', [UploadController::class, 'store'])->name('uploads.store');
+    Route::delete('/uploads', [UploadController::class, 'destroy'])->name('uploads.destroy');
+
+    //CMD Setting 
+    Route::group([
+        'prefix' => 'cms',
+        'as' => 'cms.'
+    ], function () {
+        Route::group([
+            'prefix' => 'hero',
+            'as' => 'hero.',
+        ], function () {
+            Route::get('/', [CMSController::class, 'cmsHero'])->name('index');
+            Route::match(['get', 'post'], '/create', [CMSController::class, 'CmsHeroCreate'])->name('create');
+            Route::match(['get', 'post'], '/update', [CMSController::class, 'CmsHeroUpdate'])->name('update');
+        });
+        
+        Route::group([
+            'prefix' => 'pages',
+            'as' => 'pages.',
+        ], function () {
+            Route::get('/', [CMSController::class, 'pages'])->name('index');
+            Route::match(['get', 'post'], '/create', [CMSController::class, 'general_setting_create'])->name('create');
+            Route::match(['get', 'post'], '/update', [CMSController::class, 'general_setting_update'])->name('update');
+        });
+    });
+
 });
 
 require __DIR__.'/auth.php';

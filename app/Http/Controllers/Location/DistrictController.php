@@ -4,12 +4,24 @@ namespace App\Http\Controllers\Location;
 
 use Illuminate\Http\Request;
 use App\Models\Location\District;
-use App\Models\Location\City;
+use App\Models\Location\Province;
 use App\Http\Controllers\Controller;
+use App\Services\BaseService;
+use App\Http\Requests\Location\UpdateDistrictRequest;
+use App\Http\Requests\Location\StoreDistrictRequest;
 use App\DataTables\Location\DistrictDataTable;
 
 class DistrictController extends Controller
 {
+    
+    private BaseService $service;
+
+    public function __construct()
+    {
+        $this->service = new class extends BaseService {
+            protected function getQuery() { return District::query(); }
+        };
+    }
 
     public function index(DistrictDataTable $dataTable)
     {
@@ -20,51 +32,29 @@ class DistrictController extends Controller
     {
         try {
 
-            if ($request->isMethod('get')) {
-
-                $title = __('global.add_new');
-                $form = new District();
-                $action = route('location.districts.add');
-                return response()->json([
-                    'title' => $title,
-                    'status' => 'success',
-                    'message' => 'success',
-                    'html' => view('location.districts.form', compact('title', 'form', 'action'))->render(),
-                    'modal' => 'action-modal',
-                ]);
-            }
-
             if ($request->isMethod('post')) {
+                $formRequest = new StoreDistrictRequest();
+                $this->service->create($formRequest->validated());
 
-                $request->validate([
-                    'city_id' => 'required',
-                    'name' => 'required'
-                ]);
-
-                District::create([
-                    'city_id' => $request->city_id,
-                    'name' => $request->name,
-                    'status' => $request->status
-                ]);
-
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'District created successfully',
-                    'redirect' => route('location.districts.index'),
-                ]);
+                return $this->redirectResponse(
+                    message: __('global.create_district_successfully'),
+                    route: route('location.districts.index'),
+                );
             }
             
-            return response()->json([
-                'status' => 'error',
-                'message' => __('messages.405'),
-            ]);
+            return $this->modalResponse(
+                title:  __('global.add_new'),
+                view:   'location.districts.form',
+                data:   ['form' => new District()],
+                action: route('location.districts.add'),
+            );
 
         } catch (\Exception $e) {
 
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage()
-            ], 500);
+            return $this->errorResponse(
+                message: $e->getMessage(),
+                code: 500,
+            );
 
         }
     }
@@ -73,53 +63,31 @@ class DistrictController extends Controller
     {
         try {
 
-            if ($request->isMethod('get')) {
-
-                $title = __('global.edit');
-                $form = District::findOrFail($request->id);
-                $action = route('location.districts.edit', ['id' => $request->id]);
-                return response()->json([
-                    'title' => $title,
-                    'status' => 'success',
-                    'message' => 'success',
-                    'html' => view('location.districts.form', compact('title', 'form', 'action'))->render(),
-                    'modal' => 'action-modal',
-                ]);
-            }
+            $district = District::findOrFail($request->id);
 
             if ($request->isMethod('post')) {
+                $formRequest = new UpdateDistrictRequest();
+                $this->service->update($formRequest->validated(), $request->id);
 
-                $request->validate([
-                    'city_id' => 'required',
-                    'name' => 'required'
-                ]);
-                
-                $district = District::findOrFail($request->id);
-
-                $district->update([
-                    'city_id' => $request->city_id,
-                    'name' => $request->name,
-                    'status' => $request->status
-                ]);
-
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'District updated successfully',
-                    'redirect' => route('location.districts.index'),
-                ]);
+                return $this->redirectResponse(
+                    message: __('global.updated_district_successfully'),
+                    route: route('location.districts.index'),
+                );
             }
             
-            return response()->json([
-                'status' => 'error',
-                'message' => __('messages.405'),
-            ]);
-            
-        } catch (\Exception $e) {
+            return $this->modalResponse(
+                title:  __('global.edit'),
+                view:   'location.districts.form',
+                data:   ['form' => $district],
+                action: route('location.districts.edit', ['id' => $request->id]),
+            );
 
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage()
-            ], 500);
+        } catch (\Throwable $e) {
+
+            return $this->errorResponse(
+                message: $e->getMessage(),
+                code: 500,
+            );
 
         }
     }
@@ -131,18 +99,17 @@ class DistrictController extends Controller
             $district = District::findOrFail($request->id);
             $district->delete();
 
-            return response()->json([
-                'status' => 'success',
-                'message' => 'District deleted successfully',
-                'redirect' => route('location.districts.index'),
-            ]);
+            return $this->redirectResponse(
+                message: __('global.deleted_district_successfully'),
+                route: route('location.districts.index'),
+            );
 
         } catch (\Throwable $e) {
 
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage()
-            ], 500);
+            return $this->errorResponse(
+                message: $e->getMessage(),
+                code: 500,
+            );
 
         }
     }

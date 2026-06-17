@@ -17,11 +17,11 @@
                 <span class="input-group-text bg-white border-end-0 text-muted">
                     <i class="bi bi-globe"></i>
                 </span>
-                <input 
-                    type="text" 
-                    name="name" 
-                    id="name" 
-                    class="form-control border-start-0 ps-0 @error('name') is-invalid @enderror" 
+                <input
+                    type="text"
+                    name="name"
+                    id="name"
+                    class="form-control border-start-0 ps-0 @error('name') is-invalid @enderror"
                     placeholder="e.g. United Kingdom"
                     value="{{ old('name', $form->name ?? '') }}"
                     required
@@ -33,12 +33,38 @@
                 </div>
             @enderror
         </div>
-            
+
+        <div class="mb-3">
+            <label for="code" class="form-label fw-bold text-dark small text-uppercase">ISO Country Code</label>
+            <div class="input-group">
+                <span class="input-group-text bg-white border-end-0 text-muted">
+                    <i class="bi bi-flag"></i>
+                </span>
+                <input
+                    type="text"
+                    name="code"
+                    id="code"
+                    class="form-control border-start-0 ps-0 text-uppercase @error('code') is-invalid @enderror"
+                    placeholder="e.g. KH"
+                    value="{{ old('code', $form->code ?? '') }}"
+                    maxlength="5"
+                >
+            </div>
+            <div class="text-muted small mt-1">
+                <i class="bi bi-info-circle me-1"></i> Optional. ISO 2-letter code (e.g. <strong>KH</strong> for Cambodia, <strong>GB</strong> for United Kingdom).
+            </div>
+            @error('code')
+                <div class="text-danger small mt-1">
+                    <i class="bi bi-exclamation-triangle-fill me-1"></i> {{ $message }}
+                </div>
+            @enderror
+        </div>
+
         <div class="mb-2">
-            <label for="status" class="form-label fw-bold text-dark small text-uppercase">STATUS</label>
+            <label for="status" class="form-label fw-bold text-dark small text-uppercase">Status</label>
             <select name="status" id="status" class="form-select custom-select">
-                <option value="1" {{ isset($form->status) && $form->status == 1 ? 'selected' : ''}}>🟢 Active</option>
-                <option value="0" {{ isset($form->status) && $form->status == 0 ? 'selected' : ''}}>⚪ Inactive</option>
+                <option value="1" {{ isset($form->status) && $form->status == 1 ? 'selected' : '' }}>🟢 Active</option>
+                <option value="0" {{ isset($form->status) && $form->status == 0 ? 'selected' : '' }}>⚪ Inactive</option>
             </select>
         </div>
 
@@ -50,7 +76,7 @@
             </div>
             <div class="col-sm-4">
                 <button type="submit" class="btn btn-primary w-100 py-2 fw-bold shadow-sm">
-                    <i class="bi bi-save2 me-2"></i> 
+                    <i class="bi bi-save2 me-2"></i>
                     {{ isset($form->id) ? 'Save Changes' : 'Create Country' }}
                 </button>
             </div>

@@ -6,19 +6,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class District extends Model
 {
+    public $timestamps = false;
+
     protected $fillable = [
-        'city_id',
+        'province_id',
         'name',
-        'status'
     ];
 
-    public function city()
+    public function province()
     {
-        return $this->belongsTo(City::class);
+        return $this->belongsTo(Province::class, 'province_id');
     }
 
     public function communes()
     {
-        return $this->hasMany(Commune::class);
+        return $this->hasMany(Commune::class, 'district_id');
     }
 }

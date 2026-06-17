@@ -173,8 +173,8 @@
         border-left: none;
         transform: rotate(45deg) translate(-1px, -1px);
         position: absolute;
-        top: 1px;
-        left: 4px;
+        top: 4px;
+        left: 6px;
     }
     .login-check-wrap input[type="checkbox"]:focus-visible {
         outline: none;

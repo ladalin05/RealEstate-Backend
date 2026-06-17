@@ -15,33 +15,18 @@ class DistrictDataTable extends DataTable
             ->eloquent($query)
             ->addIndexColumn()
 
-            ->addColumn('city', function ($row) {
-                return $row->city->name ?? '';
-            })
-
-            ->addColumn('status', function ($row) {
-
-                $checked = $row->status ? 'checked' : '';
-
-                return '
-                <div class="form-check form-switch">
-                    <input type="checkbox"
-                        class="form-check-input enable_disable"
-                        data-id="'.$row->id.'"
-                        '.$checked.'>
-                </div>';
-            })
+            ->addColumn('province', fn($row) => $row->province->name ?? '')
 
             ->addColumn('action', fn($row) => view('location.districts.action', compact('row')))
 
-            ->rawColumns(['status','action']);
+            ->rawColumns(['action']);
     }
 
     public function query(District $model)
     {
         return $model->newQuery()
-            ->with('city')
-            ->select('districts.*');
+            ->with('province')
+            ->select('districts.id', 'districts.province_id', 'districts.name');
     }
 
     public function html()
@@ -58,14 +43,13 @@ class DistrictDataTable extends DataTable
                 Button::make('pdf'),
                 Button::make('print'),
                 Button::make('reset'),
-                Button::make('reload')
+                Button::make('reload'),
             ]);
     }
 
     protected function getColumns()
     {
         return [
-
             Column::computed('DT_RowIndex')
                 ->title('#')
                 ->searchable(false)
@@ -74,13 +58,8 @@ class DistrictDataTable extends DataTable
             Column::make('name')
                 ->title('District Name'),
 
-            Column::computed('city')
-                ->title('City'),
-
-            Column::make('status')
-                ->title('Status')
-                ->orderable(false)
-                ->searchable(false),
+            Column::computed('province')
+                ->title('Province'),
 
             Column::computed('action')
                 ->title('Action')

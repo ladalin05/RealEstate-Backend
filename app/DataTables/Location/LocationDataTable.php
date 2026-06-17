@@ -2,45 +2,50 @@
 
 namespace App\DataTables;
 
-use App\Models\Location\Location;
+use App\Models\Location\PropertyLocation;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Services\DataTable;
 
-class LocationDataTable extends DataTable
+class PropertyLocationDataTable extends DataTable
 {
     public function dataTable($query)
     {
         return datatables()
             ->eloquent($query)
             ->addIndexColumn()
-            ->addColumn('status', function ($row) {
-                $checked = $row->status ? 'checked' : '';
-                return '
-                <div class="form-check form-switch">
-                    <input type="checkbox"
-                        class="form-check-input enable_disable"
-                        data-id="'.$row->id.'"
-                        '.$checked.'>
-                </div>';
+
+            ->addColumn('property', fn($row) => $row->property->title ?? '')
+            ->addColumn('country',  fn($row) => $row->country->name  ?? '')
+            ->addColumn('province', fn($row) => $row->province->name ?? '')
+            ->addColumn('district', fn($row) => $row->district->name ?? '')
+            ->addColumn('commune',  fn($row) => $row->commune->name  ?? '')
+
+            ->addColumn('coordinates', function ($row) {
+                if ($row->latitude && $row->longitude) {
+                    return $row->latitude . ', ' . $row->longitude;
+                }
+                return '<span class="text-muted">—</span>';
             })
-            ->addColumn('action', fn($row) => view('location.action', compact('row')))
-            ->rawColumns(['status','action']);
+
+            ->addColumn('action', fn($row) => view('property-location.action', compact('row')))
+
+            ->rawColumns(['coordinates', 'action']);
     }
 
-    public function query(Location $model)
+    public function query(PropertyLocation $model)
     {
-        return $model->newQuery()->select('locations.*');
+        return $model->newQuery()
+            ->with(['property', 'country', 'province', 'district', 'commune'])
+            ->select('property_locations.*');
     }
-
 
     public function html()
     {
         return $this->builder()
-            ->setTableId('type-table')
+            ->setTableId('property-location-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
-            //->dom('Bfrtip')
             ->orderBy(1)
             ->selectStyleSingle()
             ->buttons([
@@ -49,7 +54,7 @@ class LocationDataTable extends DataTable
                 Button::make('pdf'),
                 Button::make('print'),
                 Button::make('reset'),
-                Button::make('reload')
+                Button::make('reload'),
             ]);
     }
 
@@ -60,8 +65,30 @@ class LocationDataTable extends DataTable
                 ->title('#')
                 ->searchable(false)
                 ->orderable(false),
-            Column::make('name')->title('Location Name'),
-            Column::make('status')->title('Status')->orderable(false)->searchable(false),
+
+            Column::computed('property')
+                ->title('Property'),
+
+            Column::computed('country')
+                ->title('Country'),
+
+            Column::computed('province')
+                ->title('Province'),
+
+            Column::computed('district')
+                ->title('District'),
+
+            Column::computed('commune')
+                ->title('Commune'),
+
+            Column::make('address')
+                ->title('Address'),
+
+            Column::computed('coordinates')
+                ->title('Coordinates')
+                ->orderable(false)
+                ->searchable(false),
+
             Column::computed('action')
                 ->title('Action')
                 ->orderable(false)
@@ -72,6 +99,6 @@ class LocationDataTable extends DataTable
 
     protected function filename(): string
     {
-        return 'Locations_' . date('YmdHis');
+        return 'PropertyLocations_' . date('YmdHis');
     }
 }

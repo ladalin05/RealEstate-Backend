@@ -1,0 +1,24 @@
+<?php
+
+namespace App\Http\Requests\Property;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class StorePropertyTypeRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true; // adjust if you're using policies/gates
+    }
+
+    public function rules(): array
+    {
+        return [
+            'name_en' => ['required', 'string', 'max:255'],
+            'name_kh' => ['nullable', 'string', 'max:255'],
+            'slug'    => ['required', 'string', 'max:255', 'alpha_dash', 'unique:property_types,slug'],
+            'image'   => ['nullable', 'string', 'url', 'max:2048'],
+            'status'  => ['nullable', 'boolean'],
+        ];
+    }
+}

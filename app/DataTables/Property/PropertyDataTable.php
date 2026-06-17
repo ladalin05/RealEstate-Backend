@@ -3,7 +3,6 @@
 namespace App\DataTables\Property;
 
 use App\Models\Property\Property;
-use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Services\DataTable;
@@ -17,35 +16,59 @@ class PropertyDataTable extends DataTable
             ->addIndexColumn()
 
             ->editColumn('image', function ($row) {
-                if ($row->main_image && Storage::exists($row->main_image)) {
-                    return '<img src="'.asset('storage/'.$row->main_image).'" 
-                                width="60" height="60" 
-                                style="object-fit:cover;border-radius:6px;">';
-                }
-                return '<span class="badge bg-light text-dark">No Image</span>';
+                $src = $row->main_image
+                    ? rtrim(env('MINIO_ENDPOINT'), '/') . '/' . env('MINIO_BUCKET') . '/' . $row->main_image
+                    : null;
+
+                return $src
+                    ? '<img src="' . $src . '" width="60" height="60" style="object-fit:cover;border-radius:6px;">'
+                    : '<span class="badge bg-light text-dark">No Image</span>';
             })
 
             ->addColumn('type_name', function ($row) {
                 return $row->type_name ?? '-';
             })
 
-            ->addColumn('city_name', function ($row) {
-                return $row->city_name ?? '-';
+            ->addColumn('location', function ($row) {
+                $parts = array_filter([
+                    $row->commune_name ?? null,
+                    $row->district_name ?? null,
+                    $row->province_name ?? null,
+                ]);
+                return $parts ? implode(', ', $parts) : '-';
+            })
+
+            ->editColumn('purpose', function ($row) {
+                $map = [
+                    'sale'      => ['label' => 'Sale',      'class' => 'bg-primary'],
+                    'rent'      => ['label' => 'Rent',      'class' => 'bg-info text-dark'],
+                    'sale_rent' => ['label' => 'Sale/Rent', 'class' => 'bg-warning text-dark'],
+                ];
+                $p = $map[$row->purpose] ?? ['label' => ucfirst($row->purpose), 'class' => 'bg-secondary'];
+                return '<span class="badge ' . $p['class'] . '">' . $p['label'] . '</span>';
             })
 
             ->editColumn('price', function ($row) {
-                return $row->price ? '$' . number_format($row->price) : '-';
+                if ($row->price_label) {
+                    return $row->price_label;
+                }
+                if ($row->price) {
+                    $symbol = $row->currency === 'KHR' ? '៛' : '$';
+                    return $symbol . number_format($row->price);
+                }
+                return '-';
             })
 
             ->editColumn('status', function ($row) {
-                $checked = $row->status ? 'checked' : '';
-                return '
-                <div class="form-check form-switch">
-                    <input type="checkbox"
-                        class="form-check-input enable_disable"
-                        data-id="'.$row->id.'"
-                        '.$checked.'>
-                </div>';
+                $map = [
+                    'active'   => 'bg-success',
+                    'inactive' => 'bg-secondary',
+                    'draft'    => 'bg-warning text-dark',
+                    'sold'     => 'bg-danger',
+                    'rented'   => 'bg-info text-dark',
+                ];
+                $class = $map[$row->status] ?? 'bg-secondary';
+                return '<span class="badge ' . $class . '">' . ucfirst($row->status) . '</span>';
             })
 
             ->editColumn('featured', function ($row) {
@@ -54,24 +77,32 @@ class PropertyDataTable extends DataTable
                     : '<span class="badge bg-secondary">No</span>';
             })
 
+            ->editColumn('verified', function ($row) {
+                return $row->verified == 1
+                    ? '<span class="badge bg-success"><i class="bi bi-patch-check"></i> Verified</span>'
+                    : '<span class="badge bg-light text-dark">Unverified</span>';
+            })
+
             ->addColumn('action', fn($row) => view('property.properties.action', compact('row')))
 
-            ->rawColumns(['image','status','featured','action']);
+            ->rawColumns(['image', 'purpose', 'status', 'featured', 'verified', 'action']);
     }
 
     public function query(Property $model)
     {
-        $model = $model->newQuery()
-                        ->join('property_type', 'property_type.id', '=', 'properties.type_id')
-                        ->leftJoin('property_locations', 'property_locations.property_id', '=', 'properties.id')
-                        ->leftJoin('cities', 'property_locations.country_id', '=', 'cities.id')
-                        ->select(
-                            'properties.*',
-                            'cities.name as city_name',
-                            'property_type.type_name as type_name'
-                        );
-
-        return $model;
+        return $model->newQuery()
+            ->join('property_types', 'property_types.id', '=', 'properties.type_id')
+            ->leftJoin('property_locations', 'property_locations.property_id', '=', 'properties.id')
+            ->leftJoin('provinces', 'provinces.id', '=', 'property_locations.province_id')
+            ->leftJoin('districts', 'districts.id', '=', 'property_locations.district_id')
+            ->leftJoin('communes', 'communes.id', '=', 'property_locations.commune_id')
+            ->select(
+                'properties.*',
+                'property_types.name_en as type_name',
+                'provinces.name as province_name',
+                'districts.name as district_name',
+                'communes.name as commune_name'
+            );
     }
 
     public function html()
@@ -88,43 +119,63 @@ class PropertyDataTable extends DataTable
                 Button::make('pdf'),
                 Button::make('print'),
                 Button::make('reset'),
-                Button::make('reload')
+                Button::make('reload'),
             ]);
     }
 
     protected function getColumns()
     {
         return [
-
             Column::computed('DT_RowIndex')
                 ->title('#')
                 ->searchable(false)
-                ->orderable(false),
+                ->orderable(false)
+                ->width(40),
 
             Column::computed('image')
                 ->title('Image')
                 ->searchable(false)
+                ->orderable(false)
+                ->width(80),
+
+            Column::make('title')
+                ->title('Title'),
+
+            Column::make('type_name')
+                ->title('Type')
+                ->searchable(false)
                 ->orderable(false),
 
-            Column::make('title')->title('Title'),
+            Column::computed('location')
+                ->title('Location')
+                ->searchable(false)
+                ->orderable(false),
 
-            Column::make('type_name')->title('Type'),
+            Column::make('purpose')
+                ->title('Purpose')
+                ->searchable(false)
+                ->orderable(false),
 
-            Column::make('city_name')->title('Location'),
-
-            Column::make('purpose')->title('Purpose'),
-
-            Column::make('price')->title('Price'),
+            Column::make('price')
+                ->title('Price'),
 
             Column::computed('featured')
                 ->title('Featured')
                 ->searchable(false)
-                ->orderable(false),
+                ->orderable(false)
+                ->width(80),
+
+            Column::computed('verified')
+                ->title('Verified')
+                ->searchable(false)
+                ->orderable(false)
+                ->width(90),
 
             Column::computed('status')
                 ->title('Status')
                 ->searchable(false)
-                ->orderable(false),
+                ->orderable(false)
+                ->width(90),
 
             Column::computed('action')
                 ->title('Action')

@@ -15,37 +15,24 @@ class CommuneDataTable extends DataTable
             ->eloquent($query)
             ->addIndexColumn()
 
-            ->addColumn('district', function ($row) {
-                return $row->district->name ?? '';
-            })
-
-            ->addColumn('city', function ($row) {
-                return $row->district->city->name ?? '';
-            })
-
-            ->addColumn('status', function ($row) {
-
-                $checked = $row->status ? 'checked' : '';
-
-                return '
-                <div class="form-check form-switch">
-                    <input type="checkbox"
-                        class="form-check-input enable_disable"
-                        data-id="'.$row->id.'"
-                        '.$checked.'>
-                </div>';
-            })
+            ->addColumn('province', fn($row) => $row->province->name ?? '')
+            ->addColumn('district', fn($row) => $row->district->name ?? '')
 
             ->addColumn('action', fn($row) => view('location.communes.action', compact('row')))
 
-            ->rawColumns(['status','action']);
+            ->rawColumns(['action']);
     }
 
     public function query(Commune $model)
     {
         return $model->newQuery()
-            ->with(['district.city'])
-            ->select('communes.*');
+            ->with(['province', 'district'])
+            ->select(
+                'communes.id',
+                'communes.district_id',
+                'communes.province_id',
+                'communes.name',
+            );
     }
 
     public function html()
@@ -62,14 +49,13 @@ class CommuneDataTable extends DataTable
                 Button::make('pdf'),
                 Button::make('print'),
                 Button::make('reset'),
-                Button::make('reload')
+                Button::make('reload'),
             ]);
     }
 
     protected function getColumns()
     {
         return [
-
             Column::computed('DT_RowIndex')
                 ->title('#')
                 ->searchable(false)
@@ -78,16 +64,11 @@ class CommuneDataTable extends DataTable
             Column::make('name')
                 ->title('Commune Name'),
 
+            Column::computed('province')
+                ->title('Province'),
+
             Column::computed('district')
                 ->title('District'),
-
-            Column::computed('city')
-                ->title('City'),
-
-            Column::make('status')
-                ->title('Status')
-                ->orderable(false)
-                ->searchable(false),
 
             Column::computed('action')
                 ->title('Action')

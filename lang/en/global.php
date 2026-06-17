@@ -270,6 +270,8 @@ return [
     'country' => 'Country',
     'select_country' => 'Select Country',
     'city' => 'City',
+    'province' => 'Province',
+    'select_province' => 'Select Province',
     'select_city' => 'Select City',
     'district' => 'District',
     'select_district' => 'Select District',
@@ -286,5 +288,9 @@ return [
     'create_role' => 'Create Role',
     'post_category_management' => 'Post Category Management',
     'post_management' => 'Post Management',
-
+    'remember_me' => 'Remember Me',
+    'hero_section_management' => 'Hero Section Management',
+    'title_main' => 'Title Main',
+    'title_highlight' => 'Title Highlight',
+    'subtitle' => 'Subtitle',
 ];

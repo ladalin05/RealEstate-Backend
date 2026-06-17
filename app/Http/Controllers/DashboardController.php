@@ -31,22 +31,16 @@ class DashboardController extends Controller
         // Revenue
         $startDay   = date('Y-m-d 00:00:00');
         $endDay     = date('Y-m-d 23:59:59');
-        $dailyAmount = Transactions::whereBetween('date', [strtotime($startDay), strtotime($endDay)])
-            ->sum('payment_amount');
 
         $startWeek  = date('D') !== 'Mon' ? date('Y-m-d', strtotime('last Monday')) : date('Y-m-d');
         $endWeek    = date('D') !== 'Sat' ? date('Y-m-d', strtotime('next Saturday')) : date('Y-m-d');
-        $weeklyAmount = Transactions::whereBetween('date', [strtotime($startWeek), strtotime($endWeek)])
-            ->sum('payment_amount');
 
         $startMonth = date('Y-m-01');
         $endMonth   = date('Y-m-t');
-        $monthlyAmount = Transactions::whereBetween('date', [strtotime($startMonth), strtotime($endMonth)])->sum('payment_amount');
 
         $currentYear   = date('Y');
         $startYear     = strtotime("January 1st, {$currentYear}");
         $endYear       = strtotime("December 31st, {$currentYear}");
-        $yearlyAmount  = Transactions::whereBetween('date', [$startYear, $endYear])->sum('payment_amount');
 
         // Latest Properties
         $latestProperty = Property::where('status', 1)->orderBy('id', 'DESC')->take(10)->get();
@@ -56,17 +50,14 @@ class DashboardController extends Controller
         $trendingEnd   = strtotime('today');
 
         $trendingNow = PropertyViews::join('properties', 'properties.id', '=', 'property_views.property_id')
-                        ->where('property_views.date', '>', $trendingStart)
-                        ->where('property_views.date', '<', $trendingEnd)
+                        ->where('property_views.viewed_date', '>', $trendingStart)
+                        ->where('property_views.viewed_date', '<', $trendingEnd)
                         ->select('property_views.property_id')
-                        ->selectRaw('SUM(property_views.views) as total_views')
+                        ->selectRaw('SUM(property_views.view_count) as total_views')
                         ->groupBy('property_views.property_id')
                         ->orderBy('total_views', 'DESC')
                         ->limit(10)
                         ->get();
-
-        // Latest Transactions
-        $latestTransactions = Transactions::orderBy('id', 'DESC')->take(10)->get();
 
         // Latest Reports
         $reportLists = Reports::orderBy('id', 'DESC')->take(10)->get();
@@ -83,12 +74,7 @@ class DashboardController extends Controller
                 'reportCount',
                 'latestProperty',
                 'trendingNow',
-                'reportLists',
-                'dailyAmount',
-                'weeklyAmount',
-                'monthlyAmount',
-                'yearlyAmount',
-                'latestTransactions'
+                'reportLists'
             )
         );
     }

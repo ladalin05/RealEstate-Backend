@@ -6,13 +6,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class Country extends Model
 {
+    public $timestamps = false;
+
     protected $fillable = [
         'name',
-        'status'
+        'code',
+        'status',
     ];
 
-    public function cities()
+    protected $casts = [
+        'status' => 'boolean',
+    ];
+
+    public function provinces()
     {
-        return $this->hasMany(City::class);
+        return $this->hasMany(Province::class, 'country_id');
     }
 }

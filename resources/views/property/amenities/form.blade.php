@@ -10,7 +10,7 @@
             </label>
             <input type="text" name="name_en" id="name_en"
                 class="form-control form-control-modern"
-                value="{{ $form->name_en ?? '' }}"
+                value="{{ old('name_en', $form->name_en ?? '') }}"
                 placeholder="e.g. WiFi, Parking" required>
         </div>
 
@@ -21,30 +21,26 @@
             </label>
             <input type="text" name="name_kh" id="name_kh"
                 class="form-control form-control-modern"
-                value="{{ $form->name_kh ?? '' }}"
+                value="{{ old('name_kh', $form->name_kh ?? '') }}"
                 placeholder="ឧ. វ៉ាយហ្វាយ">
         </div>
 
         {{-- Icon Field --}}
-        
         <div class="mb-3">
-            <label for="icon" class="form-label">
-                Icon (FontAwesome)
-            </label>
+            <label class="form-label">Icon (FontAwesome)</label>
 
             <div class="form-control mb-2 p-0 d-flex">
                 <span class="input-group-text mx-2">
-                    <i id="icon-preview" class="{{ $form->icon ?? 'fa fa-icons' }}"></i>
+                    <i id="icon-preview" class="{{ old('icon', $form->icon ?? 'fas fa-icons') }}"></i>
                 </span>
                 <div class="flex-grow-1">
-                    <button type="button" 
-                            class="btn btn-outline-secondary w-100 d-flex justify-content-between align-items-center py-2 px-3" 
-                            role="iconpicker" 
-                            data-iconset="fontawesome6" 
-                            data-icon="{{ old('icon', $form->icon ?? 'fas fa-icons') }}" 
+                    <button type="button"
+                            class="btn btn-outline-secondary w-100 d-flex justify-content-between align-items-center py-2 px-3"
+                            role="iconpicker"
+                            data-iconset="fontawesome6"
+                            data-icon="{{ old('icon', $form->icon ?? 'fas fa-icons') }}"
                             data-search="true"
-                            data-search-text="Search icons..."
-                            name="icon">
+                            data-search-text="Search icons...">
                         <span class="text-muted">Click to browse...</span>
                     </button>
                     <div class="mt-2">
@@ -54,6 +50,10 @@
                     </div>
                 </div>
             </div>
+
+            {{-- Hidden input carries the actual icon class value on submit --}}
+            <input type="hidden" name="icon" id="icon"
+                   value="{{ old('icon', $form->icon ?? '') }}">
         </div>
 
         {{-- Status --}}
@@ -62,10 +62,10 @@
                 STATUS
             </label>
             <select name="status" id="status" class="form-select custom-select">
-                <option value="1" {{ isset($form->status) && $form->status == 1 ? 'selected' : '' }}>
+                <option value="1" {{ (old('status', $form->status ?? 1) == 1) ? 'selected' : '' }}>
                     🟢 Active
                 </option>
-                <option value="0" {{ isset($form->status) && $form->status == 0 ? 'selected' : '' }}>
+                <option value="0" {{ (old('status', $form->status ?? 1) == 0) ? 'selected' : '' }}>
                     ⚪ Inactive
                 </option>
             </select>
@@ -76,7 +76,6 @@
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                 Close
             </button>
-
             <button type="submit" class="btn btn-primary btn-save text-white shadow-sm">
                 <i class="fa-solid fa-floppy-disk me-2"></i>
                 <span>Save Changes</span>
@@ -88,29 +87,41 @@
 
 <script src="{{ asset('assets/extend/bootstrap-iconpicker/dist/js/bootstrap-iconpicker.bundle.min.js') }}"></script>
 <script>
-    $(document).ready(function () {
+$(document).ready(function () {
 
-        function initIconPicker() {
-            $('#icon-picker').iconpicker({
-                iconset: 'fontawesome6',
-                search: true,
-                placement: 'bottom',
-                align: 'left'
-            });
+    function initIconPicker() {
+        const $btn = $('[role="iconpicker"]');
 
-            $('#icon-picker').on('change', function (e) {
-                $('#icon').val(e.icon);
-                $('#icon-preview').attr('class', e.icon);
-            });
+        // Destroy previous instance to avoid duplicate bindings on re-init
+        if ($btn.data('iconpicker')) {
+            $btn.iconpicker('destroy');
         }
 
-        // Run normally
-        initIconPicker();
-
-        // 🔥 Run again after AJAX load
-        $(document).on('shown.bs.modal', function () {
-            initIconPicker();
+        $btn.iconpicker({
+            iconset:   'fontawesome6',
+            search:    true,
+            placement: 'bottom',
+            align:     'left'
         });
 
+        $btn.off('change.amenity').on('change.amenity', function (e) {
+            $('#icon').val(e.icon);
+            $('#icon-preview').attr('class', e.icon);
+        });
+    }
+
+    // Run on first load
+    initIconPicker();
+
+    // Re-init each time the modal is shown (AJAX reload)
+    $(document).on('shown.bs.modal', function () {
+        initIconPicker();
     });
+
+    // Wire up global ajax-form handler if available
+    if (typeof handleFormSubmit === 'function') {
+        handleFormSubmit('#amenity-form');
+    }
+
+});
 </script>

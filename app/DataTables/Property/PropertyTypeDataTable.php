@@ -14,14 +14,18 @@ class PropertyTypeDataTable extends DataTable
         return datatables()
             ->eloquent($query)
             ->addIndexColumn()
-            ->addColumn('image', function ($row) {
-                if ($row->type_image) {
-                    return '<img src="'.asset('storage/'.$row->type_image).'"
-                            width="50" height="50"
-                            style="object-fit:cover;border-radius:6px;">';
-                }
-                return '<span class="badge bg-light text-dark">No Image</span>';
+            ->editColumn('image', function ($row) {
+                $src = $row->image
+                    ? rtrim(env('MINIO_ENDPOINT'), '/') . '/' . env('MINIO_BUCKET') . '/' . $row->image
+                    : null;
+
+                return $src
+                    ? '<img src="' . $src . '" width="60" height="60" style="object-fit:cover;border-radius:6px;">'
+                    : '<span class="badge bg-light text-dark">No Image</span>';
             })
+            ->addColumn('name_en', fn($row) => $row->name_en)
+            ->addColumn('name_kh', fn($row) => $row->name_kh ?? '-')
+            ->addColumn('slug', fn($row) => $row->slug)
             ->addColumn('status', function ($row) {
                 $checked = $row->status ? 'checked' : '';
                 return '
@@ -33,12 +37,12 @@ class PropertyTypeDataTable extends DataTable
                 </div>';
             })
             ->addColumn('action', fn($row) => view('property.property-type.action', compact('row')))
-            ->rawColumns(['image','status','action']);
+            ->rawColumns(['image', 'status', 'action']);
     }
 
     public function query(PropertyType $model)
     {
-        return $model->newQuery()->select('property_type.*');
+        return $model->newQuery()->select('property_types.*');
     }
 
     public function html()
@@ -69,7 +73,9 @@ class PropertyTypeDataTable extends DataTable
                 ->orderable(false),
 
             Column::make('image')->title('Image')->orderable(false)->searchable(false),
-            Column::make('type_name')->title('Type Name'),
+            Column::make('name_en')->title('Name (EN)'),
+            Column::make('name_kh')->title('Name (KH)'),
+            Column::make('slug')->title('Slug'),
             Column::make('status')->title('Status')->orderable(false)->searchable(false),
             Column::computed('action')
                 ->title('Action')

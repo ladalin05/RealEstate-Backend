@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Location\City;
+use App\Models\Location\Province;
 use App\Models\Location\Commune;
 use App\Models\Location\Country;
 use App\Models\Location\District;
@@ -19,12 +19,12 @@ class FilterController extends Controller
         );
     }
 
-    public function getCity(Request $request)
+    public function getProvince(Request $request)
     {
         $country_id = $request->country_id;
 
         return response()->json(
-            City::when($country_id, function ($q) use ($country_id) {
+            Province::when($country_id, function ($q) use ($country_id) {
                     $q->where('country_id', $country_id);
                 })
                 ->select('id', 'name', 'country_id')
@@ -34,13 +34,13 @@ class FilterController extends Controller
 
     public function getDistrict(Request $request)
     {
-        $city_id = $request->city_id;
+        $province_id = $request->province_id;
 
         return response()->json(
-            District::when($city_id, function ($q) use ($city_id) {
-                    $q->where('city_id', $city_id);
+            District::when($province_id, function ($q) use ($province_id) {
+                    $q->where('province_id', $province_id);
                 })
-                ->select('id', 'name', 'city_id')
+                ->select('id', 'name', 'province_id')
                 ->get()
         );
     }

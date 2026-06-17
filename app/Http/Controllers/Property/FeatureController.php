@@ -10,11 +10,23 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Session;
+use App\Http\Requests\Property\StoreFeatureRequest;
+use App\Http\Requests\Property\UpdateFeatureRequest;
+use App\Services\Base\BaseService;
 use App\DataTables\Property\FeatureDataTable;
 use App\Models\Property\Feature;
 
 class FeatureController extends Controller
 {
+    private BaseService $service;
+
+    public function __construct()
+    {
+        $this->service = new class extends BaseService {
+            protected function getQuery() { return Feature::query(); }
+        };
+    }
+
     public function index(FeatureDataTable $dataTable)
     {
         return $dataTable->render('property.features.index');
@@ -24,51 +36,28 @@ class FeatureController extends Controller
     public function create(Request $request)
     {
         try {
-            // Show form (GET)
-            if ($request->isMethod('get')) {
-                $title  = __('global.add_new');
-                $form   = new Feature();
-                $action = route('property.features.add');
-
-                return response()->json([
-                    'title'  => $title,
-                    'status' => 'success',
-                    'html'   => view('property.features.form', compact('title', 'form', 'action'))->render(),
-                    'modal'  => 'action-modal',
-                ]);
-            }
-
-            // Store data (POST)
             if ($request->isMethod('post')) {
-                $request->validate([
-                    'name_en' => 'required|string|max:255',
-                    'name_kh' => 'nullable|string|max:255',
-                ]);
+                $formRequest = new StoreFeatureRequest();
+                $this->service->create($formRequest->validated());
 
-                Feature::create([
-                    'name_en' => addslashes($request->name_en),
-                    'name_kh' => addslashes($request->name_kh),
-                    'icon'    => $request->icon,
-                    'status'  => $request->status ?? 1,
-                ]);
-
-                return response()->json([
-                    'status'   => 'success',
-                    'message'  => 'Feature created successfully',
-                    'redirect' => route('property.features.index'),
-                ]);
+                return $this->redirectResponse(
+                    message: __('global.created_feature_successfully'),
+                    route: route('property.features.index'),
+                );
             }
 
-            return response()->json([
-                'status'  => 'error',
-                'message' => __('messages.405'),
-            ]);
+            return $this->modalResponse(
+                title:  __('global.add_new'),
+                view:   'property.features.form',
+                data:   ['form' => new Feature()],
+                action: route('property.features.add'),
+            );
 
         } catch (\Throwable $e) {
-            return response()->json([
-                'status'  => 'error',
-                'message' => $e->getMessage(),
-            ], 500);
+            return $this->errorResponse(
+                message: $e->getMessage(),
+                code: 500,
+            );
         }
     }
 
@@ -76,53 +65,30 @@ class FeatureController extends Controller
     public function update(Request $request)
     {
         try {
-            // Show edit form (GET)
-            if ($request->isMethod('get')) {
-                $title  = __('global.edit');
-                $form   = Feature::findOrFail($request->id);
-                $action = route('property.features.edit', ['id' => $request->id]);
-
-                return response()->json([
-                    'title'  => $title,
-                    'status' => 'success',
-                    'html'   => view('property.features.form', compact('title', 'form', 'action'))->render(),
-                    'modal'  => 'action-modal',
-                ]);
-            }
-
-            // Update data (POST)
+            $form   = Feature::findOrFail($request->id);
+            
             if ($request->isMethod('post')) {
-                $request->validate([
-                    'name_en' => 'required|string|max:255',
-                    'name_kh' => 'nullable|string|max:255',
-                    'icon'    => 'nullable|string|max:255',
-                    'status'  => 'required|in:0,1',
-                ]);
+                $formRequest = new UpdateFeatureRequest();
+                $this->service->update($formRequest->validated(), $form->id);
 
-                $feature = Feature::findOrFail($request->id);
-                $feature->name_en = addslashes($request->name_en);
-                $feature->name_kh = addslashes($request->name_kh);
-                $feature->icon    = $request->icon;
-                $feature->status  = $request->status ?? 1;
-                $feature->save();
-
-                return response()->json([
-                    'status'   => 'success',
-                    'message'  => 'Feature updated successfully',
-                    'redirect' => route('property.features.index'),
-                ]);
+                return $this->redirectResponse(
+                    message: __('global.updated_feature_successfully'),
+                    route: route('property.features.index'),
+                );
             }
 
-            return response()->json([
-                'status'  => 'error',
-                'message' => __('messages.405'),
-            ]);
+            return $this->modalResponse(
+                title:  __('global.edit'),
+                view:   'property.features.form',
+                data:   ['form' => $form],
+                action: route('property.features.edit', ['id' => $request->id]),
+            );
 
         } catch (\Throwable $e) {
-            return response()->json([
-                'status'  => 'error',
-                'message' => $e->getMessage(),
-            ], 500);
+            return $this->errorResponse(
+                message: $e->getMessage(),
+                code: 500,
+            );
         }
     }
 
@@ -133,17 +99,16 @@ class FeatureController extends Controller
             $feature = Feature::findOrFail($request->id);
             $feature->delete();
 
-            return response()->json([
-                'status'   => 'success',
-                'message'  => 'Feature deleted successfully',
-                'redirect' => route('property.features.index'),
-            ]);
+            return $this->redirectResponse(
+                message: __('global.deleted_feature_successfully'),
+                route: route('property.features.index'),
+            );
 
         } catch (\Throwable $e) {
-            return response()->json([
-                'status'  => 'error',
-                'message' => $e->getMessage(),
-            ], 500);
+            return $this->errorResponse(
+                message: $e->getMessage(),
+                code: 500,
+            );
         }
     }
 }

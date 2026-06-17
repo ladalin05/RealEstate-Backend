@@ -10,7 +10,7 @@ use App\Http\Controllers\FilterController;
 
 Route::middleware(['auth', 'abilities'])->group(function () {
     Route::get('/get-country', [FilterController::class, 'getCountry']);
-    Route::post('/get-city', [FilterController::class, 'getCity']);
+    Route::post('/get-province', [FilterController::class, 'getProvince']);
     Route::post('/get-district', [FilterController::class, 'getDistrict']);
     Route::post('/get-commune', [FilterController::class, 'getCommune']);
 });

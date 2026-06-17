@@ -5,10 +5,22 @@ namespace App\Http\Controllers\Location;
 use Illuminate\Http\Request;
 use App\Models\Location\Country;
 use App\Http\Controllers\Controller;
+use App\Services\BaseService;
+use App\Http\Requests\Location\StoreCountryRequest;
+use App\Http\Requests\Location\UpdateCountryRequest;
 use App\DataTables\Location\CountryDataTable;
 
 class CountryController extends Controller
 {
+
+    private BaseService $service;
+
+    public function __construct()
+    {
+        $this->service = new class extends BaseService {
+            protected function getQuery() { return Country::query(); }
+        };
+    }
 
     public function index(CountryDataTable $dataTable)
     {
@@ -19,43 +31,25 @@ class CountryController extends Controller
     {
         try {
 
-            if ($request->isMethod('get')) {
-                $title = __('global.add_new');
-                $form = new Country();
-                $action = route('location.countries.add');
-                return response()->json([
-                    'title' => $title,
-                    'status' => 'success',
-                    'message' => 'success',
-                    'html' => view('location.countries.form', compact('title', 'form', 'action'))->render(),
-                    'modal' => 'action-modal',
-                ]);
-            }
-
             if ($request->isMethod('post')) {
 
-                $request->validate([
-                    'name' => 'required'
-                ]);
+                $formRequest = new StoreCountryRequest();
+                $this->service->create($formRequest->validated());
 
-                Country::create([
-                    'name' => $request->name,
-                    'status' => $request->status,
-                    'status' => 1
-                ]);
+                return $this->redirectResponse(
+                    message: __('global.create_country_successfully'),
+                    route: route('location.countries.index'),
+                );
 
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'Country created successfully',
-                    'redirect' => route('location.countries.index'),
-                ]);
             }
-            
-            return response()->json([
-                'status' => 'error',
-                'message' => __('messages.405'),
-            ]);
 
+            return $this->modalResponse(
+                title:  __('global.add_new'),
+                view:   'location.countries.form',
+                data:   ['form' => new Country()],
+                action: route('location.countries.add'),
+            );
+            
         } catch (\Exception $e) {
 
             return response()->json([
@@ -70,51 +64,31 @@ class CountryController extends Controller
     {
         try {
 
-            if ($request->isMethod('get')) {
-
-                $title = __('global.edit');
-                $form = Country::findOrFail($request->id);
-                $action = route('location.countries.edit', ['id' => $request->id]);
-                return response()->json([
-                    'title' => $title,
-                    'status' => 'success',
-                    'message' => 'success',
-                    'html' => view('location.countries.form', compact('title', 'form', 'action'))->render(),
-                    'modal' => 'action-modal',
-                ]);
-            }
+            $country = Country::findOrFail($request->id);
 
             if ($request->isMethod('post')) {
+                $formRequest = new UpdateCountryRequest();
+                $this->service->update($formRequest->validated(), $request->id);
 
-                $request->validate([
-                    'name' => 'required'
-                ]);
-
-                $country = Country::findOrFail($request->id);
-
-                $country->update([
-                    'name' => $request->name,
-                    'status' => $request->status
-                ]);
-
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'Country updated successfully',
-                    'redirect' => route('location.countries.index'),
-                ]);
+                return $this->redirectResponse(
+                    message: __('global.update_country_successfully'),
+                    route: route('location.countries.index'),
+                );
             }
-            
-            return response()->json([
-                'status' => 'error',
-                'message' => __('messages.405'),
-            ]);
+
+            return $this->modalResponse(
+                title:  __('global.edit'),
+                view:   'location.countries.form',
+                data:   ['form' => $country],
+                action: route('location.countries.edit', ['id' => $request->id]),
+            );
 
         } catch (\Exception $e) {
 
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage()
-            ], 500);
+            return $this->jsonResponse(
+                status: 'error',
+                message: $e->getMessage()
+            );
 
         }
     }

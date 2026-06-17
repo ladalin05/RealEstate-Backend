@@ -45,7 +45,7 @@
 
             <h5 class="font-weight-bold mb-3 px-2">Financial Summary</h5>
             <div class="row mb-5">
-                @php
+                {{-- @php
                     $revenues = [
                         ['amount' => $dailyAmount, 'label' => 'daily_revenue', 'gradient' => 'grad-primary'],
                         ['amount' => $weeklyAmount, 'label' => 'weekly_revenue', 'gradient' => 'grad-info'],
@@ -53,9 +53,9 @@
                         ['amount' => $yearlyAmount, 'label' => 'yearly_revenue', 'gradient' => 'grad-success'],
                     ];
                     $currencySymbol = html_entity_decode(getCurrencySymbols(getcong('currency_code')));
-                @endphp
+                @endphp --}}
 
-                @foreach($revenues as $rev)
+                {{-- @foreach($revenues as $rev)
                 <div class="col-xl-3 col-md-6 mb-3">
                     <div class="card border-0 shadow-sm revenue-card {{ $rev['gradient'] }} text-white">
                         <div class="card-body p-4">
@@ -64,7 +64,7 @@
                         </div>
                     </div>
                 </div>
-                @endforeach
+                @endforeach --}}
             </div>
 
             <div class="row">
