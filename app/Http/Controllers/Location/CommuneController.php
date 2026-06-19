@@ -33,7 +33,7 @@ class CommuneController extends Controller
         try {
 
             if ($request->isMethod('post')) {
-                $formRequest = new StoreCommuneRequest();
+                $formRequest = app(StoreCommuneRequest::class);
                 $this->service->create($formRequest->validated());
 
                 return $this->redirectResponse(
@@ -66,7 +66,7 @@ class CommuneController extends Controller
             $commune = Commune::findOrFail($request->id);
             
             if ($request->isMethod('post')) {
-                $formRequest = new UpdateCommuneRequest();
+                $formRequest = app(UpdateCommuneRequest::class);
                 $this->service->update($formRequest->validated(), $request->id);
 
                 return $this->redirectResponse(

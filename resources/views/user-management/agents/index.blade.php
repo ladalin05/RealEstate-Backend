@@ -25,7 +25,7 @@
         </x-basic.datatables>
     </div>
 
-    <x-basic.modal id="action-modal" size="modal-xl">
+    <x-basic.modal id="action-modal" class="modal-4xl">
         <div id="action-form" novalidate>
         </div>
     </x-basic.modal>

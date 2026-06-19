@@ -18,8 +18,6 @@ abstract class Controller
     {
         $code = (is_int($code) && $code >= 100 && $code < 600) ? $code : 500;
 
-        Log::error($message);
-
         return response()->json([
             'status'  => 'error',
             'message' => $message,
@@ -46,4 +44,10 @@ abstract class Controller
             'redirect' => $route,
         ], $code);
     }
+
+    protected function viewResponse($view, $action, array $data = [])
+    {
+        return view($view, array_merge($data, compact('action')));
+    }
+    
 }

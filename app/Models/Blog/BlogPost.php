@@ -5,7 +5,7 @@ namespace App\Models\Blog;
 use App\Models\UserManagement\User;
 use Illuminate\Database\Eloquent\Model;
 
-class Post extends Model
+class BlogPost extends Model
 {
     protected $table = 'posts';
 

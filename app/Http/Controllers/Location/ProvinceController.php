@@ -33,7 +33,7 @@ class ProvinceController extends Controller
         try {
 
             if ($request->isMethod('post')) {
-                $formRequest = new StoreProvinceRequest();
+                $formRequest = app(StoreProvinceRequest::class);
                 $this->service->create($formRequest->validated());
 
                 return $this->redirectResponse(
@@ -66,7 +66,7 @@ class ProvinceController extends Controller
             $province = Province::findOrFail($request->id);
 
             if ($request->isMethod('post')) {
-                $formRequest = new UpdateProvinceRequest();
+                $formRequest = app(UpdateProvinceRequest::class);
                 $this->service->update($formRequest->validated(), $request->id);
 
                 return $this->redirectResponse(

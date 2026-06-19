@@ -1,28 +1,28 @@
 <?php
 
-namespace App\Http\Controllers\Property;
+namespace App\Http\Controllers\Blog;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Property\StorePropertyTypeRequest;
-use App\Http\Requests\Property\UpdatePropertyTypeRequest;
-use App\DataTables\Property\PropertyTypeDataTable;
-use App\Models\Property\PropertyType;
+use App\Http\Requests\Blog\StoreBlogCategoryRequest;
+use App\Http\Requests\Blog\UpdateBlogCategoryRequest;
+use App\DataTables\Blog\BlogCategoryDataTable;
+use App\Models\Blog\BlogCategory;
 use App\Services\BaseService;
 use Illuminate\Http\Request;
 
-class PropertyTypeController extends Controller
+class BlogCategoryController extends Controller
 {
     private BaseService $service;
     public function __construct()
     {
         $this->service = new class extends BaseService {
-            protected function getQuery() { return PropertyType::query(); }
+            protected function getQuery() { return BlogCategory::query(); }
         };
     }
 
-    public function index(PropertyTypeDataTable $dataTable)
+    public function index(BlogCategoryDataTable $dataTable)
     {
-        return $dataTable->render('property.property-type.index');
+        return $dataTable->render('blog.blog-category.index');
     }
 
     public function create(Request $request)
@@ -30,20 +30,20 @@ class PropertyTypeController extends Controller
         try {
 
             if ($request->isMethod('post')) {
-                $formRequest = app(StorePropertyTypeRequest::class);
+                $formRequest = app(StoreBlogCategoryRequest::class);
                 $this->service->create($formRequest->validated());
 
                 return $this->redirectResponse(
-                    message: __('global.create_type_successfully'),
-                    route: route('property.types.index'),
+                    message: __('global.create_category_successfully'),
+                    route: route('blog.categories.index'),
                 );
             }
 
             return $this->modalResponse(
                 title:  __('global.add_new'),
-                view:   'property.property-type.form',
-                data:   ['form' => new PropertyType()],
-                action: route('property.types.add'),
+                view:   'blog.blog-category.form',
+                data:   ['form' => new BlogCategory()],
+                action: route('blog.categories.add'),
             );
 
         } catch (\Throwable $e) {
@@ -57,23 +57,23 @@ class PropertyTypeController extends Controller
     public function update(Request $request)
     {
         try {
-            $type = PropertyType::findOrFail($request->id);
+            $category = BlogCategory::findOrFail($request->id);
 
             if ($request->isMethod('post')) {
-                $formRequest = app(UpdatePropertyTypeRequest::class);
-                $this->service->update($formRequest->validated(), $type->id);
+                $formRequest = app(UpdateBlogCategoryRequest::class);
+                $this->service->update($formRequest->validated(), $category->id);
 
                 return $this->redirectResponse(
-                    message: __('global.updated_type_successfully'),
-                    route: route('property.types.index'),
+                    message: __('global.updated_category_successfully'),
+                    route: route('blog.categories.index'),
                 );
             }
 
             return $this->modalResponse(
                 title: __('global.edit'),
-                view: 'property.property-type.form',
-                data: ['form' => $type],
-                action: route('property.types.edit', ['id' => $type->id]),
+                view: 'blog.blog-category.form',
+                data: ['form' => $category],
+                action: route('blog.categories.edit', ['id' => $category->id]),
             );
 
         } catch (\Throwable $e) {
@@ -87,12 +87,12 @@ class PropertyTypeController extends Controller
     public function delete(Request $request)
     {
         try {
-            $type = PropertyType::findOrFail($request->id);
-            $type->delete();
+            $category = BlogCategory::findOrFail($request->id);
+            $category->delete();
 
             return $this->redirectResponse(
-                message: __('global.deleted_type_successfully'),
-                route: route('property.types.index'),
+                message: __('global.deleted_category_successfully'),
+                route: route('blog.categories.index'),
             );
         } catch (\Throwable $e) {
             return $this->errorResponse(

@@ -20,4 +20,5 @@ class UpdateFeatureRequest extends FormRequest
             'status'  => ['boolean'],
         ];
     }
+
 }

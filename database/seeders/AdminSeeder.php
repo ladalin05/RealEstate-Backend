@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use App\Models\UserManagement\Role;
+use App\Models\Admin\Role;
 use App\Models\UserManagement\User;
 use App\Models\UserManagement\Page;
 use App\Helpers\GlobalHelper;

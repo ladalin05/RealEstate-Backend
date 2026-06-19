@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\Blog\PostCategoryController;
-use App\Http\Controllers\Blog\PostController;
+use App\Http\Controllers\Blog\BlogCategoryController;
+use App\Http\Controllers\Blog\BlogPostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\SettingsController;
@@ -24,6 +24,7 @@ use App\Http\Controllers\UserManagement\AgentController;
 use App\Http\Controllers\UserManagement\AgencyController;
 use App\Http\Controllers\Admin\CMSController;
 use App\Http\Controllers\Admin\UploadController;
+use App\Http\Controllers\UserManagement\InternalUserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -47,15 +48,25 @@ Route::middleware(['auth', 'abilities'])->group(function () {
         'prefix' => 'users-management',
         'as' => 'users-management.'
     ], function () {
+
+        Route::group([
+            'prefix' => 'internal-users',
+            'as' => 'internal-users.'
+        ], function () {
+            Route::get('/', [InternalUserController::class, 'index'])->name('index');
+            Route::match(['get', 'post'], '/add', [InternalUserController::class, 'create'])->name('add');
+            Route::match(['get', 'post'], '/edit', [InternalUserController::class, 'update'])->name('edit');
+            Route::delete('/delete', [InternalUserController::class, 'delete'])->name('delete');
+        });
+
         Route::group([
             'prefix' => 'users',
             'as' => 'users.'
         ], function () {
             Route::get('/', [UserController::class, 'index'])->name('index');
-            Route::get('/add', [UserController::class, 'add'])->name('add');
-            Route::get('/edit/{id}', [UserController::class, 'edit'])->name('edit');
-            Route::post('/save/{id?}', [UserController::class, 'save'])->name('save');
-            Route::delete('/delete/{id}', [UserController::class, 'delete'])->name('delete');
+            Route::match(['get', 'post'], '/add', [UserController::class, 'add'])->name('add');
+            Route::match(['get', 'post'], '/edit', [UserController::class, 'edit'])->name('edit');
+            Route::delete('/delete', [UserController::class, 'delete'])->name('delete');
 
         });
         
@@ -64,10 +75,9 @@ Route::middleware(['auth', 'abilities'])->group(function () {
             'as' => 'roles.'
         ], function () {
             Route::get('/', [RoleController::class, 'index'])->name('index');
-            Route::get('/add', [RoleController::class, 'add'])->name('add');
-            Route::get('/edit/{id}', [RoleController::class, 'edit'])->name('edit');
-            Route::post('/save/{id?}', [RoleController::class, 'save'])->name('save');
-            Route::delete('/delete/{id}', [RoleController::class, 'delete'])->name('delete');
+            Route::match(['get', 'post'], '/add', [RoleController::class, 'create'])->name('add');
+            Route::match(['get', 'post'], '/edit', [RoleController::class, 'update'])->name('edit');
+            Route::delete('/delete', [RoleController::class, 'delete'])->name('delete');
         });
         
         Route::group([
@@ -79,15 +89,15 @@ Route::middleware(['auth', 'abilities'])->group(function () {
             Route::match(['get', 'post'], '/edit', [AgentController::class, 'update'])->name('edit');
             Route::delete('/delete', [AgentController::class, 'delete'])->name('delete');
         });
-        
+
         Route::group([
-            'prefix' => 'agencies',
-            'as' => 'agencies.'
+            'prefix' => 'permissions',
+            'as' => 'permissions.'
         ], function () {
-            Route::get('/', [AgencyController::class, 'index'])->name('index');
-            Route::match(['get', 'post'], '/add', [AgencyController::class, 'create'])->name('add');
-            Route::match(['get', 'post'], '/edit', [AgencyController::class, 'update'])->name('edit');
-            Route::delete('/delete', [AgencyController::class, 'delete'])->name('delete');
+            Route::get('/', [PermissionController::class, 'index'])->name('index');
+            Route::match(['get', 'post'], '/add', [PermissionController::class, 'add'])->name('add');
+            Route::match(['get', 'post'], '/edit', [PermissionController::class, 'edit'])->name('edit');
+            Route::delete('/delete', [PermissionController::class, 'delete'])->name('delete');
         });
     });
 
@@ -180,7 +190,7 @@ Route::middleware(['auth', 'abilities'])->group(function () {
         });
     });
 
-    // Customer Interaction
+    // Interaction
     Route::group([
         'prefix' => 'interaction',
         'as' => 'interaction.'
@@ -206,6 +216,29 @@ Route::middleware(['auth', 'abilities'])->group(function () {
         });
     });
 
+    // Blog
+    Route::group([
+        'prefix' => 'blogs',
+        'as' => 'blogs.'
+    ], function () {
+        Route::group([
+            'prefix' => 'posts',
+            'as' => 'posts.'
+        ], function () {
+            Route::get('/', [BlogPostController::class, 'index'])->name('index');
+            Route::match(['get', 'post'], '/create', [BlogPostController::class, 'create'])->name('add');
+            Route::match(['get', 'post'], '/update', [BlogPostController::class, 'update'])->name('edit');
+        });
+        Route::group([
+            'prefix' => 'categories',
+            'as' => 'categories.'
+        ], function () {
+            Route::get('/', [BlogCategoryController::class, 'index'])->name('index');
+            Route::match(['get', 'post'], '/create', [BlogCategoryController::class, 'create'])->name('add');
+            Route::match(['get', 'post'], '/update', [BlogCategoryController::class, 'update'])->name('edit');
+        });
+    });
+
     //Report
     Route::group([
         'prefix' => 'reports',
@@ -218,29 +251,6 @@ Route::middleware(['auth', 'abilities'])->group(function () {
         Route::get('/filter', [ReportsController::class, 'report_filter'])->name('filter');
     });
 
-    // Blog
-    Route::group([
-        'prefix' => 'blogs',
-        'as' => 'blogs.'
-    ], function () {
-        Route::group([
-            'prefix' => 'posts',
-            'as' => 'posts.'
-        ], function () {
-            Route::get('/', [PostController::class, 'index'])->name('index');
-            Route::match(['get', 'post'], '/create', [PostController::class, 'create'])->name('add');
-            Route::match(['get', 'post'], '/update', [PostController::class, 'update'])->name('edit');
-        });
-        Route::group([
-            'prefix' => 'categories',
-            'as' => 'categories.'
-        ], function () {
-            Route::get('/', [PostCategoryController::class, 'index'])->name('index');
-            Route::match(['get', 'post'], '/create', [PostCategoryController::class, 'create'])->name('add');
-            Route::match(['get', 'post'], '/update', [PostCategoryController::class, 'update'])->name('edit');
-        });
-    });
-    
     // Web Settings
     Route::group([
         'prefix' => 'settings',

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\UserManagement;
+namespace App\Models\Admin;
 
 use App\Models\Setting\Campus;
 use Spatie\Activitylog\LogOptions;
@@ -14,15 +14,20 @@ class Role extends Model
 {
     use SoftDeletes;
 
+	protected $table = "roles";
 	protected $fillable = [
-		'name',
-		'slug',
-		'scope',
+		'name_en',
+		'name_kh',
+		'description',
+		'administrator',
 		'order',
 	];
 	protected static $logAttributes = [
-		'name',
-		'slug'
+		'name_en',
+		'name_kh',
+		'description',
+		'administrator',
+		'order',
 	];
 
 	public $timestamps = true;
@@ -34,10 +39,9 @@ class Role extends Model
 		}
 	}
 
-
-	public function users()
+	public function user()
 	{
-		return $this->hasMany(User::class, 'role_id', 'id');
+        return $this->belongsToMany(Admin::class, 'admin_roles', 'role_id', 'admin_id');
 	}
 
 	public function modules()

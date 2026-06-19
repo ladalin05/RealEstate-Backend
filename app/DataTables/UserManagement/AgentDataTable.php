@@ -15,34 +15,77 @@ class AgentDataTable extends DataTable
             ->eloquent($query)
             ->addIndexColumn()
 
-            ->editColumn('name', function ($row) {
-                return $row->{'user_name_'.app()->getLocale()} ?? '-';
+            ->editColumn('profile_image', function ($row) {
+                $src = $row->profile_image
+                    ? rtrim(env('MINIO_ENDPOINT'), '/') . '/' . env('MINIO_BUCKET') . '/' . $row->profile_image
+                    : null;
+
+                return $src
+                    ? '<img src="' . $src . '" width="60" height="60" style="object-fit:cover;border-radius:6px;">'
+                    : '<span class="badge bg-light text-dark">No Image</span>';
             })
 
-            ->editColumn('agency', function ($row) {
-                return $row->agency_name ?? '-';
+            ->editColumn('name', function ($row) {
+                return trim("{$row->first_name} {$row->last_name}") ?: '-';
+            })
+
+            ->editColumn('email', function ($row) {
+                return $row->email ?? '-';
+            })
+
+            ->editColumn('license_number', function ($row) {
+                return $row->license_number ?? '-';
             })
 
             ->editColumn('rating', function ($row) {
-                return $row->rating ? $row->rating . ' ⭐' : '0';
+                return $row->rating > 0 ? number_format($row->rating, 2) . ' ⭐' : '0';
             })
 
-            ->addColumn('action', fn($row) => view('user-management.agents.action', compact('row')))
+            ->editColumn('status', function ($row) {
+                $colors = [
+                    'active'    => 'success',
+                    'inactive'  => 'secondary',
+                    'suspended' => 'danger',
+                    'pending'   => 'warning',
+                ];
+                $color = $colors[$row->status] ?? 'secondary';
 
-            ->rawColumns(['action']);
+                return '<span class="badge badge-' . $color . '">' . ucfirst($row->status) . '</span>';
+            })
+
+            ->addColumn('action', fn ($row) => view('user-management.agents.action', compact('row')))
+
+            // 'name' is computed from first_name + last_name, so it isn't a real DB
+            // column — Yajra needs explicit instructions to sort/search it.
+            ->orderColumn('name', function ($query, $order) {
+                $query->orderBy('last_name', $order)->orderBy('first_name', $order);
+            })
+            ->filterColumn('name', function ($query, $keyword) {
+                $query->where(function ($q) use ($keyword) {
+                    $q->where('first_name', 'like', "%{$keyword}%")
+                      ->orWhere('last_name', 'like', "%{$keyword}%");
+                });
+            })
+
+            ->rawColumns(['profile_image', 'action', 'status']);
     }
 
     public function query(Agent $model)
     {
         return $model->newQuery()
-                    ->join('users', 'agents.user_id', '=', 'users.id')
-                    ->leftJoin('agencies', 'agents.agency_id', '=', 'agencies.id')
-                    ->select(
-                        'agents.*',
-                        'users.name_en as user_name_en',
-                        'users.name_kh as user_name_kh',
-                        'agencies.name as agency_name'
-                    );
+            ->select([
+                'agents.id',
+                'agents.profile_image',
+                'agents.first_name',
+                'agents.last_name',
+                'agents.email',
+                'agents.license_number',
+                'agents.experience_years',
+                'agents.rating',
+                'agents.total_sales',
+                'agents.total_rentals',
+                'agents.status',
+            ]);
     }
 
     public function html()
@@ -59,21 +102,26 @@ class AgentDataTable extends DataTable
                 Button::make('pdf'),
                 Button::make('print'),
                 Button::make('reset'),
-                Button::make('reload')
+                Button::make('reload'),
             ]);
     }
 
     protected function getColumns()
     {
         return [
-
             Column::computed('DT_RowIndex')
                 ->title('#')
                 ->searchable(false)
                 ->orderable(false),
+            
+            Column::make('profile_image')
+                ->title('Profile'),
 
             Column::make('name')
                 ->title('Agent Name'),
+
+            Column::make('email')
+                ->title('Email'),
 
             Column::make('license_number')
                 ->title('License'),
@@ -87,8 +135,8 @@ class AgentDataTable extends DataTable
             Column::make('total_sales')
                 ->title('Total Sales'),
 
-            Column::make('agency')
-                ->title('Agency'),
+            Column::make('status')
+                ->title('Status'),
 
             Column::computed('action')
                 ->title('Action')

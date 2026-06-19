@@ -2,7 +2,7 @@
 
 namespace App\DataTables\UserManagement;
 
-use App\Models\UserManagement\Role;
+use App\Models\Admin\Role;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\EloquentDataTable;
@@ -39,17 +39,7 @@ class RoleDataTable extends DataTable
                 return dateFormat($user->updated_at);
             })
             ->addColumn('action', function ($row) {
-                $edit = route('users-management.roles.edit', $row->id);
-
-                return '
-                <div class="d-flex gap-2">
-                    <a href="'.$edit.'" class="btn btn-sm btn-success">
-                        <i class="fa fa-edit"></i>
-                    </a>
-                    <button class="btn btn-sm btn-danger data_remove" data-id="'.$row->id.'">
-                        <i class="fa fa-trash"></i>
-                    </button>
-                </div>';
+                return view('admin.roles.action', compact('row'))->render();
             })
             ->rawColumns(['administrator', 'action'])
             ->setRowId('id');

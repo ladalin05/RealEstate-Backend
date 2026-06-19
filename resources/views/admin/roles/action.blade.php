@@ -3,14 +3,15 @@
         <i class="ph ph-list"></i>
     </a>
     <div class="dropdown-menu dropdown-menu-end" style="">
-        <a href="{{ route('users-management.roles.edit', $a->id) }}" class="dropdown-item">
+        <a href="{{ route('users-management.roles.edit', ['id' => $row->id]) }}" class="dropdown-item">
             <i class="ph ph-pencil me-2"></i>
             {{ __('global.edit') }}
         </a>
             <div class="dropdown-divider"></div>
-        <a href="{{ route('users-management.roles.delete', $a->id) }}" class="dropdown-item" onclick="deleteRecord(event)">
+        <a href="{{ route('users-management.roles.delete', ['id' => $row->id]) }}" class="dropdown-item" onclick="deleteRecord(event)">
             <i class="ph ph-x text-danger me-2"></i>
             {{ __('global.delete') }}
         </a>
     </div>
 </div>
+

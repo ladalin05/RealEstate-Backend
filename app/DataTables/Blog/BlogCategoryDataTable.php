@@ -2,12 +2,12 @@
 
 namespace App\DataTables\Blog;
 
-use App\Models\Blog\PostCategory;
+use App\Models\Blog\BlogCategory;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Services\DataTable;
 
-class PostCategoryDataTable extends DataTable
+class BlogCategoryDataTable extends DataTable
 {
     public function dataTable($query)
     {
@@ -15,20 +15,26 @@ class PostCategoryDataTable extends DataTable
             ->eloquent($query)
             ->addIndexColumn()
 
+            ->addColumn('status', function ($row) {
+                return $row->status
+                    ? '<span class="badge bg-success">Active</span>'
+                    : '<span class="badge bg-danger">Inactive</span>';
+            })
+
             ->addColumn('total_posts', function ($row) {
                 return $row->posts_count ?? 0;
             })
 
-            ->addColumn('action', fn($row) => view('blog.category.action', compact('row')))
+            ->addColumn('action', fn($row) => view('blog.blog-category.action', compact('row')))
 
-            ->rawColumns(['action']);
+            ->rawColumns(['status', 'action']);
     }
 
-    public function query(PostCategory $model)
+    public function query(BlogCategory $model)
     {
         return $model->newQuery()
             ->withCount('posts')
-            ->select('post_categories.*');
+            ->select('blog_categories.*');
     }
 
     public function html()
@@ -45,7 +51,7 @@ class PostCategoryDataTable extends DataTable
                 Button::make('pdf'),
                 Button::make('print'),
                 Button::make('reset'),
-                Button::make('reload')
+                Button::make('reload'),
             ]);
     }
 
@@ -65,6 +71,9 @@ class PostCategoryDataTable extends DataTable
             Column::computed('total_posts')
                 ->title('Posts'),
 
+            Column::computed('status')
+                ->title('Status'),
+
             Column::computed('action')
                 ->title('Action')
                 ->orderable(false)
@@ -74,6 +83,6 @@ class PostCategoryDataTable extends DataTable
 
     protected function filename(): string
     {
-        return 'Categories_' . date('YmdHis');
+        return 'BlogCategories_' . date('YmdHis');
     }
 }

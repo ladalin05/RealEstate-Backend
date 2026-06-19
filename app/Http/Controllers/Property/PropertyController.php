@@ -22,7 +22,7 @@ class PropertyController extends Controller
     public function create(Request $request)
     {
         if ($request->isMethod('post')) {
-            $formRequest = new StorePropertyRequest();
+            $formRequest = app(StorePropertyRequest::class);
             $this->service->create($formRequest->validated());
 
             return $this->redirectResponse(
@@ -43,7 +43,7 @@ class PropertyController extends Controller
         $property = Property::findOrFail($request->id);
 
         if ($request->isMethod('post')) {
-            $formRequest = new UpdatePropertyRequest();
+            $formRequest = app(UpdatePropertyRequest::class);
             $this->service->update($formRequest->validated(), $property->id);
 
             return $this->redirectResponse(

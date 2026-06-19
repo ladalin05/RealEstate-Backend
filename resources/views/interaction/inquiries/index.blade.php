@@ -8,13 +8,6 @@
             </span>
         </x-slot>
 
-        <div class="header-actions">
-            <a href="{{ route('interaction.inquiries.add') }}"
-               class="btn btn-add-user text-white">
-                <i class="ph ph-plus-circle me-1"></i>
-                {{ __('global.add_inquiry') }}
-            </a>
-        </div>
     </x-basic.breadcrumb>
 
     <div class="content">

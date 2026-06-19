@@ -33,7 +33,7 @@ class CountryController extends Controller
 
             if ($request->isMethod('post')) {
 
-                $formRequest = new StoreCountryRequest();
+                $formRequest = app(StoreCountryRequest::class);
                 $this->service->create($formRequest->validated());
 
                 return $this->redirectResponse(
@@ -67,7 +67,7 @@ class CountryController extends Controller
             $country = Country::findOrFail($request->id);
 
             if ($request->isMethod('post')) {
-                $formRequest = new UpdateCountryRequest();
+                $formRequest = app(UpdateCountryRequest::class);
                 $this->service->update($formRequest->validated(), $request->id);
 
                 return $this->redirectResponse(

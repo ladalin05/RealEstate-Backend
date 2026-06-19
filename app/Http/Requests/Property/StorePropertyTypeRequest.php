@@ -21,4 +21,5 @@ class StorePropertyTypeRequest extends FormRequest
             'status'  => ['nullable', 'boolean'],
         ];
     }
+
 }

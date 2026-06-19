@@ -37,7 +37,7 @@ class FeatureController extends Controller
     {
         try {
             if ($request->isMethod('post')) {
-                $formRequest = new StoreFeatureRequest();
+                $formRequest = app(StoreFeatureRequest::class);
                 $this->service->create($formRequest->validated());
 
                 return $this->redirectResponse(
@@ -68,7 +68,7 @@ class FeatureController extends Controller
             $form   = Feature::findOrFail($request->id);
             
             if ($request->isMethod('post')) {
-                $formRequest = new UpdateFeatureRequest();
+                $formRequest = app(UpdateFeatureRequest::class);
                 $this->service->update($formRequest->validated(), $form->id);
 
                 return $this->redirectResponse(

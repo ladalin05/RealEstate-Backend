@@ -31,15 +31,18 @@ class Menu extends Model
     {
         return $this->hasMany(Menu::class, 'parent_id');
     }
+    
     // menu has permissions
     public function authorized()
     {
-        $this->hasOne(Permission::class, 'menu_id')->where('is_menu', 1)->first();
+        return $this->hasOne(Permission::class, 'menu_id')->where('is_menu', 1)->first();
     }
+
     public function permissions()
     {
         return $this->hasMany(Permission::class, 'menu_id');
     }
+    
     // attributes name
     public function getNameAttribute($value) : string
     {

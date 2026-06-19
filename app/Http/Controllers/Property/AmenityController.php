@@ -30,7 +30,7 @@ class AmenityController extends Controller
     {
         try {
             if ($request->isMethod('post')) {
-                $formRequest = new StoreAmenityRequest();
+                $formRequest = app(StoreAmenityRequest::class);
                 $this->service->create($formRequest->validated());
 
                 return $this->redirectResponse(
@@ -60,7 +60,7 @@ class AmenityController extends Controller
             $amenity = Amenity::findOrFail($request->id);
 
             if ($request->isMethod('post')) {
-                $formRequest = new UpdateAmenityRequest();
+                $formRequest = app(UpdateAmenityRequest::class);
                 $this->service->update($formRequest->validated(), $amenity->id);
 
                 return $this->redirectResponse(

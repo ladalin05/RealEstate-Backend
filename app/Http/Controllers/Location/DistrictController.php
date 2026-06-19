@@ -33,7 +33,7 @@ class DistrictController extends Controller
         try {
 
             if ($request->isMethod('post')) {
-                $formRequest = new StoreDistrictRequest();
+                $formRequest = app(StoreDistrictRequest::class);
                 $this->service->create($formRequest->validated());
 
                 return $this->redirectResponse(
@@ -66,7 +66,7 @@ class DistrictController extends Controller
             $district = District::findOrFail($request->id);
 
             if ($request->isMethod('post')) {
-                $formRequest = new UpdateDistrictRequest();
+                $formRequest = app(UpdateDistrictRequest::class);
                 $this->service->update($formRequest->validated(), $request->id);
 
                 return $this->redirectResponse(

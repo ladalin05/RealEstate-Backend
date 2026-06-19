@@ -45,9 +45,7 @@ class ReviewDataTable extends DataTable
                     : '-';
             })
 
-            ->addColumn('action', fn($row) => view('interaction.reviews.action', compact('row')))
-
-            ->rawColumns(['rating','action']);
+            ->rawColumns(['rating']);
     }
 
     public function query(Review $model)

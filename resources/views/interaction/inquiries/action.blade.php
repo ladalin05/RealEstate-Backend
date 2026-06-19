@@ -1,8 +1,8 @@
 
 <div class="d-flex gap-2">
-    <a href="{{route('interaction.inquiries.edit', $row->id)}}" class="btn btn-sm btn-success">
-        <i class="fa fa-edit"></i>
-    </a>
+    <button class="btn btn-sm btn-primary flex gap-1 align-items-center">
+        <i class="fa-regular fa-share-from-square"></i>Reply
+    </button>
 
     <button class="btn btn-sm btn-danger data_remove"
         data-id="{{$row->id}}">
