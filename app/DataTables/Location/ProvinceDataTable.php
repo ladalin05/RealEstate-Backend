@@ -14,11 +14,7 @@ class ProvinceDataTable extends DataTable
         return datatables()
             ->eloquent($query)
             ->addIndexColumn()
-
-            ->addColumn('country', function ($row) {
-                return $row->country->name ?? '';
-            })
-
+            ->addColumn('country', fn($row) => $row->country_name ?? '')
             ->addColumn('status', function ($row) {
                 $checked = $row->status ? 'checked' : '';
 
@@ -39,8 +35,8 @@ class ProvinceDataTable extends DataTable
     public function query(Province $model)
     {
         return $model->newQuery()
-            ->with('country')
-            ->select('provinces.id', 'provinces.name', 'provinces.alt_name', 'provinces.country_id');
+            ->leftJoin('countries', 'provinces.country_id', 'countries.id')
+            ->select('provinces.id', 'provinces.name', 'provinces.alt_name', 'provinces.country_id', 'countries.name as country_name');
     }
 
     public function html()

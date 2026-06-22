@@ -14,24 +14,24 @@ class CommuneDataTable extends DataTable
         return datatables()
             ->eloquent($query)
             ->addIndexColumn()
-
-            ->addColumn('province', fn($row) => $row->province->name ?? '')
-            ->addColumn('district', fn($row) => $row->district->name ?? '')
-
+            ->addColumn('province', fn($row) => $row->province_name ?? '')
+            ->addColumn('district', fn($row) => $row->district_name ?? '')
             ->addColumn('action', fn($row) => view('location.communes.action', compact('row')))
-
             ->rawColumns(['action']);
     }
 
     public function query(Commune $model)
     {
         return $model->newQuery()
-            ->with(['province', 'district'])
+            ->leftJoin('districts', 'communes.district_id', 'districts.id')
+            ->leftJoin('provinces', 'communes.province_id', 'provinces.id')
             ->select(
                 'communes.id',
                 'communes.district_id',
                 'communes.province_id',
                 'communes.name',
+                'districts.name as district_name',
+                'provinces.name as province_name'
             );
     }
 

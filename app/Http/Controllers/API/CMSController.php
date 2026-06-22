@@ -13,7 +13,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Menu;
 use App\Models\UserManagement\User;
 
-class MainController extends Controller
+class CMSController extends Controller
 {
     public function getMenu(Request $request)
     {

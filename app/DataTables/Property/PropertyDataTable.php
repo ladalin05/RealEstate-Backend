@@ -14,7 +14,6 @@ class PropertyDataTable extends DataTable
         return datatables()
             ->eloquent($query)
             ->addIndexColumn()
-
             ->editColumn('image', function ($row) {
                 $src = $row->main_image
                     ? rtrim(env('MINIO_ENDPOINT'), '/') . '/' . env('MINIO_BUCKET') . '/' . $row->main_image
@@ -24,11 +23,9 @@ class PropertyDataTable extends DataTable
                     ? '<img src="' . $src . '" width="60" height="60" style="object-fit:cover;border-radius:6px;">'
                     : '<span class="badge bg-light text-dark">No Image</span>';
             })
-
             ->addColumn('type_name', function ($row) {
                 return $row->type_name ?? '-';
             })
-
             ->addColumn('location', function ($row) {
                 $parts = array_filter([
                     $row->commune_name ?? null,
@@ -37,7 +34,6 @@ class PropertyDataTable extends DataTable
                 ]);
                 return $parts ? implode(', ', $parts) : '-';
             })
-
             ->editColumn('purpose', function ($row) {
                 $map = [
                     'sale'      => ['label' => 'Sale',      'class' => 'bg-primary'],
@@ -47,7 +43,6 @@ class PropertyDataTable extends DataTable
                 $p = $map[$row->purpose] ?? ['label' => ucfirst($row->purpose), 'class' => 'bg-secondary'];
                 return '<span class="badge ' . $p['class'] . '">' . $p['label'] . '</span>';
             })
-
             ->editColumn('price', function ($row) {
                 if ($row->price_label) {
                     return $row->price_label;
@@ -58,7 +53,6 @@ class PropertyDataTable extends DataTable
                 }
                 return '-';
             })
-
             ->editColumn('status', function ($row) {
                 $map = [
                     'active'   => 'bg-success',
@@ -70,19 +64,16 @@ class PropertyDataTable extends DataTable
                 $class = $map[$row->status] ?? 'bg-secondary';
                 return '<span class="badge ' . $class . '">' . ucfirst($row->status) . '</span>';
             })
-
             ->editColumn('featured', function ($row) {
                 return $row->featured == 1
                     ? '<span class="badge bg-success">Yes</span>'
                     : '<span class="badge bg-secondary">No</span>';
             })
-
             ->editColumn('verified', function ($row) {
                 return $row->verified == 1
                     ? '<span class="badge bg-success"><i class="bi bi-patch-check"></i> Verified</span>'
                     : '<span class="badge bg-light text-dark">Unverified</span>';
             })
-
             ->addColumn('action', fn($row) => view('property.properties.action', compact('row')))
 
             ->rawColumns(['image', 'purpose', 'status', 'featured', 'verified', 'action']);

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\UserManagement;
+namespace App\Http\Controllers\Admin;
 
 use App\Models\Admin\Admin;
 use Illuminate\Http\Request;
@@ -10,7 +10,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\StoreInternalUserRequest;
 use App\Http\Requests\UpdateInternalUserRequest;
-use App\DataTables\UserManagement\UserDataTable;
+use App\DataTables\UserManagement\InternalUserDataTable;
 
 class InternalUserController extends Controller
 {
@@ -23,7 +23,7 @@ class InternalUserController extends Controller
         };
     }
 
-    public function index(UserDataTable $dataTable)
+    public function index(InternalUserDataTable $dataTable)
     {
         return $dataTable->render('admin.users.index');
     }

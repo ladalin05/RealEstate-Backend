@@ -18,13 +18,13 @@ use App\Http\Controllers\Location\CityController;
 use App\Http\Controllers\Location\CommuneController;
 use App\Http\Controllers\Location\CountryController;
 use App\Http\Controllers\Location\DistrictController;
-use App\Http\Controllers\UserManagement\UserController;
+use App\Http\Controllers\UserManagement\UsersController;
 use App\Http\Controllers\UserManagement\RoleController;
 use App\Http\Controllers\UserManagement\AgentController;
 use App\Http\Controllers\UserManagement\AgencyController;
 use App\Http\Controllers\Admin\CMSController;
 use App\Http\Controllers\Admin\UploadController;
-use App\Http\Controllers\UserManagement\InternalUserController;
+use App\Http\Controllers\Admin\InternalUserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -63,10 +63,10 @@ Route::middleware(['auth', 'abilities'])->group(function () {
             'prefix' => 'users',
             'as' => 'users.'
         ], function () {
-            Route::get('/', [UserController::class, 'index'])->name('index');
-            Route::match(['get', 'post'], '/add', [UserController::class, 'add'])->name('add');
-            Route::match(['get', 'post'], '/edit', [UserController::class, 'edit'])->name('edit');
-            Route::delete('/delete', [UserController::class, 'delete'])->name('delete');
+            Route::get('/', [UsersController::class, 'index'])->name('index');
+            Route::match(['get', 'post'], '/add', [UsersController::class, 'add'])->name('add');
+            Route::match(['get', 'post'], '/edit', [UsersController::class, 'edit'])->name('edit');
+            Route::delete('/delete', [UsersController::class, 'delete'])->name('delete');
 
         });
         
@@ -228,6 +228,7 @@ Route::middleware(['auth', 'abilities'])->group(function () {
             Route::get('/', [BlogPostController::class, 'index'])->name('index');
             Route::match(['get', 'post'], '/create', [BlogPostController::class, 'create'])->name('add');
             Route::match(['get', 'post'], '/update', [BlogPostController::class, 'update'])->name('edit');
+            Route::get('/delete/{id}', [BlogPostController::class, 'delete'])->name('deleted');
         });
         Route::group([
             'prefix' => 'categories',
@@ -236,6 +237,7 @@ Route::middleware(['auth', 'abilities'])->group(function () {
             Route::get('/', [BlogCategoryController::class, 'index'])->name('index');
             Route::match(['get', 'post'], '/create', [BlogCategoryController::class, 'create'])->name('add');
             Route::match(['get', 'post'], '/update', [BlogCategoryController::class, 'update'])->name('edit');
+            Route::get('/delete/{id}', [BlogCategoryController::class, 'delete'])->name('deleted');
         });
     });
 

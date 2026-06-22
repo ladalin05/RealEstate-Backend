@@ -15,35 +15,30 @@ class InquiryDataTable extends DataTable
         return datatables()
             ->eloquent($query)
             ->addIndexColumn()
-
             ->addColumn('property', function ($row) {
-                return $row->property?->title ?? '-';
+                return $row->property_title ?? '-';
             })
-
             ->addColumn('user', function ($row) {
-                return $row->user?->name ?? $row->name ?? '-';
+                return $row->user_name ?? $row->name ?? '-';
             })
-
             ->editColumn('message', function ($row) {
                 return Str::limit($row->message, 50);
             })
-
             ->editColumn('created_at', function ($row) {
                 return $row->created_at
                     ? date('Y-m-d H:i', strtotime($row->created_at))
                     : '-';
             })
-
             ->addColumn('action', fn($row) => view('interaction.inquiries.action', compact('row')))
-
             ->rawColumns(['action']);
     }
 
     public function query(Inquiry $model)
     {
         return $model->newQuery()
-            ->with(['property','user'])
-            ->select('inquiries.*');
+            ->leftJoin('properties', 'inquiries.property_id', 'properties.id')
+            ->leftJoin('users', 'inquiries.user_id', 'users.id')
+            ->select('inquiries.*', 'properties.title as property_title', 'users.name as user_name');
     }
 
     public function html()

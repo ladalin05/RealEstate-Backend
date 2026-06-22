@@ -14,15 +14,11 @@ class AmenityDataTable extends DataTable
         return datatables()
             ->eloquent($query)
             ->addIndexColumn()
-
-            // Icon column — renders FontAwesome class or dash
             ->addColumn('icon', function ($row) {
                 return $row->icon
                     ? '<i class="' . e($row->icon) . '" style="font-size:20px;"></i>'
                     : '<span class="text-muted">—</span>';
             })
-
-            // Inline toggle — calls enable/disable route via JS
             ->addColumn('status', function ($row) {
                 $checked = $row->status ? 'checked' : '';
                 return '
@@ -33,11 +29,7 @@ class AmenityDataTable extends DataTable
                         ' . $checked . '>
                 </div>';
             })
-
-            ->addColumn('action', fn($row) =>
-                view('property.amenities.action', compact('row'))->render()
-            )
-
+            ->addColumn('action', fn($row) => view('property.amenities.action', compact('row'))->render())
             ->rawColumns(['icon', 'status', 'action']);
     }
 

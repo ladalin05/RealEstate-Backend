@@ -14,19 +14,15 @@ class BlogCategoryDataTable extends DataTable
         return datatables()
             ->eloquent($query)
             ->addIndexColumn()
-
             ->addColumn('status', function ($row) {
                 return $row->status
                     ? '<span class="badge bg-success">Active</span>'
                     : '<span class="badge bg-danger">Inactive</span>';
             })
-
             ->addColumn('total_posts', function ($row) {
                 return $row->posts_count ?? 0;
             })
-
             ->addColumn('action', fn($row) => view('blog.blog-category.action', compact('row')))
-
             ->rawColumns(['status', 'action']);
     }
 

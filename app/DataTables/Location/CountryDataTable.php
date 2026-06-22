@@ -14,7 +14,6 @@ class CountryDataTable extends DataTable
         return datatables()
             ->eloquent($query)
             ->addIndexColumn()
-
             ->addColumn('status', function ($row) {
                 $checked = $row->status ? 'checked' : '';
 
@@ -26,9 +25,7 @@ class CountryDataTable extends DataTable
                         ' . $checked . '>
                 </div>';
             })
-
             ->addColumn('action', fn($row) => view('location.countries.action', compact('row')))
-
             ->rawColumns(['status', 'action']);
     }
 

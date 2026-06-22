@@ -14,7 +14,6 @@ class AgentDataTable extends DataTable
         return datatables()
             ->eloquent($query)
             ->addIndexColumn()
-
             ->editColumn('profile_image', function ($row) {
                 $src = $row->profile_image
                     ? rtrim(env('MINIO_ENDPOINT'), '/') . '/' . env('MINIO_BUCKET') . '/' . $row->profile_image
@@ -24,23 +23,18 @@ class AgentDataTable extends DataTable
                     ? '<img src="' . $src . '" width="60" height="60" style="object-fit:cover;border-radius:6px;">'
                     : '<span class="badge bg-light text-dark">No Image</span>';
             })
-
             ->editColumn('name', function ($row) {
                 return trim("{$row->first_name} {$row->last_name}") ?: '-';
             })
-
             ->editColumn('email', function ($row) {
                 return $row->email ?? '-';
             })
-
             ->editColumn('license_number', function ($row) {
                 return $row->license_number ?? '-';
             })
-
             ->editColumn('rating', function ($row) {
                 return $row->rating > 0 ? number_format($row->rating, 2) . ' ⭐' : '0';
             })
-
             ->editColumn('status', function ($row) {
                 $colors = [
                     'active'    => 'success',
@@ -52,11 +46,7 @@ class AgentDataTable extends DataTable
 
                 return '<span class="badge badge-' . $color . '">' . ucfirst($row->status) . '</span>';
             })
-
             ->addColumn('action', fn ($row) => view('user-management.agents.action', compact('row')))
-
-            // 'name' is computed from first_name + last_name, so it isn't a real DB
-            // column — Yajra needs explicit instructions to sort/search it.
             ->orderColumn('name', function ($query, $order) {
                 $query->orderBy('last_name', $order)->orderBy('first_name', $order);
             })

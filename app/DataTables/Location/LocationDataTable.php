@@ -15,11 +15,11 @@ class PropertyLocationDataTable extends DataTable
             ->eloquent($query)
             ->addIndexColumn()
 
-            ->addColumn('property', fn($row) => $row->property->title ?? '')
-            ->addColumn('country',  fn($row) => $row->country->name  ?? '')
-            ->addColumn('province', fn($row) => $row->province->name ?? '')
-            ->addColumn('district', fn($row) => $row->district->name ?? '')
-            ->addColumn('commune',  fn($row) => $row->commune->name  ?? '')
+            ->addColumn('property', fn($row) => $row->property_title ?? '')
+            ->addColumn('country',  fn($row) => $row->country_name  ?? '')
+            ->addColumn('province', fn($row) => $row->province_name ?? '')
+            ->addColumn('district', fn($row) => $row->district_name ?? '')
+            ->addColumn('commune',  fn($row) => $row->commune_name  ?? '')
 
             ->addColumn('coordinates', function ($row) {
                 if ($row->latitude && $row->longitude) {
@@ -36,8 +36,12 @@ class PropertyLocationDataTable extends DataTable
     public function query(PropertyLocation $model)
     {
         return $model->newQuery()
-            ->with(['property', 'country', 'province', 'district', 'commune'])
-            ->select('property_locations.*');
+        ->leftJoin('properties', 'property_locations.property_id', 'properties.id')
+        ->leftJoin('countries', 'property_locations.country_id', 'countries.id')
+        ->leftJoin('provinces', 'property_locations.province_id', 'provinces.id')
+        ->leftJoin('districts', 'property_locations.district_id', 'districts.id')
+        ->leftJoin('communes', 'property_locations.commune_id', 'communes.id')
+        ->select('property_locations.*', 'properties.title as property_title', 'countries.name as country_name', 'provinces.name as province_name', 'districts.name as district_name', 'communes.name as commune_name');
     }
 
     public function html()

@@ -431,3 +431,16 @@ if (!function_exists('jsonResponse')) {
 		return response()->json($response, 200);
 	}
 }
+
+if (!function_exists('BlogStatus')) {
+    function BlogStatus()
+    {
+        $status = [
+            'draft' => 'Draft', 
+            'published' => 
+            'Published', 'archived' => 
+            'Archived'
+        ];
+        return $status;
+    }
+}

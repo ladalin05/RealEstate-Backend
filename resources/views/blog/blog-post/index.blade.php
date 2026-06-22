@@ -7,11 +7,10 @@
                 Manage your post
             </span>
         </x-slot>
-
+        
         <div class="header-actions">
             <a href="{{ route('blogs.posts.add') }}"
-               class="btn btn-add-user text-white"
-               onclick="addData(event)" >
+               class="btn btn-add-user text-white">
                 <i class="ph ph-plus-circle me-1"></i>
                 {{ __('global.add_new') }}
             </a>

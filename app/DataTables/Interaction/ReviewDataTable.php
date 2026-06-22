@@ -15,17 +15,15 @@ class ReviewDataTable extends DataTable
         return datatables()
             ->eloquent($query)
             ->addIndexColumn()
-
             ->addColumn('user', function ($row) {
-                return $row->user?->name ?? '-';
+                return $row->user_name ?? '-';
             })
-
             ->addColumn('agent', function ($row) {
-                return $row->agent?->user?->name ?? '-';
+                return $row->agent_name ?? '-';
             })
 
             ->addColumn('property', function ($row) {
-                return $row->property?->title ?? '-';
+                return $row->property_title ?? '-';
             })
 
             ->editColumn('rating', function ($row) {
@@ -51,8 +49,10 @@ class ReviewDataTable extends DataTable
     public function query(Review $model)
     {
         return $model->newQuery()
-            ->with(['user','agent.user','property'])
-            ->select('reviews.*');
+            ->leftJoin('users', 'reviews.user_id', 'users.id')
+            ->leftJoin('agents', 'reviews.agent_id', 'agents.id')
+            ->leftJoin('properties', 'reviews.property_id', 'properties.id')
+            ->select('reviews.*', 'users.name as user_name', 'agents.name as agent_name', 'properties.title as property_title');
     }
 
     public function html()

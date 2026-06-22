@@ -14,19 +14,16 @@ class DistrictDataTable extends DataTable
         return datatables()
             ->eloquent($query)
             ->addIndexColumn()
-
-            ->addColumn('province', fn($row) => $row->province->name ?? '')
-
+            ->addColumn('province', fn($row) => $row->province_name ?? '')
             ->addColumn('action', fn($row) => view('location.districts.action', compact('row')))
-
             ->rawColumns(['action']);
     }
 
     public function query(District $model)
     {
         return $model->newQuery()
-            ->with('province')
-            ->select('districts.id', 'districts.province_id', 'districts.name');
+            ->leftJoin('provinces', 'districts.province_id', 'provinces.id')
+            ->select('districts.id', 'districts.province_id', 'districts.name', 'provinces.name as province_name');
     }
 
     public function html()

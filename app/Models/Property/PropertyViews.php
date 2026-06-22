@@ -8,24 +8,16 @@ class PropertyViews extends Model
 {
     protected $table = 'property_views';
 
-    protected $fillable = ['user_id', 'property_id','views', 'date'];
+    protected $fillable = ['property_id', 'user_id', 'view_count', 'viewed_date'];
 
+    protected $casts = [
+        'viewed_date' => 'date',
+    ];
 
-	public $timestamps = false;  
+    public $timestamps = true; // created_at / updated_at exist in the table
 
-
-	public static function getPostTotalViews($post_id,$post_type) 
-    { 
-    	$total = PropertyViews::where('post_id',$post_id)->where('post_type',$post_type)->sum('post_views');
-		 
-		return $total;
-	}
-
-	public static function getPostTotalDownload($post_id,$post_type) 
-    { 
-    	$total = PropertyViews::where('post_id',$post_id)->where('post_type',$post_type)->sum('post_download');
-		 
-		return $total;
-	}
- 
+    public static function getPropertyTotalViews($property_id)
+    {
+        return self::where('property_id', $property_id)->sum('view_count');
+    }
 }

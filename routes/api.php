@@ -10,43 +10,29 @@ use App\Http\Controllers\API\FilterController;
 use App\Http\Controllers\Api\V1\PaymentController;
 use App\Http\Controllers\DbMockup\EndpointController;
 
-// --------------------
-// Public routes (no auth)
-// --------------------
+Route::prefix('auth')->group(function () {
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::get('/logout', [AuthController::class, 'logout']);
+});
 
-// --------------------
-// Protected routes (require Sanctum token)
-// --------------------
+Route::prefix('cms')->group(function () {
+    Route::get('/menu', [MainController::class, 'getMenu']);
+    Route::get('/setting', [MainController::class, 'getSetting']);
+    Route::get('/contact', [MainController::class, 'getContact']);
+});
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
-    // Add other protected routes here
 });
-
-// Auth routes (public)
-Route::post('/login', [AuthController::class, 'login']);
-Route::get('/logout', [AuthController::class, 'logout']);
-
-Route::get('/filter_data', [FilterController::class, 'filter_data']);
-
-Route::prefix('category')->group(function () {
-    Route::get('/', [CategoryController::class, 'list']);
-});
-
-Route::prefix('menus')->group(function () {
-    Route::get('/', [MainController::class, 'getMenu']);
-});
-
-Route::get('/get-setting', [MainController::class, 'getSetting']);
-
-Route::get('/get-contact', [MainController::class, 'getContact']);
 
 Route::prefix('property')->group(function () {
     Route::get('/', [PropertyController::class, 'getProperty']);
     Route::get('/detail/{id}', [PropertyController::class, 'getPropertyDetails']);
-    Route::get('/get-by-city', [PropertyController::class, 'getPropertyByCity']);
-    Route::post('/favourite', [PropertyController::class, 'is_favourit']);
+    Route::get('/categories', [CategoryController::class, 'getPropertyCategories']);
+    Route::post('/toggle-favourite', [PropertyController::class, 'toggleFavourite']);
+    Route::get('/fillter-properties', [PropertyController::class, 'filterProperties']);
 });
 
 

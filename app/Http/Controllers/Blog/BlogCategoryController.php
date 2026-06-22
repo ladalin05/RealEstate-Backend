@@ -35,7 +35,7 @@ class BlogCategoryController extends Controller
 
                 return $this->redirectResponse(
                     message: __('global.create_category_successfully'),
-                    route: route('blog.categories.index'),
+                    route: route('blogs.categories.index'),
                 );
             }
 
@@ -43,7 +43,7 @@ class BlogCategoryController extends Controller
                 title:  __('global.add_new'),
                 view:   'blog.blog-category.form',
                 data:   ['form' => new BlogCategory()],
-                action: route('blog.categories.add'),
+                action: route('blogs.categories.add'),
             );
 
         } catch (\Throwable $e) {
@@ -65,7 +65,7 @@ class BlogCategoryController extends Controller
 
                 return $this->redirectResponse(
                     message: __('global.updated_category_successfully'),
-                    route: route('blog.categories.index'),
+                    route: route('blogs.categories.index'),
                 );
             }
 
@@ -73,7 +73,7 @@ class BlogCategoryController extends Controller
                 title: __('global.edit'),
                 view: 'blog.blog-category.form',
                 data: ['form' => $category],
-                action: route('blog.categories.edit', ['id' => $category->id]),
+                action: route('blogs.categories.edit', ['id' => $category->id]),
             );
 
         } catch (\Throwable $e) {
@@ -92,7 +92,7 @@ class BlogCategoryController extends Controller
 
             return $this->redirectResponse(
                 message: __('global.deleted_category_successfully'),
-                route: route('blog.categories.index'),
+                route: route('blogs.categories.index'),
             );
         } catch (\Throwable $e) {
             return $this->errorResponse(

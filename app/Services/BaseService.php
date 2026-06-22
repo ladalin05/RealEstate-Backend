@@ -81,9 +81,6 @@ abstract class BaseService {
     {
         $query = $this->getQuery();
 
-        // Always exclude active = 2
-        $query->where('active', '!=', 2);
-
         // Merge request first, then override with explicit $params
         $params = array_merge(request()->all(), $params);
 
@@ -193,6 +190,19 @@ abstract class BaseService {
         return $paginator;
     }
 
+    public function getList(array $params = [])
+    {
+        $query = $this->getQuery();
+        $this->applyDefaultScope($query);
+        $query = $this->applyFiltersSortSearch($query, $params);
+
+        if (!empty($params['limit'])) {
+            $query->limit((int) $params['limit']);
+        }
+
+        return $query->get();
+    }
+
     protected function msToCarbon($val): ?Carbon
     {
         if ($val === null || $val === '' || !is_numeric($val)) {
@@ -206,4 +216,5 @@ abstract class BaseService {
     {
         return null;
     }
+    
 }

@@ -156,28 +156,24 @@ if (!function_exists('getSubPlanById')) {
 }
 
 if (!function_exists('property_views_save')) {
-    function property_views_save($property_id,$user_id=null)
-    {       
+    function property_views_save($property_id, $user_id = null)
+    {
+        $today_date = date('Y-m-d');
 
-        $today_date = date('Y-m-d H:i:s');
-        $view_info = PropertyViews::where('property_id', '=', $property_id)->where('date', '==', $today_date)->first();   
+        $view_info = PropertyViews::where('property_id', $property_id)
+            ->whereDate('viewed_date', $today_date)
+            ->first();
 
-        if($view_info)
-        { 
-            $view_obj = PropertyViews::findOrFail($view_info->id);        
-            $view_obj->increment('property_views');     
-            $view_obj->save();
-             
-        }
-        else
-        {
+        if ($view_info) {
+            $view_info->increment('view_count');
+        } else {
             PropertyViews::create([
                 'property_id' => $property_id,
-                'views' => 1,
-                'date' => $today_date,
+                'user_id'     => $user_id,
+                'view_count'  => 1,
+                'viewed_date' => $today_date,
             ]);
         }
- 
     }
 }
 
