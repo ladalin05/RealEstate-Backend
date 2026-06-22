@@ -2,121 +2,91 @@
 
 namespace App\Models\UserManagement;
 
-use Illuminate\Http\Request;
-use App\Models\Setting\Campus;
-use App\Models\Setting\Faculty;
-use App\Models\Setting\Program;
-use App\Models\Setting\CampusUser;
-use App\Models\Setting\DegreeUser;
-use App\Models\Setting\Department;
-use App\Models\Setting\StudyLevel;
-use Spatie\Activitylog\LogOptions;
-use App\Models\Setting\FacultyUser;
-use App\Models\Setting\ProgramUser;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Facades\Session;
-use Spatie\Activitylog\Models\Activity;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Laravel\Sanctum\HasApiTokens;
-use App\Models\Setting\ScholarshipCategoryUser;
-use App\Models\Setting\WarehouseUser;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
-	use Notifiable, SoftDeletes, HasApiTokens;
-	public $timestamps = true;
+    use Notifiable, SoftDeletes;
 
-	/**
-	 * The attributes that are mass assignable.
-	 *
-	 * @var array
-	 */
-	protected $fillable = [
-		'username',
-		'display_name',
-		'email',
-		'email_verified_at',
-		'password',
-		'image',
-		'locale',
-		'enabled',
-		'role_id',
-		'he_scholarship',
-		'scholarship_category',
-		'remember_token',
-	];
+    public $timestamps = true;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'name',
+        'username',
+        'email',
+        'email_verified_at',
+        'password',
+        'phone',
+        'profile_picture',
+        'gender',
+        'dob',
+        'otp',
+        'otp_expires_at',
+        'google_id',
+        'telegram_id',
+        'telegram_username',
+        'is_verify_google',
+        'is_verify_telegram',
+        'is_verify_email',
+        'is_verify_phone',
+        'active',
+        'remember_token',
+    ];
 
-	/**
-	 * The attributes that should be hidden for arrays.
-	 *
-	 * @var array
-	 */
-	protected $hidden = [
-		'password',
-		'remember_token',
-	];
+    /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+        'otp',
+    ];
 
-	/**
-	 * The attributes that should be cast to native types.
-	 *
-	 * @var array
-	 */
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'email_verified_at'  => 'datetime',
+            'otp_expires_at'     => 'datetime',
+            'dob'                => 'datetime',
+            'password'           => 'hashed',
+            'is_verify_google'   => 'boolean',
+            'is_verify_telegram' => 'boolean',
+            'is_verify_email'    => 'boolean',
+            'is_verify_phone'    => 'boolean',
+            'active'             => 'boolean',
         ];
     }
 
-    protected static function boot()
+    /**
+     * JWTSubject: the identifier that will be stored in the subject claim of the JWT.
+     */
+    public function getJWTIdentifier()
     {
-        parent::boot();
-
-        static::creating(function ($model) {
-            $model->created_by = auth()->id();
-        });
-
-        static::updating(function ($model) {
-            $model->updated_by = auth()->id();
-        });
-
-        static::deleting(function ($model) {
-            if (!$model->forceDeleting) {
-                $model->deleted_by = auth()->id();
-                $model->save();
-            }
-        });
+        return $this->getKey();
     }
 
-    public function roles()
+    /**
+     * JWTSubject: custom claims to add to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims()
     {
-        return $this->belongsToMany(Role::class, 'user_role', 'user_id', 'role_id');
-    }
-
-	public function isAdmin()
-	{
-		return $this->roles()->where('administrator', 1)->first();
-	}
-    
-    public function getCreatedAtAttribute($value): string
-    {
-        return date('d/m/Y h:i A', strtotime($value));
-    }
-    
-    public function getUpdatedAtAttribute($value): string
-    {
-        return date('d/m/Y h:i A', strtotime($value));
-    }
-    
-    public function getDeletedAtAttribute($value): string
-    {
-        return date('d/m/Y h:i A', strtotime($value));
+        return [];
     }
 }

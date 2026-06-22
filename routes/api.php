@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\UserAuthController;
 use App\Http\Controllers\Api\MainController;
 use App\Http\Controllers\API\CategoryController;
 use App\Http\Controllers\API\PropertyController;
@@ -11,8 +11,11 @@ use App\Http\Controllers\Api\V1\PaymentController;
 use App\Http\Controllers\DbMockup\EndpointController;
 
 Route::prefix('auth')->group(function () {
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::get('/logout', [AuthController::class, 'logout']);
+    Route::post('/login', [UserAuthController::class, 'login']);
+    Route::post('/register', [UserAuthController::class, 'register']);
+    Route::post('/register-telegram', [UserAuthController::class, 'telegramRegister']);
+    Route::post('/verify-otp', [UserAuthController::class, 'verifyOtp']);
+    Route::get('/logout', [UserAuthController::class, 'logout']);
 });
 
 Route::prefix('cms')->group(function () {
