@@ -5,8 +5,8 @@ namespace App\Http\Controllers\UserManagement;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\DataTables\UserManagement\AgentDataTable;
-use App\Requests\UserManagement\StoreAgentRequest;
-use App\Requests\UserManagement\UpdateAgentRequest;
+use App\Http\Requests\UserManagement\StoreAgentRequest;
+use App\Http\Requests\UserManagement\UpdateAgentRequest;
 use App\Models\UserManagement\Agent;
 use App\Services\BaseService;
 

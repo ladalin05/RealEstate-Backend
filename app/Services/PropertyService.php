@@ -6,11 +6,15 @@ use App\Models\Property\Property;
 use App\Models\Property\PropertyGallery;
 use App\Models\Property\PropertyFeature;
 use App\Models\Property\PropertyAmenity;
-use App\Models\Location\PropertyLocation;
+use App\Models\Location\Area;
+use App\Models\Property\PropertyType;
+use App\Models\Property\Feature;
+use App\Models\Property\Amenity;
 use App\Models\Property\Favourite;
 
 class PropertyService extends BaseService
 {
+
     protected function getQuery()
     {
         return Property::query();
@@ -148,36 +152,6 @@ class PropertyService extends BaseService
         PropertyFeature::insert($rows);
     }
 
-    public function filterProperties(array $requestParams)
-    {
-        $filters = [];
-
-        if (!empty($requestParams['type_id'])) {
-            $filters['type_id'] = $requestParams['type_id'];
-        }
-
-        if (!empty($requestParams['city_id'])) {
-            $filters['property_locations.city_id'] = $requestParams['city_id'];
-        }
-
-        if (!empty($requestParams['province_id'])) {
-            $filters['property_locations.province_id'] = $requestParams['province_id'];
-        }
-
-        $params = [
-            'filter_by' => $filters,
-            'search'    => $requestParams['search']   ?? null,
-            'columns'   => ['properties.title', 'properties.description'],
-            'sort_by'   => $requestParams['sort_by']   ?? 'properties.id',
-            'sort_dir'  => $requestParams['sort_dir']  ?? 'desc',
-            'limit'     => $requestParams['limit']     ?? 12,
-            'min_price' => $requestParams['min_price'] ?? null,
-            'max_price' => $requestParams['max_price'] ?? null,
-        ];
-
-        return $this->getList($params);
-    }
-
     public function toggleFavourite(array $params): bool
     {
         $query = Favourite::where('user_id', $params['user_id'])
@@ -195,4 +169,23 @@ class PropertyService extends BaseService
 
         return true;
     }
+
+    public function getDataFillter()
+    {
+        $data['areas'] = Area::where('status', 1)->get([
+            'id',
+            'name'
+        ]);
+        $data['categories'] = PropertyType::where('status', 1)->get([
+            'id',
+            'name_en as name'
+        ]);
+        $data['feature'] = Feature::where('status', 1)->get([
+            'id',
+            'name_en as name'
+        ]);
+
+        return $data;
+    }
+
 }

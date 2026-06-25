@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Carbon;
 
 if (!function_exists('setUserMenu')) {
     function setUserMenu()
@@ -174,6 +175,25 @@ if (!function_exists('property_views_save')) {
                 'viewed_date' => $today_date,
             ]);
         }
+    }
+}
+
+if (!function_exists('formatCount')) {
+    function formatCount($count)
+    {
+        if ($count >= 1000) {
+            $rounded = floor($count / 1000) * 1000;
+            return number_format($rounded) . '+';
+        }
+
+        return $count . '+';
+    }
+}
+
+if (!function_exists('sincePosted')) {
+    function sincePosted($date)
+    {
+        return Carbon::parse($date)->diffForHumans();
     }
 }
 

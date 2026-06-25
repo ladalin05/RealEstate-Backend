@@ -48,8 +48,7 @@
         : [];
 
     $hasImage  = !empty($form->profile_image ?? null);
-    $minioBase = rtrim(env('MINIO_ENDPOINT', ''), '/') . '/' . env('MINIO_BUCKET', '') . '/';
-    $imageUrl  = $hasImage ? $minioBase . $form->profile_image : null;
+    $imageUrl  = $hasImage ? $form->profile_image : null;
 @endphp
 
 <div class="modal-body p-4 py-1 bg-white">
@@ -445,8 +444,8 @@ $(document).ready(function () {
             const result = await uploadToMinio(file, UPLOAD_FOLDER);
 
             /* UI: success state */
-            $path.val(result.path);
-            $nameBox.val(result.path);
+            $path.val(result.public_url); 
+            $nameBox.val(result.public_url); 
             $preview.attr('src', result.public_url).removeClass('d-none');
             $ph.addClass('d-none');
             $remove.show();

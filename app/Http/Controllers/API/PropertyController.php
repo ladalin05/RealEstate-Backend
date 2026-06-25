@@ -18,9 +18,11 @@ use App\Models\Reports;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
+use App\Traits\FormatsDataCard;
 
 class PropertyController extends Controller
 {
+    use FormatsDataCard;
     
     public function __construct(protected PropertyService $service, protected PropertyRepository $repository)
     {
@@ -34,7 +36,7 @@ class PropertyController extends Controller
 
         $property = $this->repository->getAll($params);
 
-        return $this->successResponse('Property list', $property);
+        return $this->successResponse('Property list', $this->transformProperties($property));
     }
 
     public function getPropertyDetails($id)
@@ -78,10 +80,18 @@ class PropertyController extends Controller
 
     public function filterProperties(Request $request): JsonResponse
     {
-        $property = $this->service->filterProperties($request->all());
+        $property = $this->repository->filterProperties($request->all());
 
-        return $this->successResponse('Property list', $property);
+        return $this->successResponse('Property list', $this->transformProperties($property));
     }
+
+    public function getDataFillter(): JsonResponse
+    {
+        $data = $this->service->getDataFillter();
+
+        return $this->successResponse('Data fillter', $data);
+    }
+    
 
     public function toggleFavourite(ToggleFavouriteRequest $request): JsonResponse
     {

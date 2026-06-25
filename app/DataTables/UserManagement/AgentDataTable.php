@@ -15,9 +15,7 @@ class AgentDataTable extends DataTable
             ->eloquent($query)
             ->addIndexColumn()
             ->editColumn('profile_image', function ($row) {
-                $src = $row->profile_image
-                    ? rtrim(env('MINIO_ENDPOINT'), '/') . '/' . env('MINIO_BUCKET') . '/' . $row->profile_image
-                    : null;
+                $src = $row->profile_image ?? null;
 
                 return $src
                     ? '<img src="' . $src . '" width="60" height="60" style="object-fit:cover;border-radius:6px;">'

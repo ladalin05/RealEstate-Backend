@@ -3,11 +3,12 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\UserAuthController;
-use App\Http\Controllers\Api\MainController;
+use App\Http\Controllers\Api\CMSController;
 use App\Http\Controllers\API\CategoryController;
 use App\Http\Controllers\API\PropertyController;
 use App\Http\Controllers\API\FilterController;
-use App\Http\Controllers\Api\V1\PaymentController;
+use App\Http\Controllers\API\AgentController;
+use App\Http\Controllers\API\BlogController;
 use App\Http\Controllers\DbMockup\EndpointController;
 
 Route::prefix('auth')->group(function () {
@@ -19,9 +20,10 @@ Route::prefix('auth')->group(function () {
 });
 
 Route::prefix('cms')->group(function () {
-    Route::get('/menu', [MainController::class, 'getMenu']);
-    Route::get('/setting', [MainController::class, 'getSetting']);
-    Route::get('/contact', [MainController::class, 'getContact']);
+    Route::get('/home', [CMSController::class, 'getHomeData']);
+    Route::get('/menu', [CMSController::class, 'getMenu']);
+    Route::get('/setting', [CMSController::class, 'getSetting']);
+    Route::get('/contact', [CMSController::class, 'getContact']);
 });
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -30,12 +32,21 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 });
 
+Route::prefix('user-management')->group(function () {
+    Route::get('/agents', [AgentController::class, 'getAllAgents']);
+});
+
 Route::prefix('property')->group(function () {
     Route::get('/', [PropertyController::class, 'getProperty']);
     Route::get('/detail/{id}', [PropertyController::class, 'getPropertyDetails']);
     Route::get('/categories', [CategoryController::class, 'getPropertyCategories']);
     Route::post('/toggle-favourite', [PropertyController::class, 'toggleFavourite']);
     Route::get('/fillter-properties', [PropertyController::class, 'filterProperties']);
+    Route::get('/get-data-fillter', [PropertyController::class, 'getDataFillter']);
+});
+
+Route::prefix('blogs')->group(function () {
+    Route::get('/', [BlogController::class, 'getAllBlogs']);
 });
 
 

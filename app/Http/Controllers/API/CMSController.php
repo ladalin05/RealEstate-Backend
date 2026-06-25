@@ -9,12 +9,35 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 use App\Models\Admin\Settings;
 use App\Models\UserManagement\UserInform;
+use App\Services\CMSService;
 use App\Http\Controllers\Controller;
 use App\Models\Menu;
 use App\Models\UserManagement\User;
 
 class CMSController extends Controller
 {
+    private CmsService $cmsService;
+
+    public function __construct(CmsService $cmsService)
+    {
+        $this->cmsService = $cmsService;
+    }
+
+    public function getHomeData(Request $request)
+    {
+        $data = $this->cmsService->getHomeData();
+
+        return $this->successResponse('Home data fetched successfully', $data);
+    }
+
+    public function getFeaturedProperties(Request $request)
+    {
+        $limit = $request->limit ?? 8;
+        $properties = $this->cmsService->getFeaturedProperties($limit);
+
+        return $this->successResponse('Featured properties fetched successfully', $properties);
+    }
+    
     public function getMenu(Request $request)
     {
         $menus = Menu::join('menu_items', 'menus.id', 'menu_items.menu_id')

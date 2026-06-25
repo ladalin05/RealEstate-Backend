@@ -342,6 +342,8 @@
             icon.className = 'ph ph-eye';
         }
     }
+
+    
 </script>
 
 </x-guest-layout>

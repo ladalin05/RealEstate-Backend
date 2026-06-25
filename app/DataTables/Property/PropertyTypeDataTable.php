@@ -15,9 +15,7 @@ class PropertyTypeDataTable extends DataTable
             ->eloquent($query)
             ->addIndexColumn()
             ->editColumn('image', function ($row) {
-                $src = $row->image
-                    ? rtrim(env('MINIO_ENDPOINT'), '/') . '/' . env('MINIO_BUCKET') . '/' . $row->image
-                    : null;
+                $src = $row->image ?? null;
 
                 return $src
                     ? '<img src="' . $src . '" width="60" height="60" style="object-fit:cover;border-radius:6px;">'

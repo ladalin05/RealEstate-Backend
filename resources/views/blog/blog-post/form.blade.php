@@ -603,7 +603,7 @@
 
                         const result = await uploadToMinio(file, cfg.folder);
 
-                        $path.val(result.path);
+                        $path.val(result.public_url); 
                         $preview.attr('src', result.public_url).removeClass('hidden');
                         $remove.show();
                         $wrapper.removeClass('uploading').addClass('upload-done');

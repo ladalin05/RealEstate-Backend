@@ -244,8 +244,8 @@ $(document).ready(function () {
             const result = await uploadToMinio(file, UPLOAD_FOLDER);
 
             /* UI: success state */
-            $path.val(result.path);
-            $nameBox.val(result.path);
+            $path.val(result.public_url); 
+            $nameBox.val(result.public_url); 
             $preview.attr('src', result.public_url).removeClass('d-none');
             $ph.addClass('d-none');
             $remove.show();

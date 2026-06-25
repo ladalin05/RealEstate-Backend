@@ -655,7 +655,7 @@ function ajaxSubmit(formSelector) {
                 }
             }
 
-            if (response.status === 'error') {
+            if (response.status === 'error' || response.status === 422) {
                 errorAlert(response.message || 'An error occurred');
             }
 
@@ -713,7 +713,7 @@ $(document).on('submit', '.ajax-form', function (e) {
                 }
             }
 
-            if (response.status === 'error') {
+            if (response.status === 'error' || response.status === 422) {
                 errorAlert(response.message || 'An error occurred');
             }
         },

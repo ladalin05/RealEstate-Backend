@@ -859,7 +859,7 @@
 
                         const result = await uploadToMinio(file, cfg.folder);
 
-                        $path.val(result.path);
+                        $path.val(result.public_url); 
                         $preview.attr('src', result.public_url).removeClass('hidden');
                         $remove.show();
                         $wrapper.removeClass('uploading').addClass('upload-done');
@@ -961,10 +961,10 @@
                 try {
                     const result = await uploadToMinio(file, 'properties/gallery');
 
-                    $path.val(result.path);
+                    $path.val(result.public_url);
+                    $nameBox.val(result.public_url);
                     $item.attr('data-path', result.path);
                     $item.find('.remove-gallery').attr('data-path', result.path);
-                    $nameBox.val(result.path);
                     $badge.text('Uploaded').removeClass('bg-warning text-dark').addClass('bg-success');
                     $item.removeClass('uploading').addClass('upload-done');
                     $item.find('.preview').html(

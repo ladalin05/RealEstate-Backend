@@ -47,13 +47,13 @@
                              <img src="{{ asset('assets/images/default/male-avatar.jpg') }}" class="w-32px h-32px rounded-pill">
                              <span class="status-indicator bg-success"></span>
                          </div>
-                         <span class="d-none d-lg-inline-block mx-lg-2">{{ auth()->user()->{'name_'.app()->getLocale()} }}</span>
+                         <span class="d-none d-lg-inline-block mx-lg-2">{{ auth()->user()->name }}</span>
                      </a>
 
                      <div class="dropdown-menu dropdown-menu-end">
                          <a href="{{ route('settings.users-management.users.account') }}" class="dropdown-item">
                              <i class="ph ph-user-circle me-2"></i>
-                             {{ auth()->user()->{'name_'.app()->getLocale()} }}
+                             {{ auth()->user()->name }}
                          </a>
                          <div class="dropdown-divider"></div>
                          <a href="javascript:void(0)" class="dropdown-item" onclick="clearCache()">

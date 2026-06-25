@@ -153,6 +153,17 @@ Route::middleware(['auth', 'abilities'])->group(function () {
         'as' => 'location.'
     ], function () {
         Route::group([
+            'prefix' => 'areas',
+            'as'     => 'areas.'
+        ], function () {
+            Route::get('/',        [AreaController::class, 'index'])->name('index');
+            Route::match(['get', 'post'], '/add', [AreaController::class, 'create'])->name('add');
+            Route::match(['get', 'post'], '/edit', [AreaController::class, 'update'])->name('edit');
+            Route::get('/delete',   [AreaController::class, 'delete'])->name('deleted');
+            Route::get('/districts', [AreaController::class, 'getDistricts'])->name('districts');
+            Route::get('/communes',  [AreaController::class, 'getCommunes'])->name('communes');
+        });
+        Route::group([
             'prefix' => 'countries',
             'as' => 'countries.'
         ], function () {
