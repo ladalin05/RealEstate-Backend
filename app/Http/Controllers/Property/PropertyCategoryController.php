@@ -3,24 +3,24 @@
 namespace App\Http\Controllers\Property;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Property\StorePropertyTypeRequest;
-use App\Http\Requests\Property\UpdatePropertyTypeRequest;
-use App\DataTables\Property\PropertyTypeDataTable;
-use App\Models\Property\PropertyType;
+use App\Http\Requests\Property\StorePropertyCategoryRequest;
+use App\Http\Requests\Property\UpdatePropertyCategoryRequest;
+use App\DataTables\Property\PropertyCategoryDataTable;
+use App\Models\Property\PropertyCategory;
 use App\Services\BaseService;
 use Illuminate\Http\Request;
 
-class PropertyTypeController extends Controller
+class PropertyCategoryController extends Controller
 {
     private BaseService $service;
     public function __construct()
     {
         $this->service = new class extends BaseService {
-            protected function getQuery() { return PropertyType::query(); }
+            protected function getQuery() { return PropertyCategory::query(); }
         };
     }
 
-    public function index(PropertyTypeDataTable $dataTable)
+    public function index(PropertyCategoryDataTable $dataTable)
     {
         return $dataTable->render('property.property-type.index');
     }
@@ -30,11 +30,11 @@ class PropertyTypeController extends Controller
         try {
 
             if ($request->isMethod('post')) {
-                $formRequest = app(StorePropertyTypeRequest::class);
+                $formRequest = app(StorePropertyCategoryRequest::class);
                 $this->service->create($formRequest->validated());
 
                 return $this->redirectResponse(
-                    message: __('global.create_type_successfully'),
+                    message: __('messages.create_category_successfully'),
                     route: route('property.types.index'),
                 );
             }
@@ -42,7 +42,7 @@ class PropertyTypeController extends Controller
             return $this->modalResponse(
                 title:  __('global.add_new'),
                 view:   'property.property-type.form',
-                data:   ['form' => new PropertyType()],
+                data:   ['form' => new PropertyCategory()],
                 action: route('property.types.add'),
             );
 
@@ -57,14 +57,14 @@ class PropertyTypeController extends Controller
     public function update(Request $request)
     {
         try {
-            $type = PropertyType::findOrFail($request->id);
+            $type = PropertyCategory::findOrFail($request->id);
 
             if ($request->isMethod('post')) {
-                $formRequest = app(UpdatePropertyTypeRequest::class);
+                $formRequest = app(UpdatePropertyCategoryRequest::class);
                 $this->service->update($formRequest->validated(), $type->id);
 
                 return $this->redirectResponse(
-                    message: __('global.updated_type_successfully'),
+                    message: __('messages.update_category_successfully'),
                     route: route('property.types.index'),
                 );
             }
@@ -87,11 +87,11 @@ class PropertyTypeController extends Controller
     public function delete(Request $request)
     {
         try {
-            $type = PropertyType::findOrFail($request->id);
+            $type = PropertyCategory::findOrFail($request->id);
             $type->delete();
 
             return $this->redirectResponse(
-                message: __('global.deleted_type_successfully'),
+                message: __('messages.delete_category_successfully'),
                 route: route('property.types.index'),
             );
         } catch (\Throwable $e) {

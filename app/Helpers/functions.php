@@ -2,17 +2,14 @@
 
 use Illuminate\Support\Facades\DB;
 
-use App\Models\Property\PropertyType;
+use App\Models\Property\PropertyCategory;
 use App\Models\Location\Location;
 use App\Models\Admin\Menu;
 use App\Models\SubscriptionPlan;
 use App\Models\Property\PropertyViews;
 use App\Models\UserManagement\User;
 use App\Models\Admin\Permission;
-use App\Models\Location\City;
-use App\Models\Location\Commune;
-use App\Models\Location\Country;
-use App\Models\Location\District;
+use App\Models\Property\Area;
 use App\Models\Property\Amenity;
 use App\Models\Property\Feature;
 use App\Models\UserManagement\Agency;
@@ -127,7 +124,7 @@ if (!function_exists('updateImage')) {
 if (!function_exists('getTypes')) {
     function getTypes()
     {
-        $type_info = PropertyType::where('status', 1)->get();
+        $type_info = PropertyCategory::where('status', 1)->get();
         return $type_info;
     }
 }
@@ -255,6 +252,76 @@ if (!function_exists('getAgency')) {
     function getAgency()
     {
         return Agency::all();
+    }
+}
+
+if (!function_exists('getPurposes')) {
+    function getPurposes()
+    {
+        return [ 
+            ['value' => 'sale', 'name' => 'Sale',], 
+            ['value' => 'rent', 'name' => 'Rent',], 
+            ['value' => 'sale_rent', 'name' => 'Sale / Rent',] 
+        ];
+    }
+}
+
+if (!function_exists('getStatuses')) {
+    function getStatuses()
+    {
+        return [ 
+            ['value' => 'active', 'name' => 'Active',], 
+            ['value' => 'inactive', 'name' => 'Inactive',], 
+            ['value' => 'draft', 'name' => 'Draft',], 
+            ['value' => 'sold', 'name' => 'Sold',], 
+            ['value' => 'rented', 'name' => 'Rented',] 
+        ];
+    }
+}
+
+if (!function_exists('getRentalPeriods')) {
+    function getRentalPeriods()
+    {
+        return [ 
+            ['value' => 'daily', 'name' => 'Daily'], 
+            ['value' => 'monthly', 'name' => 'Monthly',], 
+            ['value' => 'yearly', 'name' => 'Yearly',], 
+        ];
+    }
+}
+
+if (!function_exists('getAreas')) {
+    function getAreas()
+    {
+        $areas = Area::select('id', 'name')->get();
+        return $areas;
+    }
+}
+
+if (!function_exists('getDirections')) {
+    function getDirections()
+    {
+        return [
+            ['value' => 'north', 'name' => 'North'],
+            ['value' => 'east', 'name' => 'East'],
+            ['value' => 'south', 'name' => 'South'],
+            ['value' => 'west', 'name' => 'West'],
+            ['value' => 'north_east', 'name' => 'North East'],
+            ['value' => 'north_west', 'name' => 'North West'],
+            ['value' => 'south_east', 'name' => 'South East'],
+            ['value' => 'south_west', 'name' => 'South West'],
+        ];
+    }
+}
+
+if (!function_exists('getFurnishing')) {
+    function getFurnishing()
+    {
+        return [
+            ['value' => 'unfurnished', 'name' => 'Unfurnished'],
+            ['value' => 'semi_furnished', 'name' => 'Semi Furnished'],
+            ['value' => 'fully_furnished', 'name' => 'Fully Furnished'],
+        ];
     }
 }
 

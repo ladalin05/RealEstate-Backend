@@ -26,7 +26,7 @@ class PropertyController extends Controller
             $this->service->create($formRequest->validated());
 
             return $this->redirectResponse(
-                message: __('global.create_property_successfully'),
+                message: __('messages.create_property_successfully'),
                 route: route('property.properties.index'),
             );
         }
@@ -47,16 +47,19 @@ class PropertyController extends Controller
             $this->service->update($formRequest->validated(), $property->id);
 
             return $this->redirectResponse(
-                message: __('global.update_property_successfully'),
+                message: __('messages.update_property_successfully'),
                 route: route('property.properties.index'),
             );
         }
 
-        return view('property.properties.form', [
-            'page_title' => __('global.update_property'),
-            'isEdit'     => true,
-            'property'   => $property,
-        ]);
+        return $this->viewResponse(
+            view:   'property.properties.form',
+            action: route('property.properties.edit', ['id' => $property->id]),
+            data:   [
+                'page_title' => __('global.update_property'),
+                'property' => $property,
+            ],
+        );
     }
 
     public function delete(Request $request)
@@ -65,7 +68,7 @@ class PropertyController extends Controller
         $property->delete();
 
         return $this->redirectResponse(
-            message: __('global.deleted_property_successfully'),
+            message: __('messages.delete_property_successfully'),
             route: route('property.properties.index'),
         );
     }

@@ -100,7 +100,7 @@ class CommuneController extends Controller
             $commune->delete();
 
             return $this->redirectResponse(
-                message: __('global.deleted_commune_successfully'),
+                message: __('messages.deleted_commune_successfully'),
                 route:   route('location.communes.index'),
             );
 

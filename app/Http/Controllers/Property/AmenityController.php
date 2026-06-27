@@ -34,7 +34,7 @@ class AmenityController extends Controller
                 $this->service->create($formRequest->validated());
 
                 return $this->redirectResponse(
-                    message: __('global.create_amenity_successfully'),
+                    message: __('messages.create_amenity_successfully'),
                     route: route('property.amenities.index'),
                 );
             }
@@ -64,7 +64,7 @@ class AmenityController extends Controller
                 $this->service->update($formRequest->validated(), $amenity->id);
 
                 return $this->redirectResponse(
-                    message: __('global.updated_amenity_successfully'),
+                    message: __('messages.update_amenity_successfully'),
                     route: route('property.amenities.index'),
                 );
             }
@@ -91,7 +91,7 @@ class AmenityController extends Controller
             $amenity->delete();
 
             return $this->redirectResponse(
-                message: __('global.deleted_amenity_successfully'),
+                message: __('messages.delete_amenity_successfully'),
                 route: route('property.amenities.index'),
             );
 

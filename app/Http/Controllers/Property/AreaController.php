@@ -2,34 +2,28 @@
 
 namespace App\Http\Controllers\Property;
 
-use Exception;
-use Illuminate\Support\Str;
-use App\Models\Property\PropertyCategory;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Session;
-use App\Http\Requests\Property\StoreFeatureRequest;
-use App\Http\Requests\Property\UpdateFeatureRequest;
+use App\DataTables\Property\AreaDataTable;
+use App\Models\Property\Area;
+use App\Http\Requests\Property\StoreAreaRequest;
+use App\Http\Requests\Property\UpdateAreaRequest;
 use App\Services\BaseService;
-use App\DataTables\Property\FeatureDataTable;
-use App\Models\Property\Feature;
+use Illuminate\Http\Request;
 
-class FeatureController extends Controller
+class AreaController extends Controller
 {
     private BaseService $service;
 
     public function __construct()
     {
         $this->service = new class extends BaseService {
-            protected function getQuery() { return Feature::query(); }
+            protected function getQuery() { return Area::query(); }
         };
     }
 
-    public function index(FeatureDataTable $dataTable)
+    public function index(AreaDataTable $dataTable)
     {
-        return $dataTable->render('property.features.index');
+        return $dataTable->render('property.areas.index');
     }
 
     // Create new feature
@@ -37,20 +31,20 @@ class FeatureController extends Controller
     {
         try {
             if ($request->isMethod('post')) {
-                $formRequest = app(StoreFeatureRequest::class);
+                $formRequest = app(StoreAreaRequest::class);
                 $this->service->create($formRequest->validated());
 
                 return $this->redirectResponse(
-                    message: __('messages.create_feature_successfully'),
-                    route: route('property.features.index'),
+                    message: __('messages.create_area_successfully'),
+                    route: route('property.areas.index'),
                 );
             }
 
             return $this->modalResponse(
                 title:  __('global.add_new'),
-                view:   'property.features.form',
-                data:   ['form' => new Feature()],
-                action: route('property.features.add'),
+                view:   'property.areas.form',
+                data:   ['form' => new Area()],
+                action: route('property.areas.add'),
             );
 
         } catch (\Throwable $e) {
@@ -65,23 +59,23 @@ class FeatureController extends Controller
     public function update(Request $request)
     {
         try {
-            $form   = Feature::findOrFail($request->id);
+            $form   = Area::findOrFail($request->id);
             
             if ($request->isMethod('post')) {
-                $formRequest = app(UpdateFeatureRequest::class);
+                $formRequest = app(UpdateAreaRequest::class);
                 $this->service->update($formRequest->validated(), $form->id);
 
                 return $this->redirectResponse(
-                    message: __('messages.update_feature_successfully'),
-                    route: route('property.features.index'),
+                    message: __('messages.update_area_successfully'),
+                    route: route('property.areas.index'),
                 );
             }
 
             return $this->modalResponse(
                 title:  __('global.edit'),
-                view:   'property.features.form',
+                view:   'property.areas.form',
                 data:   ['form' => $form],
-                action: route('property.features.edit', ['id' => $request->id]),
+                action: route('property.areas.edit', ['id' => $request->id]),
             );
 
         } catch (\Throwable $e) {
@@ -96,12 +90,12 @@ class FeatureController extends Controller
     public function delete(Request $request)
     {
         try {
-            $feature = Feature::findOrFail($request->id);
-            $feature->delete();
+            $area = Area::findOrFail($request->id);
+            $area->delete();
 
             return $this->redirectResponse(
-                message: __('messages.delete_feature_successfully'),
-                route: route('property.features.index'),
+                message: __('messages.delete_area_successfully'),
+                route: route('property.areas.index'),
             );
 
         } catch (\Throwable $e) {

@@ -22,9 +22,9 @@ class StoreUserTelegramRegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'telegram_id'     => 'required|string|max:255',
-            'username'        => 'required|string|max:255',
-            'profile_picture' => 'nullable|string|max:255',
+            'telegram_id'     => ['required','string','max:255'],
+            'username'        => ['required','string','max:255'],
+            'profile_picture' => ['nullable','string','max:255'],
         ];
     }
 }

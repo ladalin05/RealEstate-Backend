@@ -100,7 +100,7 @@ class ProvinceController extends Controller
             $city->delete();
 
             return $this->redirectResponse(
-                message: __('global.deleted_province_successfully'),
+                message: __('messages.deleted_province_successfully'),
                 route: route('location.provinces.index'),
             );
 

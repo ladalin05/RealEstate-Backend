@@ -2,12 +2,12 @@
 
 namespace App\Services;
 
-use App\Models\Location\Area;
+use App\Models\Property\Area;
 use App\Models\Property\Property;
 use Illuminate\Support\Facades\DB;
 use App\Repositories\CMSRepository;
 use App\Models\UserManagement\Agent;
-use App\Models\Property\PropertyType;
+use App\Models\Property\PropertyCategory;
 use App\Repositories\PropertyRepository;
 use App\Traits\FormatsDataCard;
 
@@ -75,21 +75,21 @@ class CMSService
 
     public function getPropertyCategories()
     {
-        $categories = PropertyType::query()
-            ->where('property_types.status', 1)
+        $categories = PropertyCategory::query()
+            ->where('property_categories.status', 1)
             ->leftJoin('properties', function ($join) {
-                $join->on('properties.type_id', '=', 'property_types.id')
+                $join->on('properties.category_id', '=', 'property_categories.id')
                     ->where('properties.status', 'active')
                     ->whereNull('properties.deleted_at');
             })
-            ->groupBy('property_types.id', 'property_types.name_en', 'property_types.slug', 'property_types.image')
+            ->groupBy('property_categories.id', 'property_categories.name_en', 'property_categories.slug', 'property_categories.image')
             ->orderByDesc('property_count')
             ->limit(6)
             ->select([
-                'property_types.id',
-                'property_types.name_en',
-                'property_types.slug',
-                'property_types.image',
+                'property_categories.id',
+                'property_categories.name_en',
+                'property_categories.slug',
+                'property_categories.image',
                 DB::raw('COUNT(properties.id) as property_count'),
             ])
             ->get();

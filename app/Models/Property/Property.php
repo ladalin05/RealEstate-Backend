@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\UserManagement\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\Location\Location;
-use App\Models\Location\PropertyLocation;
 
 class Property extends Model
 {
@@ -48,7 +46,12 @@ class Property extends Model
 
     public function type()
     {
-        return $this->belongsTo(PropertyType::class, 'type_id');
+        return $this->belongsTo(PropertyCategory::class, 'type_id');
+    }
+
+    public function area()
+    {
+        return $this->belongsTo(Area::class, 'area_id', 'id');
     }
 
     public function location()

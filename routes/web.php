@@ -11,13 +11,14 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Property\AmenityController;
 use App\Http\Controllers\Property\FeatureController;
 use App\Http\Controllers\Property\PropertyController;
-use App\Http\Controllers\Property\PropertyTypeController;
+use App\Http\Controllers\Property\PropertyCategoryController;
 use App\Http\Controllers\Interaction\InquiryController;
 use App\Http\Controllers\Interaction\ReviewController;
 use App\Http\Controllers\Location\CityController;
 use App\Http\Controllers\Location\CommuneController;
 use App\Http\Controllers\Location\CountryController;
 use App\Http\Controllers\Location\DistrictController;
+use App\Http\Controllers\Property\AreaController;
 use App\Http\Controllers\UserManagement\UsersController;
 use App\Http\Controllers\UserManagement\RoleController;
 use App\Http\Controllers\UserManagement\AgentController;
@@ -120,10 +121,10 @@ Route::middleware(['auth', 'abilities'])->group(function () {
             'prefix' => 'types',
             'as' => 'types.'
         ], function () {
-            Route::get('/', [PropertyTypeController::class, 'index'])->name('index');
-            Route::match(['get', 'post'], '/add', [PropertyTypeController::class, 'create'])->name('add');
-            Route::match(['get', 'post'], '/edit', [PropertyTypeController::class, 'update'])->name('edit');
-            Route::get('/delete', [PropertyTypeController::class, 'delete'])->name('deleted');
+            Route::get('/', [PropertyCategoryController::class, 'index'])->name('index');
+            Route::match(['get', 'post'], '/add', [PropertyCategoryController::class, 'create'])->name('add');
+            Route::match(['get', 'post'], '/edit', [PropertyCategoryController::class, 'update'])->name('edit');
+            Route::get('/delete', [PropertyCategoryController::class, 'delete'])->name('deleted');
         });
 
         Route::group([
@@ -145,13 +146,6 @@ Route::middleware(['auth', 'abilities'])->group(function () {
             Route::match(['get', 'post'], '/edit', [FeatureController::class, 'update'])->name('edit');
             Route::get('/delete', [FeatureController::class, 'delete'])->name('deleted');
         });
-    });
-
-    // Locations
-    Route::group([
-        'prefix' => 'location',
-        'as' => 'location.'
-    ], function () {
         Route::group([
             'prefix' => 'areas',
             'as'     => 'areas.'
@@ -160,9 +154,14 @@ Route::middleware(['auth', 'abilities'])->group(function () {
             Route::match(['get', 'post'], '/add', [AreaController::class, 'create'])->name('add');
             Route::match(['get', 'post'], '/edit', [AreaController::class, 'update'])->name('edit');
             Route::get('/delete',   [AreaController::class, 'delete'])->name('deleted');
-            Route::get('/districts', [AreaController::class, 'getDistricts'])->name('districts');
-            Route::get('/communes',  [AreaController::class, 'getCommunes'])->name('communes');
         });
+    });
+
+    // Locations
+    Route::group([
+        'prefix' => 'location',
+        'as' => 'location.'
+    ], function () {
         Route::group([
             'prefix' => 'countries',
             'as' => 'countries.'

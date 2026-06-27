@@ -16,7 +16,7 @@ class UploadController extends Controller
 
         $result = $storage->upload($validated['file'], $validated['folder']);
 
-        return $this->successResponse('Image uploaded successfully', $result);
+        return $this->successResponse(__('messages.upload_successfully'), $result);
     }
 
     public function destroy(DeleteFileRequest $request, MinioStorageService $storage)
@@ -25,6 +25,6 @@ class UploadController extends Controller
 
         $storage->delete($validated['path']);
 
-        return $this->successResponse('File deleted');
+        return $this->successResponse(__('messages.file_delete_successfully'));
     }
 }

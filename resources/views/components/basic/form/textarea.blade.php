@@ -1,9 +1,34 @@
 @props([
-    'disabled' => false,
     'label' => null,
+    'name',
     'value' => null,
+    'placeholder' => null,
+    'required' => false,
+    'rows' => 4,
 ])
+
 <div class="mb-3">
-    <label class="form-label">{{ $label }}</label>
-    <textarea @disabled($disabled) {{ $attributes->merge(['class' => 'form-control']) }}>{{ $value }}</textarea>
+    @if($label ?? $slot->isNotEmpty())
+        <label for="{{ $name }}" class="form-label">
+            {{ $label ?? $slot }}
+            @if($required)
+                <span class="text-danger">*</span>
+            @endif
+        </label>
+    @endif
+
+    <textarea
+        name="{{ $name }}"
+        id="{{ $name }}"
+        rows="{{ $rows }}"
+        placeholder="{{ $placeholder }}"
+        {{ $required ? 'required' : '' }}
+        {{ $attributes->merge([
+            'class' => 'form-control' . ($errors->has($name) ? ' is-invalid' : '')
+        ]) }}
+    >{{ old($name, $value) }}</textarea>
+
+    @error($name)
+        <div class="invalid-feedback">{{ $message }}</div>
+    @enderror
 </div>

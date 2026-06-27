@@ -100,7 +100,7 @@ class DistrictController extends Controller
             $district->delete();
 
             return $this->redirectResponse(
-                message: __('global.deleted_district_successfully'),
+                message: __('messages.deleted_district_successfully'),
                 route: route('location.districts.index'),
             );
 

@@ -6,6 +6,7 @@ use App\Models\Interaction\Review;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Html\Button;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Services\DataTable;
 
 class ReviewDataTable extends DataTable
@@ -52,7 +53,7 @@ class ReviewDataTable extends DataTable
             ->leftJoin('users', 'reviews.user_id', 'users.id')
             ->leftJoin('agents', 'reviews.agent_id', 'agents.id')
             ->leftJoin('properties', 'reviews.property_id', 'properties.id')
-            ->select('reviews.*', 'users.name as user_name', 'agents.name as agent_name', 'properties.title as property_title');
+            ->select('reviews.*', 'users.name as user_name', DB::raw("CONCAT(agents.first_name , ' ', agents.last_name) as agent_name"), 'properties.title as property_title');
     }
 
     public function html()

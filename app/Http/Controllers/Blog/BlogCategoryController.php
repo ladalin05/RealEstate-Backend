@@ -34,7 +34,7 @@ class BlogCategoryController extends Controller
                 $this->service->create($formRequest->validated());
 
                 return $this->redirectResponse(
-                    message: __('global.create_category_successfully'),
+                    message: __('messages.create_blog_category_successfully'),
                     route: route('blogs.categories.index'),
                 );
             }
@@ -64,7 +64,7 @@ class BlogCategoryController extends Controller
                 $this->service->update($formRequest->validated(), $category->id);
 
                 return $this->redirectResponse(
-                    message: __('global.updated_category_successfully'),
+                    message: __('messages.update_blog_category_successfully'),
                     route: route('blogs.categories.index'),
                 );
             }
@@ -91,7 +91,7 @@ class BlogCategoryController extends Controller
             $category->delete();
 
             return $this->redirectResponse(
-                message: __('global.deleted_category_successfully'),
+                message: __('messages.delete_blog_category_successfully'),
                 route: route('blogs.categories.index'),
             );
         } catch (\Throwable $e) {

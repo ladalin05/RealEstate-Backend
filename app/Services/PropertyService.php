@@ -6,8 +6,8 @@ use App\Models\Property\Property;
 use App\Models\Property\PropertyGallery;
 use App\Models\Property\PropertyFeature;
 use App\Models\Property\PropertyAmenity;
-use App\Models\Location\Area;
-use App\Models\Property\PropertyType;
+use App\Models\Property\Area;
+use App\Models\Property\PropertyCategory;
 use App\Models\Property\Feature;
 use App\Models\Property\Amenity;
 use App\Models\Property\Favourite;
@@ -29,7 +29,6 @@ class PropertyService extends BaseService
         $property = parent::create($propertyData);
 
         $this->saveGallery($property->id, $relations['gallery_images']);
-        $this->saveLocation($property->id, $relations);
         $this->syncAmenities($property->id, $relations['amenities']);
         $this->syncFeatures($property->id, $relations['features']);
 
@@ -45,8 +44,6 @@ class PropertyService extends BaseService
         // Gallery: always replace so removed images are reflected
         PropertyGallery::where('property_id', $property->id)->delete();
         $this->saveGallery($property->id, $relations['gallery_images']);
-
-        $this->saveLocation($property->id, $relations, update: true);
 
         // Amenities & features: always sync so deselections take effect
         $this->syncAmenities($property->id, $relations['amenities']);
@@ -97,28 +94,6 @@ class PropertyService extends BaseService
         PropertyGallery::insert($rows); // single query instead of N queries
     }
 
-    // ─── Location ─────────────────────────────────────────────────────────────
-
-    private function saveLocation(int $propertyId, array $data, bool $update = false): void
-    {
-        $location = [
-            'country_id'  => $data['country_id']  ?? null,
-            'province_id' => $data['province_id'] ?? null,
-            'district_id' => $data['district_id'] ?? null,
-            'commune_id'  => $data['commune_id']  ?? null,
-            'address'     => $data['address']     ?? null,
-            'latitude'    => $data['latitude']    ?? null,
-            'longitude'   => $data['longitude']   ?? null,
-        ];
-
-        // Skip if nothing useful was submitted at all
-        if (!array_filter($location)) return;
-
-        PropertyLocation::updateOrCreate(
-            ['property_id' => $propertyId],
-            $location
-        );
-    }
 
     // ─── Amenities ────────────────────────────────────────────────────────────
 
@@ -176,7 +151,7 @@ class PropertyService extends BaseService
             'id',
             'name'
         ]);
-        $data['categories'] = PropertyType::where('status', 1)->get([
+        $data['categories'] = PropertyCategory::where('status', 1)->get([
             'id',
             'name_en as name'
         ]);

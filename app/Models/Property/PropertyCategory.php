@@ -4,9 +4,9 @@ namespace App\Models\Property;
 
 use Illuminate\Database\Eloquent\Model;
 
-class PropertyType extends Model
+class PropertyCategory extends Model
 {
-    protected $table = 'property_types';
+    protected $table = 'property_categories';
 
     protected $fillable = ['type_name','type_image','type_slug','status'];
  
@@ -20,7 +20,7 @@ class PropertyType extends Model
 
 	public static function getTypeInfo($id,$field_name) 
     { 
-		$info = PropertyType::where('status','1')->where('id',$id)->first();
+		$info = PropertyCategory::where('status','1')->where('id',$id)->first();
 		
 		if($info)
 		{

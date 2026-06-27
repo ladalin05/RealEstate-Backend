@@ -80,14 +80,14 @@ class PropertyDataTable extends DataTable
     public function query(Property $model)
     {
         return $model->newQuery()
-            ->join('property_types', 'property_types.id', '=', 'properties.type_id')
-            ->leftJoin('property_locations', 'property_locations.property_id', '=', 'properties.id')
-            ->leftJoin('provinces', 'provinces.id', '=', 'property_locations.province_id')
-            ->leftJoin('districts', 'districts.id', '=', 'property_locations.district_id')
-            ->leftJoin('communes', 'communes.id', '=', 'property_locations.commune_id')
+            ->join('property_categories', 'property_categories.id', '=', 'properties.category_id')
+            ->leftJoin('areas', 'areas.id', '=', 'properties.area_id')
+            ->leftJoin('provinces', 'provinces.id', '=', 'areas.province_id')
+            ->leftJoin('districts', 'districts.id', '=', 'areas.district_id')
+            ->leftJoin('communes', 'communes.id', '=', 'areas.commune_id')
             ->select(
                 'properties.*',
-                'property_types.name_en as type_name',
+                'property_categories.name_en as type_name',
                 'provinces.name as province_name',
                 'districts.name as district_name',
                 'communes.name as commune_name'

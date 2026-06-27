@@ -11,7 +11,7 @@ class PropertyRepository extends BaseRepository
     protected function getQuery(): Builder
     {
         return Property::query()
-            ->join('property_types', 'properties.type_id', '=', 'property_types.id')
+            ->join('property_categories', 'properties.category_id', '=', 'property_categories.id')
             ->leftJoin('areas', 'properties.area_id', '=', 'areas.id')
             ->leftJoin('provinces', 'areas.province_id', '=', 'provinces.id')
             ->leftJoin('districts', 'areas.district_id', '=', 'districts.id')
@@ -35,8 +35,8 @@ class PropertyRepository extends BaseRepository
                 'properties.furnishing',
                 'properties.address',
                 'properties.main_image',
-                'property_types.name_en as type_name_en',
-                'property_types.name_kh as type_name_kh',
+                'property_categories.name_en as type_name_en',
+                'property_categories.name_kh as type_name_kh',
                 'areas.name as area_name',
                 'provinces.name as province_name',
                 'districts.name as district_name',
@@ -55,7 +55,7 @@ class PropertyRepository extends BaseRepository
     protected function getDetailQuery(): Builder
     {
         return Property::query()
-            ->join('property_types', 'properties.type_id', '=', 'property_types.id')
+            ->join('property_categories', 'properties.category_id', '=', 'property_categories.id')
             ->leftJoin('areas', 'properties.area_id', '=', 'areas.id')
             ->leftJoin('provinces', 'areas.province_id', '=', 'provinces.id')
             ->leftJoin('districts', 'areas.district_id', '=', 'districts.id')
@@ -93,8 +93,8 @@ class PropertyRepository extends BaseRepository
                 'properties.longitude',
                 'properties.published_at',
                 'properties.updated_at',
-                'property_types.name_en as type_name_en',
-                'property_types.name_kh as type_name_kh',
+                'property_categories.name_en as type_name_en',
+                'property_categories.name_kh as type_name_kh',
                 'areas.name as area_name',
                 'provinces.name as province_name',
                 'districts.name as district_name',
@@ -197,8 +197,8 @@ class PropertyRepository extends BaseRepository
     {
         $filters = [];
 
-        if (!empty($requestParams['type_id'])) {
-            $filters['properties.type_id'] = $requestParams['type_id'];
+        if (!empty($requestParams['category_id'])) {
+            $filters['properties.category_id'] = $requestParams['category_id'];
         }
 
         if (!empty($requestParams['area_id'])) {

@@ -35,7 +35,7 @@ class AgentController extends Controller
                 $this->service->create($formRequest->validated());
 
                 return $this->redirectResponse(
-                    message: __('global.create_user_successfully'),
+                    message: __('messages.create_user_successfully'),
                     route: route('users-management.agents.index'),
                 );
             }
@@ -65,7 +65,7 @@ class AgentController extends Controller
                 $this->service->update($formRequest->validated(), $request->id);
 
                 return $this->redirectResponse(
-                    message: __('global.update_user_successfully'),
+                    message: __('messages.update_user_successfully'),
                     route: route('users-management.agents.index'),
                 );
             }

@@ -2,12 +2,12 @@
 
 namespace App\DataTables\Property;
 
-use App\Models\Property\PropertyType;
+use App\Models\Property\PropertyCategory;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Services\DataTable;
 
-class PropertyTypeDataTable extends DataTable
+class PropertyCategoryDataTable extends DataTable
 {
     public function dataTable($query)
     {
@@ -38,9 +38,9 @@ class PropertyTypeDataTable extends DataTable
             ->rawColumns(['image', 'status', 'action']);
     }
 
-    public function query(PropertyType $model)
+    public function query(PropertyCategory $model)
     {
-        return $model->newQuery()->select('property_types.*');
+        return $model->newQuery()->select('property_categories.*');
     }
 
     public function html()

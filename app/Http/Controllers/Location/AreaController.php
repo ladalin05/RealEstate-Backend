@@ -39,7 +39,7 @@ class AreaController extends Controller
                 $this->service->create($formRequest->validated());
 
                 return $this->redirectResponse(
-                    message: __('global.create_area_successfully'),
+                    message: __('messages.create_area_successfully'),
                     route: route('location.areas.index'),
                 );
             }
@@ -75,7 +75,7 @@ class AreaController extends Controller
                 $this->service->update($formRequest->validated(), $request->id);
 
                 return $this->redirectResponse(
-                    message: __('global.updated_area_successfully'),
+                    message: __('messages.update_area_successfully'),
                     route: route('location.areas.index'),
                 );
             }
@@ -114,7 +114,7 @@ class AreaController extends Controller
             $area->delete();
 
             return $this->redirectResponse(
-                message: __('global.deleted_area_successfully'),
+                message: __('messages.delete_area_successfully'),
                 route: route('location.areas.index'),
             );
 

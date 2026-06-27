@@ -38,7 +38,7 @@ class InternalUserController extends Controller
                 revoke_session($form->id);
 
                 return $this->redirectResponse(
-                    message: __('global.create_user_successfully'),
+                    message: __('global.create_admin_successfully'),
                     route: route('users-management.internal-users.index'),
                 );
             }
@@ -64,7 +64,7 @@ class InternalUserController extends Controller
                 revoke_session($form->id);
 
                 return $this->redirectResponse(
-                    message: __('global.update_user_successfully'),
+                    message: __('global.update_admin_successfully'),
                     route: route('users-management.internal-users.index'),
                 );
             }
@@ -160,7 +160,7 @@ class InternalUserController extends Controller
             $form = User::find($id);
             $form->delete();
             return $this->successResponse(
-                message: __('messages.user_deleted'),
+                message: __('messages.delete_admin_successfully'),
                 route: route('settings.users-management.users.index'),
             );
         } catch (\Exception $e) {

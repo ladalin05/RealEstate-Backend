@@ -14,11 +14,11 @@ class StoreRoleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name_en'        => 'required|string|max:255',
-            'name_kh'        => 'nullable|string|max:255',
-            'administrator'  => 'nullable|boolean',
-            'description'    => 'nullable|string|max:255',
-            'order'          => 'nullable|numeric',
+            'name_en'        => ['required','string','max:255'],
+            'name_kh'        => ['nullable','string','max:255'],
+            'administrator'  => ['nullable','boolean'],
+            'description'    => ['nullable','string','max:255'],
+            'order'          => ['nullable','numeric'],
         ];
     }
 }

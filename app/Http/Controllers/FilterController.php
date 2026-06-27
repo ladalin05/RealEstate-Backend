@@ -21,7 +21,7 @@ class FilterController extends Controller
 
     public function getProvince(Request $request)
     {
-        $country_id = $request->country_id;
+        $country_id = $request->country_id ?? 1;
 
         return response()->json(
             Province::when($country_id, function ($q) use ($country_id) {

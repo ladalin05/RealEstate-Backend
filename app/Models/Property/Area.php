@@ -1,10 +1,13 @@
 <?php
 
-namespace App\Models\Location;
+namespace App\Models\Property;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\Location\Province;
+use App\Models\Location\District;
+use App\Models\Location\Commune;
 
 class Area extends Model
 {

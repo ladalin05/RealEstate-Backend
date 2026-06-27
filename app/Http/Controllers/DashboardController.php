@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\UserManagement\User;
-use App\Models\Property\PropertyType;
+use App\Models\Property\PropertyCategory;
 use App\Models\Property\Property;
 use App\Models\Reports;
 use App\Models\Property\PropertyViews;
@@ -23,7 +23,7 @@ class DashboardController extends Controller
         $user = Auth::user();
 
         // Counts
-        $typeCount     = PropertyType::count();
+        $typeCount     = PropertyCategory::count();
         $propertyCount = Property::count();
         $userCount     = User::count();
         $reportCount   = Reports::count();

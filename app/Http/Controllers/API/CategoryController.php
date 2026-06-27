@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Models\Property\PropertyType;
+use App\Models\Property\PropertyCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -16,7 +16,7 @@ class CategoryController extends Controller
     public function __construct()
     {
         $this->service = new class extends BaseService {
-            protected function getQuery() { return PropertyType::query(); }
+            protected function getQuery() { return PropertyCategory::query(); }
         };
     }
     

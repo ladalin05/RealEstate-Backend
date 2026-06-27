@@ -49,7 +49,7 @@ class RoleController extends Controller
                 }
 
                 return $this->redirectResponse(
-                    message: __('messages.role_saved'),
+                    message: __('messages.create_role_successfully'),
                     route:   route('users-management.roles.index'),
                 );
             }
@@ -103,7 +103,7 @@ class RoleController extends Controller
                 }
 
                 return $this->redirectResponse(
-                    message: __('messages.role_updated'),
+                    message: __('messages.update_role_successfully'),
                     route:   route('users-management.roles.index'),
                 );
             }
@@ -154,9 +154,9 @@ class RoleController extends Controller
             }
             $role = Role::find($request->id);
             $role->delete();
-            return $this->successResponse(
-                message: __('messages.role_deleted'),
-                route: route('settings.users-management.roles.index'),
+            return $this->redirectResponse(
+                message: __('messages.delete_role_successfully'),
+                route: route('users-management.roles.index'),
             );
         } catch (\Exception $e) {
             return $this->errorResponse(

@@ -28,7 +28,7 @@ class BlogPostController extends Controller
             $this->service->create($formRequest->validated());
 
             return $this->redirectResponse(
-                message: __('global.create_post_successfully'),
+                message: __('messages.create_blog_successfully'),
                 route: route('blogs.posts.index'),
             );
         }
@@ -53,7 +53,7 @@ class BlogPostController extends Controller
             $this->service->update($formRequest->validated(), $post->id);
 
             return $this->redirectResponse(
-                message: __('global.update_post_successfully'),
+                message: __('messages.update_blog_successfully'),
                 route: route('blogs.posts.index'),
             );
         }
@@ -75,7 +75,7 @@ class BlogPostController extends Controller
         $post->delete();
 
         return $this->redirectResponse(
-            message: __('global.deleted_post_successfully'),
+            message: __('messages.delete_blog_successfully'),
             route: route('blog.blog-post.index'),
         );
     }

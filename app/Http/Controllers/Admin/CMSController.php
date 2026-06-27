@@ -69,7 +69,7 @@ class CMSController extends Controller
             
                 return response()->json([
                     'status'  => 'success',
-                    'message' => __('global.create_type_successfully'),
+                    'message' => __('messages.create_category_successfully'),
                     'redirect' => route('cms.hero.index'),
                 ]);
             }
@@ -141,7 +141,7 @@ class CMSController extends Controller
     
                 return response()->json([
                     'status'   => 'success',
-                    'message'  => __('global.update_type_successfully'),
+                    'message'  => __('messages.update_category_successfully'),
                     'redirect' => route('cms.hero.index'),
                 ]);
             }

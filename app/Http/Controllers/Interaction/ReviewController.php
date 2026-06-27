@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Interaction;
 
-use App\Models\Property\PropertyType;
+use App\Models\Property\PropertyCategory;
 use App\Models\Reports;
 use App\Models\Property\Property;
 use App\Models\Location\Location;
