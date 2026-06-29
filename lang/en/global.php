@@ -281,5 +281,12 @@ return [
     'subtitle' => 'Subtitle',
     'update_property' => 'Update Property',
     'area_management' => 'Area Management',
-    'add_area' => 'Add Area'
+    'add_area' => 'Add Area',
+    'unverified' => 'Unverified',
+    'email_verified' => 'Email Verified',
+    'email_not_verified' => 'Email Not Verified',
+    'phone_verified' => 'Phone Verified',
+    'phone_not_verified' => 'Phone Not Verified',
+    'sms_verified' => 'SMS Verified',
+    'sms_not_verified' => 'SMS Not Verified',
 ];

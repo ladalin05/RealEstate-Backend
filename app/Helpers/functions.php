@@ -35,7 +35,7 @@ if (!function_exists('setUserMenu')) {
 
         if ($administrator) {
             $data['administrator'] = true;
-            $data['menus'] = Menu::with('children') ->whereNull('parent_id')->orderBy('order')->get();
+            $data['menus'] = Menu::with('children')->whereNull('parent_id')->where('status', 1)->orderBy('order')->get();
             return $data;
         }
 
@@ -62,7 +62,7 @@ if (!function_exists('setUserMenu')) {
         $data['access']      = $access;
         $data['permissions'] = $permissions;
         $data['has_menus']   = $has_menus;
-        $data['menus']       = Menu::with('children') ->whereNull('parent_id')->orderBy('order')->get();
+        $data['menus']       = Menu::with('children')->whereNull('parent_id')->where('status', 1)->orderBy('order')->get();
 
         return $data;
     }

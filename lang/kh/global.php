@@ -283,4 +283,11 @@ return [
     'property_management' => 'គ្រប់គ្រងអចលនទ្រព្យ',
     'add_property' => 'បន្ថែមអចលនទ្រព្យ',
     'price' => 'តម្លៃ',
+    'unverified' => 'មិនទាន់ផ្ទៀងផ្ទាត់',
+    'email_verified' => 'អ៊ីមែលបានផ្ទៀងផ្ទាត់',
+    'email_not_verified' => 'អ៊ីមែលមិនបានផ្ទៀងផ្ទាត់',
+    'phone_verified' => 'ទូរស័ព្ទបានផ្ទៀងផ្ទាត់',
+    'phone_not_verified' => 'ទូរស័ព្ទមិនបានផ្ទៀងផ្ទាត់',
+    'sms_verified' => 'អក្សរសារបានផ្ទៀងផ្ទាត់',
+    'sms_not_verified' => 'អក្សរសារមិនបានផ្ទៀងផ្ទាត់',
 ];
