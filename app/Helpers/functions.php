@@ -159,11 +159,15 @@ if (!function_exists('property_views_save')) {
         $today_date = date('Y-m-d');
 
         $view_info = PropertyViews::where('property_id', $property_id)
+            ->where('user_id', $user_id)
             ->whereDate('viewed_date', $today_date)
             ->first();
 
         if ($view_info) {
-            $view_info->increment('view_count');
+            PropertyViews::where('property_id', $property_id)
+                ->where('user_id', $user_id)
+                ->whereDate('viewed_date', $today_date)
+                ->increment('view_count');
         } else {
             PropertyViews::create([
                 'property_id' => $property_id,

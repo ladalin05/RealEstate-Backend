@@ -14,11 +14,6 @@ class AmenityDataTable extends DataTable
         return datatables()
             ->eloquent($query)
             ->addIndexColumn()
-            ->addColumn('icon', function ($row) {
-                return $row->icon
-                    ? '<i class="' . e($row->icon) . '" style="font-size:20px;"></i>'
-                    : '<span class="text-muted">—</span>';
-            })
             ->addColumn('status', function ($row) {
                 $checked = $row->status ? 'checked' : '';
                 return '
@@ -30,13 +25,13 @@ class AmenityDataTable extends DataTable
                 </div>';
             })
             ->addColumn('action', fn($row) => view('property.amenities.action', compact('row'))->render())
-            ->rawColumns(['icon', 'status', 'action']);
+            ->rawColumns(['status', 'action']);
     }
 
     public function query(Amenity $model)
     {
         return $model->newQuery()
-            ->select('amenities.id', 'amenities.name_en', 'amenities.name_kh', 'amenities.icon', 'amenities.status');
+            ->select('amenities.id', 'amenities.name_en', 'amenities.name_kh', 'amenities.status');
     }
 
     public function html()
@@ -83,12 +78,6 @@ class AmenityDataTable extends DataTable
             Column::make('name_kh')
                 ->title('Name (KH)')
                 ->defaultContent('—'),
-
-            Column::computed('icon')
-                ->title('Icon')
-                ->orderable(false)
-                ->searchable(false)
-                ->width(60),
 
             Column::computed('status')
                 ->title('Status')

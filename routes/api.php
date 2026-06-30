@@ -34,11 +34,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::prefix('user-management')->group(function () {
     Route::get('/agents', [AgentController::class, 'getAllAgents']);
+    Route::get('/agent-detail', [AgentController::class, 'getAgentDetail']);
 });
 
 Route::prefix('property')->group(function () {
     Route::get('/', [PropertyController::class, 'getProperty']);
-    Route::get('/detail/{id}', [PropertyController::class, 'getPropertyDetails']);
+    Route::get('/detail', [PropertyController::class, 'getPropertyDetails']);
     Route::get('/categories', [CategoryController::class, 'getPropertyCategories']);
     Route::post('/toggle-favourite', [PropertyController::class, 'toggleFavourite']);
     Route::get('/fillter-properties', [PropertyController::class, 'filterProperties']);
@@ -47,6 +48,7 @@ Route::prefix('property')->group(function () {
 
 Route::prefix('blogs')->group(function () {
     Route::get('/', [BlogController::class, 'getAllBlogs']);
+    Route::get('/detail', [BlogController::class, 'getBlogDetail']);
 });
 
 

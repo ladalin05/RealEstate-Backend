@@ -75,13 +75,12 @@ class PropertyRepository extends BaseRepository
                 'properties.price_negotiable',
                 'properties.rental_period',
                 'properties.rooms',
+                'properties.bedrooms',
                 'properties.bathrooms',
-                'properties.floors',
-                'properties.floor_number',
+                'properties.garages',
                 'properties.area_size',
                 'properties.land_size',
                 'properties.furnishing',
-                'properties.direction',
                 'properties.year_built',
                 'properties.phone',
                 'properties.main_image',
@@ -93,6 +92,7 @@ class PropertyRepository extends BaseRepository
                 'properties.longitude',
                 'properties.published_at',
                 'properties.updated_at',
+                'properties.category_id',
                 'property_categories.name_en as type_name_en',
                 'property_categories.name_kh as type_name_kh',
                 'areas.name as area_name',
@@ -116,8 +116,7 @@ class PropertyRepository extends BaseRepository
                         JSON_OBJECT(
                             'id',      f.id,
                             'name_en', f.name_en,
-                            'name_kh', f.name_kh,
-                            'icon',    f.icon
+                            'name_kh', f.name_kh
                         )
                         ORDER BY f.id ASC
                     )
@@ -131,8 +130,7 @@ class PropertyRepository extends BaseRepository
                         JSON_OBJECT(
                             'id',      a.id,
                             'name_en', a.name_en,
-                            'name_kh', a.name_kh,
-                            'icon',    a.icon
+                            'name_kh', a.name_kh
                         )
                         ORDER BY a.id ASC
                     )
@@ -162,9 +160,8 @@ class PropertyRepository extends BaseRepository
 
     protected function applyDefaultScope(Builder $query): void
     {
-        $query
-            ->where('properties.status', 'active')
-            ->whereNull('properties.deleted_at');
+        $query ->where('properties.status', 'active')
+               ->whereNull('properties.deleted_at');
     }
 
     public function getProperties(): Builder
@@ -174,15 +171,13 @@ class PropertyRepository extends BaseRepository
         return $query;
     }
 
-    public function getOneDetail(int $id): ?object
-    {
+    public function getOneDetail($id): ?object
+    {  
         $query = $this->getDetailQuery();
         $this->applyDefaultScope($query);
-
         $property = $query
             ->where('properties.id', $id)
-            ->first();
-
+            ->first(); 
         if (!$property) return null;
 
         // Decode JSON subquery columns

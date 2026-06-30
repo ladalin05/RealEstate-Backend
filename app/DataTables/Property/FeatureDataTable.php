@@ -14,11 +14,6 @@ class FeatureDataTable extends DataTable
         return datatables()
             ->eloquent($query)
             ->addIndexColumn()
-            ->addColumn('icon', function ($row) {
-                return $row->icon
-                    ? '<i class="' . e($row->icon) . '" style="font-size:20px;"></i>'
-                    : '<span class="text-muted">—</span>';
-            })
             ->addColumn('status', function ($row) {
                 $checked = $row->status ? 'checked' : '';
                 return '
@@ -30,7 +25,7 @@ class FeatureDataTable extends DataTable
                 </div>';
             })
             ->addColumn('action', fn($row) => view('property.features.action', compact('row'))->render())
-            ->rawColumns(['icon', 'status', 'action']);
+            ->rawColumns(['status', 'action']);
     }
 
     public function query(Feature $model)
@@ -83,12 +78,6 @@ class FeatureDataTable extends DataTable
             Column::make('name_kh')
                 ->title('Name (KH)')
                 ->defaultContent('—'),
-
-            Column::computed('icon')
-                ->title('Icon')
-                ->orderable(false)
-                ->searchable(false)
-                ->width(60),
 
             Column::computed('status')
                 ->title('Status')

@@ -261,27 +261,18 @@
                         <h3 class="h4 mb-0 text-gray-800">{{ $pageTitle }}</h3>
                     </div>
 
-                    <form action="{{ $formAction }}"
-                          method="POST"
-                          id="blogPostForm"
-                          class="ajax-form">
+                    <form action="{{ $formAction }}" method="POST" id="blogPostForm" class="ajax-form">
                         @csrf
-                        @if ($isEdit)
-                            @method('PUT')
-                        @endif
 
-                        {{-- ═══════════════════════════════════════════
-                             CARD 1 – Basic Information
-                        ════════════════════════════════════════════ --}}
                         <div class="card">
                             <div class="card-header">
                                 <i class="fa fa-info-circle"></i> Basic Information
                             </div>
                             <div class="card-body">
 
-                                {{-- Title --}}
+                                {{-- Category / Status / Published At --}}
                                 <div class="row mb-3">
-                                    <div class="col-md-12">
+                                    <div class="col-md-4">
                                         <label class="form-label">Title *</label>
                                         <input type="text"
                                                name="title"
@@ -291,10 +282,6 @@
                                                required
                                                maxlength="255">
                                     </div>
-                                </div>
-
-                                {{-- Category / Status / Published At --}}
-                                <div class="row mb-3">
                                     <div class="col-md-4">
                                         <label class="form-label">Category</label>
                                         <select class="form-control select2" name="category_id">
@@ -362,7 +349,7 @@
                                 <i class="fa fa-image"></i> Featured Image
                             </div>
                             <div class="card-body">
-                                <div class="row">
+                                <div class="row justify-content-center">
                                     <div class="col-md-6">
                                         <div class="image-upload-wrapper {{ $featuredImageUrl ? 'upload-done' : '' }}" id="featured-image-wrapper">
                                             <div class="upload-spinner" id="featured-image-spinner">

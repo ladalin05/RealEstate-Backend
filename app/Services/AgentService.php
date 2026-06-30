@@ -31,33 +31,72 @@ class AgentService
     public function getAgents()
     {
         $agents = Agent::query()
-                            ->where('status', 'active')
-                            ->orderBy('agents.rating', 'desc')
-                            ->crossJoin('company_profile', function($join) {
-                                $join->where('company_profile.id', 1);
-                            })
-                            ->select([
-                                'agents.id',
-                                'agents.first_name',
-                                'agents.last_name',
-                                'agents.email',
-                                'agents.phone',
-                                'agents.profile_image',
-                                'agents.bio',
-                                'agents.experience_years',
-                                'agents.specializations',
-                                'agents.rating',
-                                'agents.review_count',
-                                'agents.total_sales',
-                                'agents.total_rentals',
-                                'agents.social_links',
-                                'company_profile.name as company_name',
-                                'company_profile.phone as company_phone',
-                            ])
-                            ->get();
+                        ->where('status', 'active')
+                        ->orderBy('agents.rating', 'desc')
+                        ->crossJoin('company_profile', function($join) {
+                            $join->where('company_profile.id', 1);
+                        })
+                        ->select([
+                            'agents.id',
+                            'agents.first_name',
+                            'agents.last_name',
+                            'agents.email',
+                            'agents.phone',
+                            'agents.profile_image',
+                            'agents.bio',
+                            'agents.experience_years',
+                            'agents.specializations',
+                            'agents.rating',
+                            'agents.review_count',
+                            'agents.total_sales',
+                            'agents.total_rentals',
+                            'agents.social_links',
+                            'company_profile.name as company_name',
+                            'company_profile.phone as company_phone',
+                        ])
+                        ->get();
         return $this->transformAgents($agents);
     }
-    
+
+    public function getAgentDetailData($id)
+    {
+        $agent = Agent::query()
+                        ->where('agents.id', $id)
+                        ->where('agents.status', 'active')
+                        ->crossJoin('company_profile', function($join) {
+                            $join->where('company_profile.id', 1);
+                        })
+                        ->select([
+                            'agents.id',
+                            DB::raw('CONCAT(agents.first_name, " ", agents.last_name) as name'),
+                            'agents.email',
+                            'agents.phone',
+                            'agents.profile_image as image',
+                            'agents.bio',
+                            'agents.experience_years',
+                            'agents.specializations',
+                            'agents.rating',
+                            'agents.review_count',
+                            'agents.total_sales',
+                            'agents.total_rentals',
+                            'agents.social_links',
+                            'company_profile.name as company',
+                            'company_profile.phone as officePhone',
+                        ])
+                        ->first();
+
+        $agent_properties = $this->propertyRepository->getProperties()
+                                ->where('properties.agent_id', $id)
+                                ->limit(5)
+                                ->get();
+        return [
+            'agent' => $agent,
+            'agent_properties' => $this->transformProperties($agent_properties),
+            'categories' => $this->getCategories(),
+            'featuredProperties' => $this->getFeaturedProperties(),
+        ];
+    }
+
     public function getFeaturedProperties()
     {
         $properties = $this->propertyRepository->getProperties()
@@ -96,5 +135,5 @@ class AgentService
 
         return $this->transformPropertyCategories($categories);
     }
-
+     
 }

@@ -369,7 +369,7 @@ $(document).ready(function () {
     const UPLOAD_URL    = '{{ route("uploads.store") }}';
     const DESTROY_URL   = '{{ route("uploads.destroy") }}';
     const MINIO_BASE    = '{{ rtrim(env("MINIO_ENDPOINT", ""), "/") }}/{{ env("MINIO_BUCKET", "") }}/';
-    const UPLOAD_FOLDER = 'agents/profiles';
+    const UPLOAD_FOLDER = 'profiles/agents';
 
     /* ─────────────────────────────────────────────
        MinIO helpers

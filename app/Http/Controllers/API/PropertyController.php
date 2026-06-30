@@ -39,11 +39,9 @@ class PropertyController extends Controller
         return $this->successResponse('Property list', $this->transformProperties($property));
     }
 
-    public function getPropertyDetails($id)
-    {
-        $property = $this->repository->getOneDetail([
-            'filter_by' => ['properties.status' => 1, 'properties.id' => $id],
-        ]);
+    public function getPropertyDetails(Request $request)
+    { 
+        $property = $this->repository->getOneDetail($request->property_id);
 
         if (!$property) {
             return $this->errorResponse('Property not found', 404);
@@ -54,27 +52,27 @@ class PropertyController extends Controller
             ->get();
 
         $latest_list = $this->repository->getList([
-            'filter_by' => ['properties.status' => 1],
+            'filter_by' => ['properties.status' => 'active'],
             'sort_by'   => 'id',
             'sort_dir'  => 'desc',
             'limit'     => 5,
         ]);
-
+        
         $related_list = $this->repository->getList([
-            'filter_by' => ['properties.status' => 1, 'type_id' => $property->type_id],
+            'filter_by' => ['properties.status' => 'active', 'category_id' => $property->category_id],
             'sort_by'   => 'id',
             'sort_dir'  => 'desc',
             'limit'     => 5,
         ]);
 
-        property_views_save($id);
+        if($request->user_id != null){
+            property_views_save($property->id, $request->user_id);
+        }
 
         return $this->successResponse('Property details', [
-            'property'       => $property,
-            'gallery_images' => $gallery_images,
-            'related_list'   => $related_list,
-            'latest_list'    => $latest_list,
-            'user_id'        => $property->user_id,
+            'property'       => $this->transformPropertyDetail($property, $gallery_images),
+            'related_list'   => $this->transformProperties($related_list),
+            'latest_list'    => $this->transformProperties($latest_list),
         ]);
     }
 

@@ -22,4 +22,11 @@ class BlogController extends Controller
 
         return $this->successResponse('Blogs fetched successfully', $blogs);
     }
+
+    public function getBlogDetail(Request $request)
+    {
+        $blog = $this->blogService->getBlogDetail($request->id);
+
+        return $this->successResponse('Blog fetched successfully', $blog);
+    }
 }

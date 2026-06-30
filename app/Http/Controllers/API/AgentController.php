@@ -23,4 +23,11 @@ class AgentController extends Controller
 
         return $this->successResponse('Agents fetched successfully', $agents);
     }
+
+    public function getAgentDetail(Request $request)
+    {
+        $agent = $this->agentService->getAgentDetailData($request->id);
+
+        return $this->successResponse('Agent fetched successfully', $agent);
+    }
 }

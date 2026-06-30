@@ -16,7 +16,6 @@ class UpdateAmenityRequest extends FormRequest
         return [
             'name_en' => ['required', 'string', 'max:255'],
             'name_kh' => ['nullable', 'string', 'max:255'],
-            'icon'    => ['nullable', 'string', 'max:255'],
             'status'  => ['required', 'in:0,1'],
         ];
     }
