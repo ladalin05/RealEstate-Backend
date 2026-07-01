@@ -290,4 +290,8 @@ return [
     'phone_not_verified' => 'ទូរស័ព្ទមិនបានផ្ទៀងផ្ទាត់',
     'sms_verified' => 'អក្សរសារបានផ្ទៀងផ្ទាត់',
     'sms_not_verified' => 'អក្សរសារមិនបានផ្ទៀងផ្ទាត់',
+    'create_property' => 'បង្កើតអចលនទ្រព្យ',
+    'update_property' => 'កែប្រែអចលនទ្រព្យ',
+    'create_post' => 'បង្កើតអត្ថបទ',
+    'update_post' => 'កែប្រែអត្ថបទ',
 ];

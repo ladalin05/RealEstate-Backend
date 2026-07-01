@@ -279,7 +279,6 @@ return [
     'title_main' => 'Title Main',
     'title_highlight' => 'Title Highlight',
     'subtitle' => 'Subtitle',
-    'update_property' => 'Update Property',
     'area_management' => 'Area Management',
     'add_area' => 'Add Area',
     'unverified' => 'Unverified',
@@ -289,4 +288,8 @@ return [
     'phone_not_verified' => 'Phone Not Verified',
     'sms_verified' => 'SMS Verified',
     'sms_not_verified' => 'SMS Not Verified',
+    'create_property' => 'Create Property',
+    'update_property' => 'Update Property',
+    'create_post' => 'Create Post',
+    'update_post' => 'Update Post',
 ];

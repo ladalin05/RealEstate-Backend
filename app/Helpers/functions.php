@@ -8,6 +8,9 @@ use App\Models\Admin\Menu;
 use App\Models\SubscriptionPlan;
 use App\Models\Property\PropertyViews;
 use App\Models\UserManagement\User;
+use App\Models\Blog\BlogCategory;
+use App\Models\Blog\BlogTag;
+use App\Models\Blog\BlogPost;
 use App\Models\Admin\Permission;
 use App\Models\Property\Area;
 use App\Models\Property\Amenity;
@@ -259,6 +262,20 @@ if (!function_exists('getAgency')) {
     }
 }
 
+if (!function_exists('getCategories')) {
+    function getCategories()
+    {
+        return BlogCategory::select('id', 'name')->get();
+    }
+}
+
+if (!function_exists('getTags')) {
+    function getTags()
+    {
+        return BlogTag::select('id', 'name')->get();
+    }
+}
+
 if (!function_exists('getPurposes')) {
     function getPurposes()
     {
@@ -329,4 +346,14 @@ if (!function_exists('getFurnishing')) {
     }
 }
 
+if (!function_exists('getPostStatuses')) {
+    function getPostStatuses()
+    {
+        return [
+            ['value' => 'draft', 'name' => 'Draft'],
+            ['value' => 'published', 'name' => 'Published'],
+            ['value' => 'archived', 'name' => 'Archived'],
+        ];
+    }
+}
 

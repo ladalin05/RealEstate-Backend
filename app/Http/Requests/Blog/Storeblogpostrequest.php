@@ -19,7 +19,7 @@ class StoreBlogPostRequest extends FormRequest
             'title'               => ['required', 'string', 'max:255'],
             'excerpt'             => ['nullable', 'string', 'max:500'],
             'overview'            => ['nullable', 'string'],
-            'featured_image'      => ['nullable', 'image', 'max:4096'],
+            'featured_image'      => ['nullable', 'string', 'max:500'],
             'meta_title'          => ['nullable', 'string', 'max:255'],
             'meta_description'    => ['nullable', 'string', 'max:500'],
             'status'              => ['required', Rule::in(['draft', 'published', 'archived'])],
@@ -36,7 +36,7 @@ class StoreBlogPostRequest extends FormRequest
             'sections.*.list_items.*'           => ['string', 'max:1000'],
             'sections.*.sort_order'             => ['nullable', 'integer', 'min:0'],
             'sections.*.images'                 => ['nullable', 'array'],
-            'sections.*.images.*'               => ['image', 'max:4096'],
+            'sections.*.images.*'               => ['string', 'max:1000'],
         ];
     }
 

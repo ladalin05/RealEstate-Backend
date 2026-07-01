@@ -93,7 +93,7 @@ class BlogPost extends Model
 
     public function getMetaTitleAttribute(?string $value): string
     {
-        return $value ?: $this->title;
+        return $value ?: ($this->title ?? '');
     }
 
     public function getMetaDescriptionAttribute(?string $value): ?string

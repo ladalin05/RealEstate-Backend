@@ -31,11 +31,14 @@ class PropertyController extends Controller
             );
         }
 
-        return view('property.properties.form', [
-            'page_title' => __('global.add_property'),
-            'isEdit'     => false,
-            'property'   => null,
-        ]);
+        return $this->viewResponse(
+            view:   'property.properties.form',
+            action: route('property.properties.add'),
+            data:   [
+                'page_title' => __('global.create_property'),
+                'property' => new Property(),
+            ],
+        );
     }
 
     public function update(Request $request)

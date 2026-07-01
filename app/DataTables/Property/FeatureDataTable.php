@@ -31,7 +31,7 @@ class FeatureDataTable extends DataTable
     public function query(Feature $model)
     {
         return $model->newQuery()
-            ->select('features.id', 'features.name_en', 'features.name_kh', 'features.icon', 'features.status');
+            ->select('features.id', 'features.name_en', 'features.name_kh', 'features.status');
     }
 
     public function html()

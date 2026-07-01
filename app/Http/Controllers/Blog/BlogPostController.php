@@ -35,12 +35,12 @@ class BlogPostController extends Controller
 
         return $this->viewResponse(
             view:   'blog.blog-post.form',
+            action: route('blogs.posts.add'),
             data:   [
                 'form'       => new BlogPost(),
                 'categories' => BlogCategory::orderBy('name')->get(),
                 'tags'       => BlogTag::orderBy('name')->get(),
             ],
-            action: route('blogs.posts.add'),
         );
     }
 
@@ -60,13 +60,13 @@ class BlogPostController extends Controller
         
         $post->load(['sections.images', 'tags']);
 
-        return view('blog.blog-post.form', [
-            'page_title' => __('global.update_post'),
-            'isEdit'     => true,
-            'post'       => $post,
-            'categories' => BlogCategory::orderBy('name')->get(),
-            'tags'       => BlogTag::orderBy('name')->get(),
-        ]);
+        return $this->viewResponse(
+            view:   'blog.blog-post.form',
+            action: route('blogs.posts.edit', ['id' => $post->id]),
+            data:   [
+                'form' => $post,
+            ],
+        );
     }
 
     public function delete(Request $request)

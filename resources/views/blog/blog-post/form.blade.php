@@ -209,46 +209,6 @@
         }
     </style>
 
-    @php
-        $isEdit      = isset($isEdit) && $isEdit;
-        $post        = $post ?? null;
-
-        $formAction  = $isEdit
-            ? route('blogs.posts.edit', ['id' => $post->id])
-            : route('blogs.posts.add');
-
-        $pageTitle   = $isEdit ? 'Edit Blog Post' : 'Add New Blog Post';
-        $submitLabel = $isEdit ? 'Save Changes'   : 'Create Post';
-
-        // Helper: old() → model value → default
-        $val = fn(string $field, mixed $default = '') => old($field, $post?->{$field} ?? $default);
-
-        $selectedTagIds = $isEdit ? $post->tags->pluck('id')->toArray() : old('tag_ids', []);
-
-        // Existing MinIO paths
-        $featuredImagePath = $isEdit ? ($post->featured_image ?? '') : '';
-
-        $minioBase        = rtrim(env('MINIO_ENDPOINT'), '/') . '/' . env('MINIO_BUCKET') . '/';
-        $featuredImageUrl = $featuredImagePath ? $minioBase . $featuredImagePath : null;
-
-        $statusOptions = ['draft' => 'Draft', 'published' => 'Published', 'archived' => 'Archived'];
-
-        // Existing sections (edit mode) serialized for the JS to bootstrap with
-        $existingSections = $isEdit
-            ? $post->sections->map(function ($s) use ($minioBase) {
-                return [
-                    'heading'     => $s->heading,
-                    'content'     => $s->content,
-                    'list_items'  => $s->list_items ?? [],
-                    'images'      => $s->images->map(fn ($img) => [
-                        'path' => $img->image_path,
-                        'url'  => $minioBase . $img->image_path,
-                    ])->values(),
-                ];
-            })->values()
-            : collect();
-    @endphp
-
     <div class="content mt-4">
         <div class="container">
             <div class="row">
@@ -258,10 +218,9 @@
                         <a href="{{ route('blogs.posts.index') }}" class="btn-back text-decoration-none">
                             <i class="fa fa-arrow-left me-1"></i> {{ __('global.back') }}
                         </a>
-                        <h3 class="h4 mb-0 text-gray-800">{{ $pageTitle }}</h3>
+                        <h3 class="h4 mb-0 text-gray-800">{{ $form->id ? __('global.update_post') : __('global.create_post') }}</h3>
                     </div>
-
-                    <form action="{{ $formAction }}" method="POST" id="blogPostForm" class="ajax-form">
+                    <form action="{{ $action }}" method="POST" id="blogPostForm" class="ajax-form">
                         @csrf
 
                         <div class="card">
@@ -274,22 +233,17 @@
                                 <div class="row mb-3">
                                     <div class="col-md-4">
                                         <label class="form-label">Title *</label>
-                                        <input type="text"
-                                               name="title"
-                                               value="{{ $val('title') }}"
-                                               class="form-control"
-                                               placeholder="e.g. 10 Tips for First-Time Homebuyers"
-                                               required
-                                               maxlength="255">
+                                        <input type="text" name="title" value="{{ $form?->title ?? '' }}" class="form-control"
+                                               placeholder="e.g. 10 Tips for First-Time Homebuyers" required maxlength="255">
                                     </div>
                                     <div class="col-md-4">
                                         <label class="form-label">Category</label>
                                         <select class="form-control select2" name="category_id">
                                             <option value="">— None —</option>
-                                            @foreach ($categories as $category)
+                                            @foreach (getCategories() as $category)
                                                 <option value="{{ $category->id }}"
-                                                    {{ (string) $val('category_id') === (string) $category->id ? 'selected' : '' }}>
-                                                    {{ $category->name }}
+                                                    {{ (string) $form?->category_id === (string) $category->id ? 'selected' : '' }}>
+                                                    {{ $category->name}}
                                                 </option>
                                             @endforeach
                                         </select>
@@ -298,10 +252,10 @@
                                     <div class="col-md-4">
                                         <label class="form-label">Status *</label>
                                         <select class="form-control" name="status" id="status" required>
-                                            @foreach ($statusOptions as $sVal => $sLabel)
-                                                <option value="{{ $sVal }}"
-                                                    {{ $val('status', 'draft') === $sVal ? 'selected' : '' }}>
-                                                    {{ $sLabel }}
+                                            @foreach (getPostStatuses() as $statusOption)
+                                                <option value="{{ $statusOption['value'] }}"
+                                                    {{ $form->status == $statusOption['value'] ? 'selected' : '' }}>
+                                                    {{ $statusOption['name'] }}
                                                 </option>
                                             @endforeach
                                         </select>
@@ -309,10 +263,7 @@
 
                                     <div class="col-md-4" id="published-at-row">
                                         <label class="form-label">Publish Date</label>
-                                        <input type="datetime-local"
-                                               name="published_at"
-                                               value="{{ $val('published_at') }}"
-                                               class="form-control">
+                                        <input type="datetime-local" name="published_at" value="{{ $form->published_at ? dateFormat($form->published_at) : '' }}" class="form-control">
                                     </div>
                                 </div>
 
@@ -322,9 +273,7 @@
                                         <label class="form-label">Excerpt
                                             <small class="text-muted fw-normal">(shown on listing page)</small>
                                         </label>
-                                        <textarea name="excerpt" class="form-control" rows="2"
-                                                  maxlength="500"
-                                                  placeholder="Short summary…">{{ $val('excerpt') }}</textarea>
+                                        <textarea name="excerpt" class="form-control" rows="2" maxlength="500" placeholder="Short summary…">{{ $form->excerpt }}</textarea>
                                     </div>
                                 </div>
 
@@ -334,7 +283,7 @@
                                         <label class="form-label">Overview
                                             <small class="text-muted fw-normal">(intro paragraph at top of post)</small>
                                         </label>
-                                        <textarea id="elm1" name="overview" class="form-control tinymce">{{ $val('overview') }}</textarea>
+                                        <textarea id="elm1" name="overview" class="form-control tinymce">{{ $form->overview }}</textarea>
                                     </div>
                                 </div>
 
@@ -351,26 +300,20 @@
                             <div class="card-body">
                                 <div class="row justify-content-center">
                                     <div class="col-md-6">
-                                        <div class="image-upload-wrapper {{ $featuredImageUrl ? 'upload-done' : '' }}" id="featured-image-wrapper">
+                                        <div class="image-upload-wrapper {{ $form->featured_image ? 'upload-done' : '' }}" id="featured-image-wrapper">
                                             <div class="upload-spinner" id="featured-image-spinner">
                                                 <div class="spinner-border spinner-border-sm text-warning" role="status"></div>
                                                 Uploading…
                                             </div>
                                             <input type="file" id="featured_image_file" class="d-none" accept="image/*">
-                                            <input type="hidden" name="featured_image" id="featured_image_path"
-                                                   value="{{ $featuredImagePath }}">
+                                            <input type="hidden" name="featured_image" id="featured_image_path" value="{{ $form->featured_image }}">
                                             <button type="button" class="btn btn-dark mb-2" id="featured-image-btn">
-                                                {{ $isEdit && $featuredImagePath ? 'Change Image' : 'Select Image' }}
+                                                {{ $form->featured_image ? 'Change Image' : 'Select Image' }}
                                             </button>
                                             <p class="small text-muted mb-0">Recommended: 1200×630px</p>
-                                            <img id="featured-image-preview"
-                                                 src="{{ $featuredImageUrl ?? '#' }}"
-                                                 class="img-preview-custom {{ $featuredImageUrl ? '' : 'hidden' }}">
+                                            <img id="featured-image-preview" src="{{ $form->featured_image ?? '#' }}" class="img-preview-custom {{ $form->featured_image ? '' : 'hidden' }}">
                                             <div>
-                                                <button type="button"
-                                                        class="btn btn-sm btn-outline-danger btn-remove-image mt-2"
-                                                        id="featured-image-remove"
-                                                        style="{{ $featuredImagePath ? 'display:inline-block' : '' }}">
+                                                <button type="button" class="btn btn-sm btn-outline-danger btn-remove-image mt-2" id="featured-image-remove" style="{{ $form->featured_image ? 'display:inline-block' : '' }}">
                                                     <i class="fa fa-times me-1"></i> Remove
                                                 </button>
                                             </div>
@@ -389,9 +332,8 @@
                             </div>
                             <div class="card-body">
                                 <select name="tag_ids[]" class="form-control select2-multiple" multiple="multiple" data-tags="true">
-                                    @foreach ($tags as $tag)
-                                        <option value="{{ $tag->id }}"
-                                            {{ in_array($tag->id, $selectedTagIds) ? 'selected' : '' }}>
+                                    @foreach (getTags() as $tag)
+                                        <option value="{{ $tag->id }}" {{ $form->relationLoaded('tags') && $form->tags->contains('id', $tag->id) ? 'selected' : '' }}>
                                             {{ $tag->name }}
                                         </option>
                                     @endforeach
@@ -429,24 +371,20 @@
                                         <label class="form-label">Meta Title
                                             <small class="text-muted fw-normal">(falls back to title)</small>
                                         </label>
-                                        <input type="text" name="meta_title"
-                                               value="{{ $val('meta_title') }}"
-                                               class="form-control" maxlength="255">
+                                        <input type="text" name="meta_title" value="{{ $form->getAttributes()['meta_title'] ?? '' }}" class="form-control" maxlength="255">
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Meta Description
                                             <small class="text-muted fw-normal">(falls back to excerpt)</small>
                                         </label>
-                                        <input type="text" name="meta_description"
-                                               value="{{ $val('meta_description') }}"
-                                               class="form-control" maxlength="500">
+                                        <input type="text" name="meta_description" value="{{ $form->getAttributes()['meta_description'] ?? '' }}" class="form-control" maxlength="500">
                                     </div>
                                 </div>
                             </div>
 
                             <div class="card-footer d-flex justify-content-end">
                                 <button type="submit" class="btn btn-primary btn-lg shadow" id="submit-btn">
-                                    <i class="fa-solid fa-floppy-disk me-2"></i> {{ $submitLabel }}
+                                    <i class="fa-solid fa-floppy-disk me-2"></i> {{ $form->id ? 'Update' : 'Create' }}
                                 </button>
                             </div>
                         </div>
@@ -515,9 +453,43 @@
         </div>
     </template>
 
+    @php
+        // Existing record data (edit mode), pre-built here so the <script>
+        // block below only has to drop in a plain @json() call.
+        // Shape: [{ heading, content, list_items: [...], images: [{path, url}, ...] }, ...]
+        $existingSections = [];
+
+        if ($form->relationLoaded('sections')) {
+            foreach ($form->sections as $section) {
+                $images = [];
+
+                if ($section->relationLoaded('images')) {
+                    foreach ($section->images as $img) {
+                        $images[] = [
+                            'path' => $img->image_path,
+                            'url'  => $img->image_path,
+                        ];
+                    }
+                }
+
+                $existingSections[] = [
+                    'heading'    => $section->heading,
+                    'content'    => $section->content,
+                    'list_items' => $section->list_items ?? [],
+                    'images'     => $images,
+                ];
+            }
+        }
+    @endphp
+
     @push('scripts')
         <script>
         $(document).ready(function () {
+
+            // ── Existing record data (edit mode) ─────────────────────────────
+            // sections[].images[] => { path, url } so the JS can render previews
+            // without re-uploading anything that's already saved.
+            const EXISTING_SECTIONS = @json($existingSections);
 
             // ── Select2 ────────────────────────────────────────────────────
             $('.select2').select2({ width: '100%' });
@@ -590,7 +562,7 @@
 
                         const result = await uploadToMinio(file, cfg.folder);
 
-                        $path.val(result.public_url); 
+                        $path.val(result.public_url);
                         $preview.attr('src', result.public_url).removeClass('hidden');
                         $remove.show();
                         $wrapper.removeClass('uploading').addClass('upload-done');
@@ -726,7 +698,7 @@
 
                 try {
                     const result = await uploadToMinio(file, 'blog/sections');
-                    $thumb.find('.section-image-path').val(result.path);
+                    $thumb.find('.section-image-path').val(result.public_url);
                     $thumb.find('img').attr('src', result.public_url);
                     $thumb.find('.uploading-badge').hide();
                     buildSectionFieldNames($block);
@@ -748,10 +720,12 @@
                 buildSectionFieldNames($block);
             });
 
-            // ── Bootstrap existing sections in edit mode ─────────────────────
-            const existingSections = @json($existingSections);
-            existingSections.forEach(s => addSection(s));
-            refreshSectionNumbers();
+            // ── Bootstrap existing sections (edit mode) ───────────────────
+            if (EXISTING_SECTIONS.length > 0) {
+                EXISTING_SECTIONS.forEach(s => addSection(s));
+            } else {
+                refreshSectionNumbers();
+            }
 
             // ── Submit guard ───────────────────────────────────────────────
             $('#blogPostForm').on('submit', function (e) {

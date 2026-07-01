@@ -24,9 +24,10 @@ class BlogService
     public function getBlogs()
     {
         $blogs = BlogPost::query()
-            ->LeftJoin('agents', 'agents.id', '=', 'blog_posts.author_id')
+            ->LeftJoin('admins', 'admins.id', '=', 'blog_posts.author_id')
             ->LeftJoin('blog_categories', 'blog_categories.id', '=', 'blog_posts.category_id')
             ->whereNull('blog_posts.deleted_at')
+            ->where('blog_posts.status', 'published')
             ->orderBy('blog_posts.created_at', 'desc')
             ->select([
                 'blog_posts.id',
@@ -34,12 +35,16 @@ class BlogService
                 'blog_posts.excerpt',
                 'blog_posts.overview',
                 'blog_posts.featured_image as image',
+                'blog_posts.category_id',
+                'blog_posts.comments_count',
+                'blog_posts.views_count',
                 'blog_posts.created_at',
-                DB::raw('concat(agents.first_name, " ", agents.last_name) as author_name'),
-                'agents.profile_image as author_image',
+                'admins.name as author_name',
+                'admins.image as author_image',
                 'blog_categories.name as category_name',
             ])
             ->get();
+
         return $this->transformBlogs($blogs);
     }
 
@@ -57,7 +62,6 @@ class BlogService
                 'blog_posts.excerpt',
                 'blog_posts.overview',
                 'blog_posts.featured_image as image',
-                'blog_posts.category_id',
                 'blog_posts.comments_count',
                 'blog_posts.views_count',
                 'blog_posts.created_at',
@@ -70,6 +74,7 @@ class BlogService
         if (!$blog) {
             abort(404, 'Blog post not found');
         }
+
 
         $sections = DB::table('blog_post_sections')
             ->where('post_id', $blog->id)
@@ -128,20 +133,19 @@ class BlogService
     }
 
     public function transformBlogs($blogs)
-    { 
+    {
         return $blogs->map(function ($blog) {
             return [
                 'id' => $blog->id,
                 'title' => $blog->title,
-                'slug' => $blog->slug,
                 'description' => $blog->excerpt,
-                'image' => $blog->image,
                 'overview' => $blog->overview,
+                'image' => $blog->image,
                 'date' => $blog->created_at,
                 'since_posted' => sincePosted($blog->created_at),
-                'author' => $blog->author_name,
+                'author_name' => $blog->author_name,
                 'author_image' => $blog->author_image,
-                'category' => $blog->category_name,
+                'category_name' => $blog->category_name,
             ];
         })->values();
     }
