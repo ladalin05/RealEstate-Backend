@@ -1,75 +1,33 @@
 <div class="py-1 px-4">
 
-    <form action="{{ $action }}" method="POST" id="form-area" class="ajax-form">
+    <form action="{{ $action }}" method="POST" id="form-category" class="ajax-form">
         @csrf
 
-        {{-- Province --}}
+        {{-- Name (English) --}}
         <div class="mb-3">
-            <label for="province_id" class="form-label">
-                Province <span class="text-danger">*</span>
-            </label>
-            <select name="province_id" id="province_id" class="form-select custom-select" required>
-                <option value="">-- Select Province --</option>
-                @foreach($provinces as $province)
-                    <option value="{{ $province->id }}"
-                        {{ (old('province_id', $form->province_id ?? '') == $province->id) ? 'selected' : '' }}>
-                        {{ $province->name }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
-
-        {{-- District --}}
-        <div class="mb-3">
-            <label for="district_id" class="form-label">
-                District <span class="text-danger">*</span>
-            </label>
-            <select name="district_id" id="district_id" class="form-select custom-select" required
-                    {{ empty($form->province_id ?? null) ? 'disabled' : '' }}>
-                <option value="">-- Select District --</option>
-                @if(!empty($districts))
-                    @foreach($districts as $district)
-                        <option value="{{ $district->id }}"
-                            {{ (old('district_id', $form->district_id ?? '') == $district->id) ? 'selected' : '' }}>
-                            {{ $district->name }}
-                        </option>
-                    @endforeach
-                @endif
-            </select>
-        </div>
-
-        {{-- Commune --}}
-        <div class="mb-3">
-            <label for="commune_id" class="form-label">
-                Commune <span class="text-danger">*</span>
-            </label>
-            <select name="commune_id" id="commune_id" class="form-select custom-select" required
-                    {{ empty($form->district_id ?? null) ? 'disabled' : '' }}>
-                <option value="">-- Select Commune --</option>
-                @if(!empty($communes))
-                    @foreach($communes as $commune)
-                        <option value="{{ $commune->id }}"
-                            {{ (old('commune_id', $form->commune_id ?? '') == $commune->id) ? 'selected' : '' }}>
-                            {{ $commune->name }}
-                        </option>
-                    @endforeach
-                @endif
-            </select>
-        </div>
-
-        {{-- Name --}}
-        <div class="mb-3">
-            <label for="name" class="form-label">
-                Area Name <span class="text-danger">*</span>
-                <small class="text-muted fw-normal">(auto-generated, editable)</small>
+            <label for="name_en" class="form-label">
+                Name (English) <span class="text-danger">*</span>
             </label>
             <input type="text"
-                   name="name"
-                   id="name"
+                   name="name_en"
+                   id="name_en"
                    class="form-control form-control-modern"
-                   value="{{ old('name', $form->name ?? '') }}"
-                   placeholder="e.g. Chamkarmon, Phnom Penh"
+                   value="{{ old('name_en', $form->name_en ?? '') }}"
+                   placeholder="e.g. Apartment"
                    required>
+        </div>
+
+        {{-- Name (Khmer) --}}
+        <div class="mb-3">
+            <label for="name_km" class="form-label">
+                Name (Khmer)
+            </label>
+            <input type="text"
+                   name="name_km"
+                   id="name_km"
+                   class="form-control form-control-modern"
+                   value="{{ old('name_km', $form->name_km ?? '') }}"
+                   placeholder="e.g. អាផាតមិន">
         </div>
 
         {{-- Slug --}}
@@ -83,13 +41,13 @@
                    id="slug"
                    class="form-control form-control-modern"
                    value="{{ old('slug', $form->slug ?? '') }}"
-                   placeholder="e.g. chamkarmon-phnom-penh"
+                   placeholder="e.g. apartment"
                    required>
         </div>
 
         {{-- Image (MinIO async upload) --}}
         <div class="mb-3">
-            <label class="form-label">Area Image</label>
+            <label class="form-label">Category Image</label>
 
             @php
                 $hasImage  = !empty($form->image ?? null);
@@ -97,28 +55,28 @@
                 $imageUrl  = $hasImage ? $minioBase . $form->image : null;
             @endphp
 
-            <div class="image-upload-wrapper {{ $hasImage ? 'upload-done' : '' }}" id="area-image-wrapper">
+            <div class="image-upload-wrapper {{ $hasImage ? 'upload-done' : '' }}" id="category-image-wrapper">
 
                 {{-- Upload spinner overlay --}}
-                <div class="upload-spinner" id="area-image-spinner" style="display:none; align-items:center; padding: 6px 0;">
+                <div class="upload-spinner" id="category-image-spinner" style="display:none; align-items:center; padding: 6px 0;">
                     <div class="spinner-border spinner-border-sm text-warning" role="status"></div>
                     <span class="ms-2" style="font-size:.8rem;font-weight:600;color:#858796;">Uploading…</span>
                 </div>
 
                 {{-- Hidden inputs --}}
-                <input type="file"   id="area_image_file" class="d-none" accept="image/*">
-                <input type="hidden" name="image" id="area_image_path"
+                <input type="file"   id="category_image_file" class="d-none" accept="image/*">
+                <input type="hidden" name="image" id="category_image_path"
                        value="{{ old('image', $form->image ?? '') }}">
 
                 {{-- Browse bar --}}
                 <div class="input-group mb-2">
                     <input type="text"
-                           id="area-image-name"
+                           id="category-image-name"
                            readonly
                            class="form-control form-control-modern bg-white"
                            placeholder="No file chosen"
                            value="{{ old('image', $form->image ?? '') }}">
-                    <button class="btn btn-dark px-4" type="button" id="area-image-btn">Browse</button>
+                    <button class="btn btn-dark px-4" type="button" id="category-image-btn">Browse</button>
                 </div>
 
                 {{-- Hint + badge --}}
@@ -126,7 +84,7 @@
                     <small class="text-muted">
                         <i class="fa-solid fa-circle-info me-1"></i> Recommended: 600×400px
                     </small>
-                    <span id="area-upload-badge"
+                    <span id="category-upload-badge"
                           class="badge {{ $hasImage ? 'bg-success' : 'bg-secondary d-none' }}">
                         {{ $hasImage ? 'Uploaded' : 'Pending' }}
                     </span>
@@ -135,12 +93,12 @@
                 {{-- Preview --}}
                 <div class="image-preview-container p-1">
                     <img src="{{ $imageUrl ?? '#' }}"
-                         id="area-image-preview"
+                         id="category-image-preview"
                          alt="Preview"
                          class="img-fluid rounded {{ $hasImage ? '' : 'd-none' }}"
                          style="max-height: 120px;">
 
-                    <div id="no-image-placeholder-area"
+                    <div id="no-image-placeholder-category"
                          class="{{ $hasImage ? 'd-none' : '' }} text-muted text-center py-2">
                         <i class="fa-regular fa-image fa-3x mb-2 d-block"></i>
                         <span>Image Preview</span>
@@ -151,7 +109,7 @@
                 <div class="mt-2">
                     <button type="button"
                             class="btn btn-sm btn-outline-danger"
-                            id="area-image-remove"
+                            id="category-image-remove"
                             style="{{ $hasImage ? '' : 'display:none' }}">
                         <i class="fa fa-times me-1"></i> Remove
                     </button>
@@ -172,7 +130,7 @@
         {{-- Modal Footer --}}
         <div class="modal-footer px-0 pb-0 pt-3">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary btn-save text-white shadow-sm" id="area-submit-btn">
+            <button type="submit" class="btn btn-primary btn-save text-white shadow-sm" id="category-submit-btn">
                 <i class="fa-solid fa-floppy-disk me-2"></i>
                 <span id="saveBtnText">Save Changes</span>
             </button>
@@ -187,96 +145,15 @@ $(document).ready(function () {
     /* ─────────────────────────────────────────────
        Config – injected by Laravel at render time
     ───────────────────────────────────────────── */
-    const CSRF              = $('meta[name="csrf-token"]').attr('content');
-    const UPLOAD_URL        = '{{ route("uploads.store") }}';
-    const DESTROY_URL       = '{{ route("uploads.destroy") }}';
-    const DISTRICTS_URL     = '{{ route("locations.districts") }}';   // expects ?province_id=
-    const COMMUNES_URL      = '{{ route("locations.communes") }}';    // expects ?district_id=
-    const UPLOAD_FOLDER     = 'properties/areas';
+    const CSRF         = $('meta[name="csrf-token"]').attr('content');
+    const UPLOAD_URL   = '{{ route("uploads.store") }}';
+    const DESTROY_URL  = '{{ route("uploads.destroy") }}';
+    const UPLOAD_FOLDER = 'properties/categories';
 
     /* ─────────────────────────────────────────────
-       Cascading Province → District → Commune
+       Auto-slug from Name (English)
     ───────────────────────────────────────────── */
-    const $province = $('#province_id');
-    const $district  = $('#district_id');
-    const $commune   = $('#commune_id');
-
-    const OLD_DISTRICT_ID = '{{ old('district_id', $form->district_id ?? '') }}';
-    const OLD_COMMUNE_ID  = '{{ old('commune_id', $form->commune_id ?? '') }}';
-
-    function resetSelect($select, placeholder) {
-        $select.html('<option value="">' + placeholder + '</option>').prop('disabled', true);
-    }
-
-    function loadDistricts(provinceId, selectedId) {
-        if (!provinceId) {
-            resetSelect($district, '-- Select District --');
-            resetSelect($commune, '-- Select Commune --');
-            return;
-        }
-        $.get(DISTRICTS_URL, { province_id: provinceId }).then(function (res) {
-            let options = '<option value="">-- Select District --</option>';
-            (res.data || res).forEach(function (d) {
-                options += `<option value="${d.id}" ${selectedId == d.id ? 'selected' : ''}>${d.name}</option>`;
-            });
-            $district.html(options).prop('disabled', false);
-        });
-    }
-
-    function loadCommunes(districtId, selectedId) {
-        if (!districtId) {
-            resetSelect($commune, '-- Select Commune --');
-            return;
-        }
-        $.get(COMMUNES_URL, { district_id: districtId }).then(function (res) {
-            let options = '<option value="">-- Select Commune --</option>';
-            (res.data || res).forEach(function (c) {
-                options += `<option value="${c.id}" ${selectedId == c.id ? 'selected' : ''}>${c.name}</option>`;
-            });
-            $commune.html(options).prop('disabled', false);
-        });
-    }
-
-    /* Re-fetch districts when province changes (clears downstream selections) */
-    $province.on('change', function () {
-        const provinceId = $(this).val();
-        loadDistricts(provinceId, null);
-        resetSelect($commune, '-- Select Commune --');
-    });
-
-    /* Re-fetch communes when district changes */
-    $district.on('change', function () {
-        loadCommunes($(this).val(), null);
-    });
-
-    /* On edit: pre-load district/commune lists for already-selected province/district */
-    @if(!empty($form->province_id ?? null))
-        loadDistricts({{ $form->province_id }}, OLD_DISTRICT_ID);
-    @endif
-
-    @if(!empty($form->district_id ?? null))
-        loadCommunes({{ $form->district_id }}, OLD_COMMUNE_ID);
-    @endif
-
-    /* ─────────────────────────────────────────────
-       Auto-name & auto-slug from selected locations
-    ───────────────────────────────────────────── */
-    let nameManuallyEdited = {{ !empty($form->name ?? null) ? 'true' : 'false' }};
     let slugManuallyEdited = {{ !empty($form->slug ?? null) ? 'true' : 'false' }};
-
-    function buildNameFromSelects() {
-        if (nameManuallyEdited) return;
-        const communeText  = $commune.find(':selected').text();
-        const provinceText = $province.find(':selected').text();
-        const parts = [];
-        if (communeText && $commune.val()) parts.push(communeText);
-        if (provinceText && $province.val()) parts.push(provinceText);
-        if (parts.length) {
-            const built = parts.join(', ');
-            $('#name').val(built);
-            updateSlugFromName(built);
-        }
-    }
 
     function updateSlugFromName(value) {
         if (slugManuallyEdited) return;
@@ -289,12 +166,7 @@ $(document).ready(function () {
         $('#slug').val(slug);
     }
 
-    $province.on('change', buildNameFromSelects);
-    $district.on('change', buildNameFromSelects);
-    $commune.on('change', buildNameFromSelects);
-
-    $('#name').on('input', function () {
-        nameManuallyEdited = true;
+    $('#name_en').on('input', function () {
         updateSlugFromName($(this).val());
     });
 
@@ -333,16 +205,16 @@ $(document).ready(function () {
     /* ─────────────────────────────────────────────
        DOM refs
     ───────────────────────────────────────────── */
-    const $file    = $('#area_image_file');
-    const $path    = $('#area_image_path');
-    const $preview = $('#area-image-preview');
-    const $ph      = $('#no-image-placeholder-area');
-    const $wrapper = $('#area-image-wrapper');
-    const $spinner = $('#area-image-spinner');
-    const $nameBox = $('#area-image-name');
-    const $remove  = $('#area-image-remove');
-    const $btn     = $('#area-image-btn');
-    const $badge   = $('#area-upload-badge');
+    const $file    = $('#category_image_file');
+    const $path    = $('#category_image_path');
+    const $preview = $('#category-image-preview');
+    const $ph      = $('#no-image-placeholder-category');
+    const $wrapper = $('#category-image-wrapper');
+    const $spinner = $('#category-image-spinner');
+    const $nameBox = $('#category-image-name');
+    const $remove  = $('#category-image-remove');
+    const $btn     = $('#category-image-btn');
+    const $badge   = $('#category-upload-badge');
 
     /* ─────────────────────────────────────────────
        Browse trigger
@@ -385,7 +257,7 @@ $(document).ready(function () {
             $btn.text('Change Image');
 
         } catch (err) {
-            console.error('Area image upload failed:', err);
+            console.error('Category image upload failed:', err);
             alert('Upload failed. Please try again.');
             $wrapper.removeClass('uploading');
             $badge
@@ -426,7 +298,7 @@ $(document).ready(function () {
     /* ─────────────────────────────────────────────
        Submit guard – block if upload still in flight
     ───────────────────────────────────────────── */
-    $('#form-area').on('submit', function (e) {
+    $('#form-category').on('submit', function (e) {
         if ($wrapper.hasClass('uploading')) {
             e.preventDefault();
             alert('Please wait — the image is still uploading.');
@@ -438,7 +310,7 @@ $(document).ready(function () {
        External ajax-form handler (if defined globally)
     ───────────────────────────────────────────── */
     if (typeof handleFormSubmit === 'function') {
-        handleFormSubmit('#form-area');
+        handleFormSubmit('#form-category');
     }
 
 });

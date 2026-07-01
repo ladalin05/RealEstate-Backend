@@ -46,7 +46,7 @@ class Property extends Model
 
     public function type()
     {
-        return $this->belongsTo(PropertyCategory::class, 'type_id');
+        return $this->belongsTo(PropertyCategory::class, 'category_id');
     }
 
     public function area()

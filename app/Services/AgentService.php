@@ -122,11 +122,12 @@ class AgentService
                     ->where('properties.status', 'active')
                     ->whereNull('properties.deleted_at');
             })
-            ->groupBy('property_categories.id', 'property_categories.name_en', 'property_categories.slug', 'property_categories.image')
+            ->groupBy('property_categories.id', 'property_categories.name_en', 'property_categories.name_km', 'property_categories.slug', 'property_categories.image')
             ->orderByDesc('property_count')
             ->select([
                 'property_categories.id',
                 'property_categories.name_en',
+                'property_categories.name_km',
                 'property_categories.slug',
                 'property_categories.image',
                 DB::raw('COUNT(properties.id) as property_count'),

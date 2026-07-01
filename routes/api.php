@@ -21,6 +21,7 @@ Route::prefix('auth')->group(function () {
 
 Route::prefix('cms')->group(function () {
     Route::get('/home', [CMSController::class, 'getHomeData']);
+    Route::get('/featured-properties', [CMSController::class, 'getFeaturedProperties']);
     Route::get('/menu', [CMSController::class, 'getMenu']);
     Route::get('/setting', [CMSController::class, 'getSetting']);
     Route::get('/contact', [CMSController::class, 'getContact']);

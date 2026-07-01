@@ -36,14 +36,20 @@ class PropertyRepository extends BaseRepository
                 'properties.address',
                 'properties.main_image',
                 'property_categories.name_en as type_name_en',
-                'property_categories.name_kh as type_name_kh',
-                'areas.name as area_name',
+                'property_categories.name_km as type_name_kh',
+                'areas.name_en as area_name_en',
+                'areas.name_km as area_name_km',
                 'provinces.name as province_name',
                 'districts.name as district_name',
                 'communes.name as commune_name',
                 'agents.profile_image as agent_profile',
                 'agents.experience_years as agent_experience',
                 DB::raw("CONCAT(COALESCE(agents.first_name,''), ' ', COALESCE(agents.last_name,'')) as agent_name"),
+                DB::raw("(
+                    SELECT JSON_ARRAYAGG(pg.image ORDER BY pg.`order` ASC, pg.id ASC)
+                    FROM property_gallery pg
+                    WHERE pg.property_id = properties.id
+                ) AS gallery"),
                 DB::raw("EXISTS(
                     SELECT 1 FROM favourites
                     WHERE favourites.property_id = properties.id
@@ -94,7 +100,7 @@ class PropertyRepository extends BaseRepository
                 'properties.updated_at',
                 'properties.category_id',
                 'property_categories.name_en as type_name_en',
-                'property_categories.name_kh as type_name_kh',
+                'property_categories.name_km as type_name_kh',
                 'areas.name as area_name',
                 'provinces.name as province_name',
                 'districts.name as district_name',

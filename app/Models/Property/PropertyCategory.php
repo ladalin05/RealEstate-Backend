@@ -8,14 +8,14 @@ class PropertyCategory extends Model
 {
     protected $table = 'property_categories';
 
-    protected $fillable = ['type_name','type_image','type_slug','status'];
+    protected $fillable = ['name_en','name_km','slug','image','status'];
  
 	
     public $timestamps = false;
 
 	public function property()
 	{
-		return $this->hasMany(Property::class,'type_id','id');
+		return $this->hasMany(Property::class,'category_id','id');
 	}
 
 	public static function getTypeInfo($id,$field_name) 

@@ -51,17 +51,26 @@
                 Area Name <span class="text-danger">*</span>
                 <small class="text-muted fw-normal">(auto-generated, editable)</small>
             </label>
-            <input type="text"
-                   name="name"
-                   id="name"
-                   class="form-control form-control-modern @error('name') is-invalid @enderror"
-                   value="{{ old('name', $form->name ?? '') }}"
-                   placeholder="e.g. Chamkarmon, Phnom Penh"
-                   required>
-            @error('name')
+            <input type="text" name="name_en" id="name_en" class="form-control form-control-modern @error('name_en') is-invalid @enderror"
+                   value="{{ old('name_en', $form->name_en ?? '') }}" placeholder="e.g. Chamkarmon, Phnom Penh" required>
+            @error('name_en')
                 <div class="text-danger small mt-1">{{ $message }}</div>
             @enderror
         </div>
+
+        {{-- Name Khmer --}}
+        <div class="mb-3">
+            <label for="name_km" class="form-label">
+                Area Name Khmer <span class="text-danger">*</span>
+                <small class="text-muted fw-normal">(auto-generated, editable)</small>
+            </label>
+            <input type="text" name="name_km" id="name_km" class="form-control form-control-modern @error('name_km') is-invalid @enderror"
+                   value="{{ old('name_km', $form->name_km ?? '') }}" placeholder="e.g. Chamkarmon, Phnom Penh" required>
+            @error('name_km')
+                <div class="text-danger small mt-1">{{ $message }}</div>
+            @enderror
+        </div>
+
 
         {{-- Slug --}}
         <div class="mb-3">
@@ -195,7 +204,7 @@ $(document).ready(function () {
         if (provinceText && $('#province').val()) parts.push(provinceText);
         if (parts.length) {
             const built = parts.join(', ');
-            $('#name').val(built);
+            $('#name_en').val(built);
             updateSlugFromName(built);
         }
     }
@@ -215,7 +224,7 @@ $(document).ready(function () {
        when populating cascaded options — these listeners just react to that */
     $('#province, #district, #commune').on('change', buildNameFromSelects);
 
-    $('#name').on('input', function () {
+    $('#name_en').on('input', function () {
         nameManuallyEdited = true;
         updateSlugFromName($(this).val());
     });

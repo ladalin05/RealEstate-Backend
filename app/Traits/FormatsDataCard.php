@@ -12,7 +12,7 @@ trait FormatsDataCard
                 'featured'   => (bool) $property->featured,
                 'status'     => $property->status,
                 'image'      => $property->main_image,
-                'gallery'    => [],
+                'gallery'    => $property->gallery,
                 'price'      => $property->price_label ?? '$' . number_format($property->price, 0),
                 'favorite'   => (bool) $property->is_favourite,
                 'name'       => $property->title,
@@ -99,7 +99,8 @@ trait FormatsDataCard
         return $propertyCategories->map(function ($propertyCategory) {
             return [
                 'id'             => $propertyCategory->id,
-                'name'           => $propertyCategory->name_en,
+                'name_en'        => $propertyCategory->name_en,
+                'name_km'        => $propertyCategory->name_km,
                 'slug'           => $propertyCategory->slug,
                 'image'          => $propertyCategory->image,
                 'property_count' => $propertyCategory->property_count,

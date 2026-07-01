@@ -32,7 +32,7 @@ class CMSController extends Controller
 
     public function getFeaturedProperties(Request $request)
     {
-        $limit = $request->limit ?? 8;
+        $limit = $request->limit ?? 4;
         $properties = $this->cmsService->getFeaturedProperties($limit);
 
         return $this->successResponse('Featured properties fetched successfully', $properties);

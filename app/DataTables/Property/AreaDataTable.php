@@ -19,6 +19,8 @@ class AreaDataTable extends DataTable
                     ? '<img src="' . e($row->image) . '" alt="' . e($row->name) . '" style="height:40px;width:40px;object-fit:cover;border-radius:4px;">'
                     : '<span class="text-muted">—</span>';
             })
+            ->editColumn('name_en', fn($row) => $row->name_en ?? '—')
+            ->editColumn('name_km', fn($row) => $row->name_km ?? '—')
             ->addColumn('province', fn($row) => $row->province_name ?? '—')
             ->addColumn('district', fn($row) => $row->district_name ?? '—')
             ->addColumn('commune', fn($row) => $row->commune_name ?? '—')
@@ -44,7 +46,8 @@ class AreaDataTable extends DataTable
             ->leftJoin('communes', 'areas.commune_id', '=', 'communes.id')
             ->select(
                 'areas.id',
-                'areas.name',
+                'areas.name_en',
+                'areas.name_km',
                 'areas.slug',
                 'areas.image',
                 'areas.status',
@@ -92,8 +95,11 @@ class AreaDataTable extends DataTable
                 ->orderable(false)
                 ->width(40),
 
-            Column::make('name')
-                ->title('Name'),
+            Column::make('name_en')
+                ->title('Name (EN)'),
+
+            Column::make('name_km')
+                ->title('Name (KH)'),
 
             Column::computed('image')
                 ->title('Image')

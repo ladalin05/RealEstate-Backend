@@ -48,7 +48,8 @@ class AreaDataTable extends DataTable
             ->leftJoin('communes', 'areas.commune_id', 'communes.id')
             ->select(
                 'areas.id',
-                'areas.name',
+                'areas.name_en',
+                'areas.name_km',
                 'areas.slug',
                 'areas.status',
                 'areas.province_id',

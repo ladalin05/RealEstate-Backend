@@ -22,7 +22,7 @@ class PropertyCategoryDataTable extends DataTable
                     : '<span class="badge bg-light text-dark">No Image</span>';
             })
             ->addColumn('name_en', fn($row) => $row->name_en)
-            ->addColumn('name_kh', fn($row) => $row->name_kh ?? '-')
+            ->addColumn('name_km', fn($row) => $row->name_km ?? '-')
             ->addColumn('slug', fn($row) => $row->slug)
             ->addColumn('status', function ($row) {
                 $checked = $row->status ? 'checked' : '';
@@ -72,7 +72,7 @@ class PropertyCategoryDataTable extends DataTable
 
             Column::make('image')->title('Image')->orderable(false)->searchable(false),
             Column::make('name_en')->title('Name (EN)'),
-            Column::make('name_kh')->title('Name (KH)'),
+            Column::make('name_km')->title('Name (KH)'),
             Column::make('slug')->title('Slug'),
             Column::make('status')->title('Status')->orderable(false)->searchable(false),
             Column::computed('action')

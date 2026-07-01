@@ -149,11 +149,14 @@ class PropertyService extends BaseService
     {
         $data['areas'] = Area::where('status', 1)->get([
             'id',
-            'name'
+            'name_en',
+            'name_km'
         ]);
         $data['categories'] = PropertyCategory::where('status', 1)->get([
             'id',
-            'name_en as name'
+            'name_en',
+            'name_km'
+
         ]);
         $data['feature'] = Feature::where('status', 1)->get([
             'id',

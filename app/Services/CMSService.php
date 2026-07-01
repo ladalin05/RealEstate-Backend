@@ -27,7 +27,7 @@ class CMSService
         return [
             'areas'              => $this->getAreas(),
             'stats'              => $this->getStats(),
-            'featuredProperties' => $this->getFeaturedProperties(8),
+            'featuredProperties' => $this->getFeaturedProperties(4),
             'propertyCategories' => $this->getPropertyCategories(),
             'propertiesForRent'  => $this->getPropertiesForRent(),
             'agents'             => $this->getAgents(),
@@ -37,9 +37,22 @@ class CMSService
     public function getAreas()
     {
         return Area::query()
-            ->where('status', 1)
-            ->orderBy('name')
-            ->select(['id', 'name', 'slug', 'image'])
+            ->leftJoin('properties', function ($join) {
+                $join->on('properties.area_id', '=', 'areas.id')
+                    ->where('properties.status', 'active')
+                    ->whereNull('properties.deleted_at');
+            })
+            ->where('areas.status', 1)
+            ->orderBy('areas.name_en')
+            ->groupBy('areas.id', 'areas.name_en', 'areas.name_km', 'areas.slug', 'areas.image')
+            ->select([
+                'areas.id',
+                'areas.name_en',
+                'areas.name_km',
+                'areas.slug',
+                'areas.image',
+                DB::raw('COUNT(properties.id) as properties_count'),
+            ])
             ->get();
     }
 
@@ -50,14 +63,14 @@ class CMSService
         $verifiedProperties = Property::where('verified', 1)->count();
 
         return [
-            ['title' => formatCount($totalProperties), 'description' => 'Property listings actively managed on our platform.'],
-            ['title' => formatCount($totalAgents), 'description' => 'Verified agents helping clients buy, sell, and rent.'],
-            ['title' => formatCount($verifiedProperties), 'description' => 'Listings verified for accuracy and trust.'],
-            ['title' => '10+', 'description' => 'Years of experience serving the real estate market.'],
+            ['title' => formatCount($totalProperties), 'description_en' => 'Property listings actively managed on our platform.','description_km' => 'អចលនទ្រព្យដែលគ្រប់គ្រងយ៉ាងសកម្មនៅលើវេទិការបស់យើង។'],
+            ['title' => formatCount($totalAgents), 'description_en' => 'Verified agents helping clients buy, sell, and rent.','description_km' => 'ភ្នាក់ងារអចលនទ្រព្យដែលផ្ទៀងផ្ទាត់ជួយអតិថិជនទិញ លក់ និងជួល។'],
+            ['title' => formatCount($verifiedProperties), 'description_en' => 'Listings verified for accuracy and trust.','description_km' => 'បញ្ជីអចលនទ្រព្យដែលផ្ទៀងផ្ទាត់ភាពត្រឹមត្រូវ និងទុកចិត្ត។'],
+            ['title' => '10+', 'description_en' => 'Years of experience serving the real estate market.','description_km' => '10+ ឆ្នាំនៃបទពិសោធន៍បម្រើទីផ្សារអចលនទ្រព្យ។'],
         ];
     }
 
-    public function getFeaturedProperties(int $limit = 8)
+    public function getFeaturedProperties(int $limit = 4)
     {
         $properties = $this->propertyRepository->getProperties()
                             ->where('properties.status', 'active')
@@ -82,12 +95,13 @@ class CMSService
                     ->where('properties.status', 'active')
                     ->whereNull('properties.deleted_at');
             })
-            ->groupBy('property_categories.id', 'property_categories.name_en', 'property_categories.slug', 'property_categories.image')
+            ->groupBy('property_categories.id', 'property_categories.name_en', 'property_categories.name_km', 'property_categories.slug', 'property_categories.image')
             ->orderByDesc('property_count')
             ->limit(6)
             ->select([
                 'property_categories.id',
                 'property_categories.name_en',
+                'property_categories.name_km',
                 'property_categories.slug',
                 'property_categories.image',
                 DB::raw('COUNT(properties.id) as property_count'),

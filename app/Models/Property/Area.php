@@ -17,7 +17,8 @@ class Area extends Model
         'province_id',
         'district_id',
         'commune_id',
-        'name',
+        'name_en',
+        'name_km',
         'slug',
         'status',
     ];

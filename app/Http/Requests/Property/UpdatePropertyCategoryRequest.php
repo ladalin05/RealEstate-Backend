@@ -18,7 +18,7 @@ class UpdatePropertyCategoryRequest extends FormRequest
 
         return [
             'name_en' => ['required', 'string', 'max:255'],
-            'name_kh' => ['nullable', 'string', 'max:255'],
+            'name_km' => ['nullable', 'string', 'max:255'],
             'slug'    => ['required', 'string', 'max:255', 'alpha_dash', Rule::unique('property_categories', 'slug')->ignore($propertyCategoryId)],
             'image'   => ['nullable', 'string', 'url', 'max:2048'],
             'status'  => ['nullable', 'boolean'],
