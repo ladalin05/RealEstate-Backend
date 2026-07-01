@@ -20,11 +20,12 @@ trait FormatsDataCard
                 'bedrooms'   => $property->rooms ?? 0,
                 'bathrooms'  => $property->bathrooms ?? 0,
                 'size'       => $property->area_size ?? $property->land_size ?? 'N/A',
-                'category'   => $property->type_name_en,
+                'category_en'   => $property->category_name_en,
+                'category_km'   => $property->category_name_km,
                 'agent'      => [
                     'image'      => $property->agent_profile,
                     'name'       => $property->agent_name,
-                    'experience' => $this->formatExperience($property->agent_experience_years ?? null),
+                    'experience' => $this->formatExperience($property->agent_experience ?? null),
                 ],
             ];
         })->values();
@@ -52,8 +53,8 @@ trait FormatsDataCard
             'priceNegotiable' => (bool) $property->price_negotiable,
             'rentalPeriod' => $property->rental_period,
             'currency'     => $property->currency,
-
-            'category'     => $property->type_name_en,
+            'category_en'   => $property->category_name_en,
+            'category_km'   => $property->category_name_km,
             'bedrooms'     => $property->bedrooms ?? 0,
             'bathrooms'    => $property->bathrooms ?? 0,
             'garages'      => $property->garages ?? 0,
@@ -133,8 +134,8 @@ trait FormatsDataCard
 
     public function formatExperience(?int $years): string
     {
-        if (!$years) {
-            return 'New agent';
+        if ($years == 0) {
+            return 'new_agent';
         }
 
         return $years . ' ' . ($years === 1 ? 'year' : 'years');

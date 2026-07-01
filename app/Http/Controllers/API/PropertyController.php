@@ -65,7 +65,7 @@ class PropertyController extends Controller
             'limit'     => 5,
         ]);
 
-        if($request->user_id != null){
+        if($request->user_id !== null){
             property_views_save($property->id, $request->user_id);
         }
 
