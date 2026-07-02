@@ -12,6 +12,7 @@ use App\Models\UserManagement\User;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserManagement\StoreUserRequest;
+use App\Http\Requests\UserManagement\UpdateUserRequest;
 use App\Http\Requests\UserManagement\StoreUserTelegramRegisterRequest;
 
 class UserAuthController extends Controller
@@ -256,5 +257,58 @@ class UserAuthController extends Controller
         }
 
         return false;
+    }
+
+    public function getInfo() {
+        try {
+            $user = Auth::guard('api-user')->user();
+            if (!$user) {
+                return $this->errorResponse('Unauthorized', 401);
+            }
+            return $this->successResponse('User info fetched successfully.',['user' => $user]);
+        } catch (\Throwable $th) {
+            return $this->errorResponse('Failed to fetch user info.', 500);
+        }
+    }
+
+    public function updateInfo(UpdateUserRequest $request)
+    {
+        /** @var User $user */
+        $user = Auth::guard('api-user')->user();
+
+        if (!$user) {
+            return $this->errorResponse('Unauthorized', 401);
+        }
+
+        $data = $request->validated();
+
+        // Belt-and-braces: this endpoint never touches these, no matter what request class is used
+        unset(
+            $data['password'],
+            $data['profile_picture'],
+            $data['google_id'],
+            $data['telegram_id'],
+            $data['telegram_username'],
+            $data['is_verify_google'],
+            $data['is_verify_telegram'],
+            $data['is_verify_email'],
+            $data['is_verify_phone'],
+            $data['active'],
+        );
+
+        DB::beginTransaction();
+
+        try {
+            $user->fill($data);
+            $user->save();
+
+            DB::commit();
+
+            return $this->successResponse(['user' => $user->fresh()], 'Profile updated successfully.');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            return $this->errorResponse('Failed to update profile.', 500);
+        }
     }
 }

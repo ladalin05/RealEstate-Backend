@@ -60,15 +60,14 @@ class BlogCategoryDataTable extends DataTable
                 ->searchable(false)
                 ->orderable(false),
 
-            Column::make('name'),
+            Column::make('name_en')->title('Name (EN)'),
+            Column::make('name_km')->title('Name (KM)'),
 
             Column::make('slug'),
 
-            Column::computed('total_posts')
-                ->title('Posts'),
+            Column::computed('total_posts') ->title('Posts'),
 
-            Column::computed('status')
-                ->title('Status'),
+            Column::computed('status') ->title('Status'),
 
             Column::computed('action')
                 ->title('Action')

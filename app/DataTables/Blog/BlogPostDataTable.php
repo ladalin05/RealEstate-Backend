@@ -15,7 +15,7 @@ class BlogPostDataTable extends DataTable
             ->eloquent($query)
             ->addIndexColumn()
             ->editColumn('category_name', function ($row) {
-                return $row->category_name ?? '';
+                return $row->{'category_name_'.app()->getLocale()} ?? '';
             })
             ->editColumn('author_name', function ($row) {
                 return $row->author_name ?? '';
@@ -59,7 +59,7 @@ class BlogPostDataTable extends DataTable
             ->leftJoin('admins', 'blog_posts.author_id', 'admins.id')
             ->leftJoin('blog_post_tags', 'blog_posts.id', 'blog_post_tags.post_id')
             ->leftJoin('blog_tags', 'blog_post_tags.tag_id', 'blog_tags.id')
-            ->select('blog_posts.*', 'blog_categories.name as category_name', 'admins.name as author_name', 'blog_tags.name as tag_name');
+            ->select('blog_posts.*', 'blog_categories.name_en as category_name_en', 'blog_categories.name_km as category_name_kh', 'admins.name as author_name', 'blog_tags.name as tag_name');
     }
 
     public function html()

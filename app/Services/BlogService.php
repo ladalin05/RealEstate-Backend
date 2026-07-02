@@ -41,7 +41,8 @@ class BlogService
                 'blog_posts.created_at',
                 'admins.name as author_name',
                 'admins.image as author_image',
-                'blog_categories.name as category_name',
+                'blog_categories.name_en as category_name_en',
+                'blog_categories.name_km as category_name_km',
             ])
             ->get();
 
@@ -67,7 +68,8 @@ class BlogService
                 'blog_posts.created_at',
                 'admins.name as author_name',
                 'admins.image as author_image',
-                'blog_categories.name as category_name',
+                'blog_categories.name_en as category_name_en',
+                'blog_categories.name_km as category_name_km',
             ])
             ->first();
 
@@ -121,7 +123,8 @@ class BlogService
                 'blog_posts.created_at',
                 'admins.name as author_name',
                 'admins.image as author_image',
-                'blog_categories.name as category_name',
+                'blog_categories.name_en as category_name_en',
+                'blog_categories.name_km as category_name_km',
             ])
             ->limit(3)
             ->get();
@@ -145,7 +148,8 @@ class BlogService
                 'since_posted' => sincePosted($blog->created_at),
                 'author_name' => $blog->author_name,
                 'author_image' => $blog->author_image,
-                'category_name' => $blog->category_name,
+                'category_name_en' => $blog->category_name_en,
+                'category_name_km' => $blog->category_name_km,
             ];
         })->values();
     }

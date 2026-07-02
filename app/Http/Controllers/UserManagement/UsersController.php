@@ -26,58 +26,6 @@ class UsersController extends Controller
         return $dataTable->render('user-management.users.index');
     }
 
-    // public function create(Request $request) {
-    //     try {
-    //         if ($request->isMethod('post')) {
-    //             $formRequest = app(StoreUserRequest::class);
-    //             $form = $this->service->create($formRequest->validated());
-    //             $form->roles()->sync($request->role_id);
-    //             revoke_session($form->id);
-
-    //             return $this->redirectResponse(
-    //                 message: __('global.create_user_successfully'),
-    //                 route: route('users-management.users.index'),
-    //             );
-    //         }
-    //         return $this->viewResponse(
-    //             view:   'user-management.users.form',
-    //             data:   ['form' => new User()],
-    //             action: route('users-management.users.create'),
-    //         );
-    //     } catch (\Throwable $e) {
-    //         return $this->errorResponse(
-    //             message: $e->getMessage(),
-    //             code: 500,
-    //         );
-    //     }
-    // }
-
-    // public function update(Request $request) {
-    //     try {
-    //         if ($request->isMethod('post')) {
-    //             $formRequest = app(UpdateUserRequest::class);
-    //             $form = $this->service->update($formRequest->validated());
-    //             $form->roles()->sync($request->role_id);
-    //             revoke_session($form->id);
-
-    //             return $this->redirectResponse(
-    //                 message: __('global.update_user_successfully'),
-    //                 route: route('users-management.internal-users.index'),
-    //             );
-    //         }
-    //         return $this->viewResponse(
-    //             view:   'admin.users.form',
-    //             data:   ['form' => $this->service->find($request->id)],
-    //             action: route('users-management.internal-users.update', $request->id),
-    //         );
-    //     } catch (\Throwable $e) {
-    //         return $this->errorResponse(
-    //             message: $e->getMessage(),
-    //             code: 500,
-    //         );
-    //     }
-    // }
-
     public function delete($id) {
         try {
             if ($id == 1) {

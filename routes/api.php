@@ -36,12 +36,15 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::prefix('user-management')->group(function () {
     Route::get('/agents', [AgentController::class, 'getAllAgents']);
     Route::get('/agent-detail', [AgentController::class, 'getAgentDetail']);
+    Route::get('/get-info', [UserAuthController::class, 'getInfo']);
+    Route::put('update-info', [UserAuthController::class, 'updateInfo']);
 });
 
 Route::prefix('property')->group(function () {
     Route::get('/', [PropertyController::class, 'getProperty']);
     Route::get('/detail', [PropertyController::class, 'getPropertyDetails']);
     Route::get('/categories', [CategoryController::class, 'getPropertyCategories']);
+    Route::get('/favourite', [PropertyController::class, 'getFavouriteProperties']);
     Route::post('/toggle-favourite', [PropertyController::class, 'toggleFavourite']);
     Route::get('/fillter-properties', [PropertyController::class, 'filterProperties']);
     Route::get('/get-data-fillter', [PropertyController::class, 'getDataFillter']);

@@ -16,15 +16,16 @@ class UpdateUserRequest extends FormRequest
     public function rules(): array
     {
         // Works whether the route param is {user} (model binding) or {id}
-        $userId = $this->route('user')?->id ?? $this->route('id');
+        $userId = auth('api')->id();
 
         return [
             'name' => ['sometimes', 'required', 'string', 'max:255'],
-            'username' => [ 'sometimes', 'required', 'string', 'max:255', 'alpha_dash', Rule::unique('users', 'username')->ignore($userId) ],
-            'email' => [ 'sometimes', 'nullable', 'email', 'max:255', Rule::unique('users', 'email')->ignore($userId) ],
+            'username' => [ 'sometimes', 'nullable', 'string', 'max:255', 'alpha_dash', Rule::unique('users', 'username')->ignore($userId) ],
+            'email' => [ 'sometimes', 'required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($userId) ],
             'password' => ['sometimes', 'nullable', 'string', Password::min(8)->mixedCase()->numbers()],
             'phone' => ['sometimes', 'nullable', 'string', 'max:255'],
             'profile_picture' => ['sometimes', 'nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            'bio' => ['sometimes', 'nullable', 'string', 'max:255'],
             'gender' => ['sometimes', 'nullable', Rule::in(['male', 'female', 'others'])],
             'dob' => ['sometimes', 'nullable', 'date', 'before:today'],
             'google_id' => ['sometimes', 'nullable', 'string', 'max:255'],

@@ -5,14 +5,26 @@
 
         {{-- Name --}}
         <div class="mb-3">
-            <label for="name" class="form-label">
+            <label for="name_en" class="form-label">
                 Category Name <span class="text-danger">*</span>
             </label>
             <input type="text"
-                   name="name"
-                   id="name"
+                   name="name_en"
+                   id="name_en"
                    class="form-control form-control-modern"
-                   value="{{ old('name', $form->name ?? '') }}"
+                   value="{{ old('name_en', $form->name_en ?? '') }}"
+                   placeholder="e.g. Travel Tips"
+                   required>
+        </div>
+        <div class="mb-3">
+            <label for="name_km" class="form-label">
+                Category Name <span class="text-danger">*</span>
+            </label>
+            <input type="text"
+                   name="name_km"
+                   id="name_km"
+                   class="form-control form-control-modern"
+                   value="{{ old('name_km', $form->name_km ?? '') }}"
                    placeholder="e.g. Travel Tips"
                    required>
         </div>
@@ -71,7 +83,7 @@ $(document).ready(function () {
     ───────────────────────────────────────────── */
     let slugManuallyEdited = {{ !empty($form->slug ?? null) ? 'true' : 'false' }};
 
-    $('#name').on('input', function () {
+    $('#name_en').on('input', function () {
         if (slugManuallyEdited) return;
         const slug = $(this).val()
             .toLowerCase()

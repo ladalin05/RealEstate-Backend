@@ -76,6 +76,14 @@ class PropertyController extends Controller
         ]);
     }
 
+    public function getFavouriteProperties(Request $request)
+    {
+        $favourite = $this->repository->getFavouriteProperties($request->user_id);
+
+        return $this->successResponse('Favourite properties', $this->transformProperties($favourite));
+    }
+    
+
     public function filterProperties(Request $request): JsonResponse
     {
         $property = $this->repository->filterProperties($request->all());

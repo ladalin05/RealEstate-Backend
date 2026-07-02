@@ -53,7 +53,7 @@ class PropertyRepository extends BaseRepository
                 DB::raw("EXISTS(
                     SELECT 1 FROM favourites
                     WHERE favourites.property_id = properties.id
-                      AND favourites.user_id = " . (auth()->id() ?? 'NULL') . "
+                      AND favourites.user_id = " . (auth('api')->id() ?? 'NULL') . "
                 ) as is_favourite"),
             );
     }
@@ -158,7 +158,7 @@ class PropertyRepository extends BaseRepository
                 DB::raw("EXISTS(
                     SELECT 1 FROM favourites
                     WHERE favourites.property_id = properties.id
-                      AND favourites.user_id = " . (auth()->id() ?? 'NULL') . "
+                      AND favourites.user_id = " . (auth('api')->id() ?? 'NULL') . "
                 ) as is_favourite"),
             );
     }
@@ -191,6 +191,20 @@ class PropertyRepository extends BaseRepository
         $property->amenities = json_decode($property->amenities ?? '[]') ?? [];
 
         return $property;
+    }
+
+    
+    public function getFavouriteProperties($id)
+    {
+        $properties = $this->getProperties()
+                            ->join('favourites', 'properties.id', '=', 'favourites.property_id')
+                            ->where('properties.status', 'active')
+                            ->where('properties.featured', 1)
+                            ->where('favourites.user_id', $id)
+                            ->whereNull('properties.deleted_at')
+                            ->orderBy('properties.published_at', 'desc')
+                            ->get();
+        return $properties;
     }
 
     public function filterProperties(array $requestParams): mixed
