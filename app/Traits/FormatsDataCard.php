@@ -80,8 +80,10 @@ trait FormatsDataCard
             'latitude'   => $property->latitude,
             'longitude'  => $property->longitude,
 
-            'amenities'  => collect($property->amenities ?? [])->pluck('name_en')->values()->all(),
-            'features'   => collect($property->features ?? [])->pluck('name_en')->values()->all(),
+            'amenities_en'  => collect($property->amenities ?? [])->pluck('name_en')->values()->all(),
+            'amenities_km'  => collect($property->amenities ?? [])->pluck('name_kh')->values()->all(),
+            'features_en'   => collect($property->features ?? [])->pluck('name_en')->values()->all(),
+            'features_km'   => collect($property->features ?? [])->pluck('name_kh')->values()->all(),
 
             'agent'      => [
                 'id'         => $property->agent_id,
