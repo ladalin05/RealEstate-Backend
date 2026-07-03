@@ -247,8 +247,8 @@ class PropertyRepository extends BaseRepository
 
         $params = [
             'filter_by' => $filters,
-            'search'    => $requestParams['search']    ?? null,
-            'columns'   => ['properties.title', 'properties.description', 'properties.address'],
+            'search' => $requestParams['search'] ?? '',
+            'columns'   => ['properties.title_en','properties.title_kh', 'properties.description_en', 'properties.description_kh', 'properties.address_en', 'properties.address_kh'],
             'sort_by'   => $requestParams['sort_by']   ?? 'properties.id',
             'sort_dir'  => $requestParams['sort_dir']  ?? 'desc',
             'limit'     => $requestParams['limit']     ?? 12,

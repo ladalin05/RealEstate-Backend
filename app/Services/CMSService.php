@@ -130,14 +130,45 @@ class CMSService
     public function getAgents()
     {
         $agents = Agent::query()
-            ->where('status', 'active')
-            ->orderBy('rating', 'desc')
+            ->leftJoin('properties', function ($join) {
+                $join->on('properties.agent_id', '=', 'agents.id')
+                    ->whereNull('properties.deleted_at');
+            })
+            ->where('agents.status', 'active')
+            ->orderBy('agents.rating', 'desc')
             ->limit(3)
             ->select([
-                'id', 'first_name', 'last_name', 'email', 'phone',
-                'profile_image', 'bio', 'experience_years', 'specializations',
-                'rating', 'review_count', 'total_sales', 'total_rentals', 'social_links',
+                'agents.id', 
+                'agents.first_name', 
+                'agents.last_name', 
+                'agents.email', 
+                'agents.phone',
+                'agents.profile_image', 
+                'agents.bio', 
+                'agents.experience_years', 
+                'agents.specializations',
+                'agents.rating', 'agents.review_count', 
+                'agents.total_sales', 
+                'agents.total_rentals', 
+                'agents.social_links',
+                DB::raw('COUNT(DISTINCT properties.id) as properties_count'),
             ])
+            ->groupBy(
+                'agents.id', 
+                'agents.first_name', 
+                'agents.last_name', 
+                'agents.email', 
+                'agents.phone',
+                'agents.profile_image', 
+                'agents.bio', 
+                'agents.experience_years', 
+                'agents.specializations',
+                'agents.rating', 
+                'agents.review_count', 
+                'agents.total_sales', 
+                'agents.total_rentals', 
+                'agents.social_links'
+            )
             ->get();
         return $this->transformAgents($agents);
     }
