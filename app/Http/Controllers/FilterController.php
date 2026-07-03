@@ -15,7 +15,7 @@ class FilterController extends Controller
     public function getCountry()
     {
         return response()->json(
-            Country::select('id', 'name')->get()
+            Country::select('id', 'name_en', 'name_kh')->get()
         );
     }
 
@@ -27,7 +27,7 @@ class FilterController extends Controller
             Province::when($country_id, function ($q) use ($country_id) {
                     $q->where('country_id', $country_id);
                 })
-                ->select('id', 'name', 'country_id')
+                ->select('id', 'name_en', 'name_kh', 'country_id')
                 ->get()
         );
     }
@@ -40,7 +40,7 @@ class FilterController extends Controller
             District::when($province_id, function ($q) use ($province_id) {
                     $q->where('province_id', $province_id);
                 })
-                ->select('id', 'name', 'province_id')
+                ->select('id', 'name_en', 'name_kh', 'province_id')
                 ->get()
         );
     }
@@ -53,7 +53,7 @@ class FilterController extends Controller
             Commune::when($district_id, function ($q) use ($district_id) {
                     $q->where('district_id', $district_id);
                 })
-                ->select('id', 'name', 'district_id')
+                ->select('id', 'name_en', 'name_kh', 'district_id')
                 ->get()
         );
     }

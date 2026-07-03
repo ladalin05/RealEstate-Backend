@@ -14,20 +14,24 @@ class StorePropertyRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'property_code'      => ['nullable', 'string', 'max:50', 'unique:properties,property_code'],
             'agent_id'           => ['nullable', 'exists:agents,id'],
             'category_id'        => ['required', 'exists:property_categories,id'],
             'purpose'            => ['required', 'in:sale,rent,sale_rent'],
-            'title'              => ['required', 'string', 'max:255'],
-            'description'        => ['nullable', 'string'],
+            'title_en'           => ['required', 'string', 'max:255'],
+            'title_kh'           => ['nullable', 'string', 'max:255'],
+            'description_en'     => ['nullable', 'string'],
+            'description_kh'     => ['nullable', 'string'],
             'notes'              => ['nullable', 'string'],
             'status'             => ['nullable', 'in:draft,active,inactive,sold,rented'],
-            'rental_period'      => ['nullable','in:daily,monthly,yearly|required_if:purpose,rent'],
+            'rental_period'      => ['nullable', 'in:daily,monthly,yearly', 'required_if:purpose,rent'],
             'phone'              => ['nullable', 'string', 'max:30'],
 
             'rooms'              => ['nullable', 'integer', 'min:0'],
             'bedrooms'           => ['nullable', 'integer', 'min:0'],
             'bathrooms'          => ['nullable', 'integer', 'min:0'],
             'garages'            => ['nullable', 'integer', 'min:0'],
+            'garage_size'        => ['nullable', 'string', 'max:100'],
             'area_size'          => ['nullable', 'string', 'max:100'],
             'land_size'          => ['nullable', 'string', 'max:100'],
             'year_built'         => ['nullable', 'digits:4', 'integer', 'min:1800'],
@@ -44,7 +48,8 @@ class StorePropertyRequest extends FormRequest
             'virtual_tour_url'   => ['nullable', 'url', 'max:500'],
 
             'area_id'            => ['nullable', 'exists:areas,id'],
-            'address'            => ['nullable', 'string', 'max:500'],
+            'address_en'         => ['nullable', 'string', 'max:500'],
+            'address_kh'         => ['nullable', 'string', 'max:500'],
             'latitude'           => ['nullable', 'numeric', 'between:-90,90'],
             'longitude'          => ['nullable', 'numeric', 'between:-180,180'],
 
@@ -60,12 +65,15 @@ class StorePropertyRequest extends FormRequest
     public function validated($key = null, $default = null): array
     {
         return [
+            'property_code'      => $this->property_code ?: null,
             'agent_id'           => $this->agent_id ?? null,
             'listed_by'          => auth()->id(),
             'category_id'        => $this->category_id,
             'purpose'            => $this->purpose,
-            'title'              => $this->title,
-            'description'        => $this->description ?? null,
+            'title_en'           => $this->title_en,
+            'title_kh'           => $this->title_kh ?? null,
+            'description_en'     => $this->description_en ?? null,
+            'description_kh'     => $this->description_kh ?? null,
             'notes'              => $this->notes ?? null,
             'status'             => $this->status ?? 'draft',
             'rental_period'      => $this->rental_period ?? null,
@@ -75,6 +83,7 @@ class StorePropertyRequest extends FormRequest
             'bedrooms'           => $this->bedrooms ?? 0,
             'bathrooms'          => $this->bathrooms ?? 0,
             'garages'            => $this->garages ?? 0,
+            'garage_size'        => $this->garage_size ?? null,
             'area_size'          => $this->area_size ?? null,
             'land_size'          => $this->land_size ?? null,
             'year_built'         => $this->year_built ?? null,
@@ -83,7 +92,7 @@ class StorePropertyRequest extends FormRequest
             'currency'           => $this->currency ?? 'USD',
             'price'              => $this->price ?? null,
             'price_label'        => $this->price_label ?? null,
-            'price_negotiable'   => $this->price_negotiable ?? false,
+            'price_negotiable'   => $this->boolean('price_negotiable'),
 
             'main_image'         => $this->main_image ?? null,
             'floor_plan_image'   => $this->floor_plan_image ?? null,
@@ -91,7 +100,8 @@ class StorePropertyRequest extends FormRequest
             'virtual_tour_url'   => $this->virtual_tour_url ?? null,
 
             'area_id'            => $this->area_id ?? null,
-            'address'            => $this->address ?? null,
+            'address_en'         => $this->address_en ?? null,
+            'address_kh'         => $this->address_kh ?? null,
             'latitude'           => $this->latitude ?? null,
             'longitude'          => $this->longitude ?? null,
 

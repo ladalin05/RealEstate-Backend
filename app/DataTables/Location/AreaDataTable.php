@@ -14,9 +14,9 @@ class AreaDataTable extends DataTable
         return datatables()
             ->eloquent($query)
             ->addIndexColumn()
-            ->addColumn('province', fn($row) => $row->province_name ?? '')
-            ->addColumn('district', fn($row) => $row->district_name ?? '')
-            ->addColumn('commune', fn($row) => $row->commune_name ?? '')
+            ->addColumn('province', fn($row) => $row->{'province_name_'.app()->getLocale()} ?? '')
+            ->addColumn('district', fn($row) => $row->{'district_name_'.app()->getLocale()} ?? '')
+            ->addColumn('commune', fn($row) => $row->{'commune_name_'.app()->getLocale()} ?? '')
             ->addColumn('level', function ($row) {
                 if ($row->commune_id) return '<span class="badge bg-success">Commune</span>';
                 if ($row->district_id) return '<span class="badge bg-info">District</span>';
@@ -55,9 +55,12 @@ class AreaDataTable extends DataTable
                 'areas.province_id',
                 'areas.district_id',
                 'areas.commune_id',
-                'provinces.name as province_name',
-                'districts.name as district_name',
-                'communes.name as commune_name'
+                'provinces.name_en as province_name_en',
+                'provinces.name_kh as province_name_kh',
+                'districts.name_en as district_name_en',
+                'districts.name_kh as district_name_kh',
+                'communes.name_en as commune_name_en',
+                'communes.name_kh as commune_name_kh'
             );
     }
 

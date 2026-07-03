@@ -84,4 +84,6 @@ return [
     'create_blog_category_successfully' => 'បង្កើតប្រភេទប្លុកដោយជោគជ័យ',
     'update_blog_category_successfully' => 'កែប្រែប្រភេទប្លុកដោយជោគជ័យ',
     'delete_blog_category_successfully' => 'លុបប្រភេទប្លុកដោយជោគជ័យ',
+    'schedule_tour_success' => 'កំណត់ពេលទស្សនាដោយជោគជ័យ',
+    'request_info_success' => 'ស្នើសុំព័ត៌មានដោយជោគជ័យ',
 ];

@@ -55,6 +55,10 @@ class PropertyController extends Controller
             );
         }
 
+        // Eager-load relations the edit form reads directly (amenities/features
+        // multi-selects, gallery list) to avoid N+1 lazy loads in the view.
+        $property->load(['amenities', 'features', 'property_image']);
+
         return $this->viewResponse(
             view:   'property.properties.form',
             action: route('property.properties.edit', ['id' => $property->id]),

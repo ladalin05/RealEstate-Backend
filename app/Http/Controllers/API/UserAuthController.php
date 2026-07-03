@@ -6,6 +6,7 @@ use App\Services\AuthSV;
 use Illuminate\Http\Request;
 use App\Services\BrevoService;
 use App\Services\TelegramService;
+use App\Services\GoogleService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\UserManagement\User;
@@ -20,12 +21,14 @@ class UserAuthController extends Controller
     protected $AuthSV;
     protected $TelegramSV;
     protected $BrevoSV;
+    protected $GoogleSV;
 
     public function __construct()
     {
         $this->AuthSV     = new AuthSV();
         $this->TelegramSV = new TelegramService();
         $this->BrevoSV    = new BrevoService();
+        $this->GoogleSV   = new GoogleService();
     }
 
     public function getQuery()
@@ -109,6 +112,32 @@ class UserAuthController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return $this->errorResponse($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function googleLogin(Request $request)
+    {
+        $request->validate([
+            'access_token' => 'required|string',
+        ]);
+
+        try {
+            $result = $this->GoogleSV->googleLogin($request->access_token);
+
+            return $this->successResponse('User google logged in successfully', [
+                    'token' => $result['token'],
+                    'user' => [
+                        'id'       => $result['user']->id,
+                        'name'     => $result['user']->name,
+                        'username' => $result['user']->username,
+                        'email'    => $result['user']->email,
+                        'phone'    => $result['user']->phone,
+                    ]]);
+        } catch (Exception $e) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => $e->getMessage(),
+            ], 401);
         }
     }
 

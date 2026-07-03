@@ -10,7 +10,7 @@
 
                 data.forEach(item => {
                     $('#province').append(
-                        `<option value="${item.id}">${item.name}</option>`
+                        `<option value="${item.id}">${item.name_en}</option>`
                     );
                 });
 
@@ -34,7 +34,7 @@
 
                 data.forEach(item => {
                     $('#district').append(
-                        `<option value="${item.id}">${item.name}</option>`
+                        `<option value="${item.id}">${item.name_en}</option>`
                     );
                 });
 
@@ -56,7 +56,7 @@
 
                 data.forEach(item => {
                     $('#commune').append(
-                        `<option value="${item.id}">${item.name}</option>`
+                        `<option value="${item.id}">${item.name_en}</option>`
                     );
                 });
 

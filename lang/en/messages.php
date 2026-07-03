@@ -85,4 +85,7 @@ return [
     'create_blog_category_successfully' => 'Create blog category successfully',
     'update_blog_category_successfully' => 'Update blog category successfully',
     'delete_blog_category_successfully' => 'Delete blog category successfully',
+    'schedule_tour_success' => 'Schedule tour successfully',
+    'request_info_success' => 'Request info successfully',
+    
 ];

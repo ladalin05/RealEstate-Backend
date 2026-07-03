@@ -7,8 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
-    <link rel="icon shortcut" href="{{ asset('assets/images/default/favicon.ico') }}" type="image/x-icon">
+    <title>Winrealty</title>
+    <link rel="icon shortcut" href="{{ asset('assets/images/default/win-realty-icon.ico') }}" type="image/x-icon">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">

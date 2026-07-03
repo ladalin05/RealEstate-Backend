@@ -21,9 +21,9 @@ class AreaDataTable extends DataTable
             })
             ->editColumn('name_en', fn($row) => $row->name_en ?? '—')
             ->editColumn('name_km', fn($row) => $row->name_km ?? '—')
-            ->addColumn('province', fn($row) => $row->province_name ?? '—')
-            ->addColumn('district', fn($row) => $row->district_name ?? '—')
-            ->addColumn('commune', fn($row) => $row->commune_name ?? '—')
+            ->addColumn('province', fn($row) => $row->{'province_name_'.app()->getLocale()} ?? '')
+            ->addColumn('district', fn($row) => $row->{'district_name_'.app()->getLocale()} ?? '')
+            ->addColumn('commune', fn($row) => $row->{'commune_name_'.app()->getLocale()} ?? '')
             ->addColumn('status', function ($row) {
                 $checked = $row->status ? 'checked' : '';
                 return '
@@ -51,9 +51,12 @@ class AreaDataTable extends DataTable
                 'areas.slug',
                 'areas.image',
                 'areas.status',
-                'provinces.name as province_name',
-                'districts.name as district_name',
-                'communes.name as commune_name'
+                'provinces.name_en as province_name_en',
+                'provinces.name_kh as province_name_kh',
+                'districts.name_en as district_name_en',
+                'districts.name_kh as district_name_kh',
+                'communes.name_en as commune_name_en',
+                'communes.name_kh as commune_name_kh'
             );
     }
 

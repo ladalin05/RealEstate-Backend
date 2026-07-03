@@ -9,7 +9,7 @@
 
          <div class="navbar-brand flex-1 flex-lg-0 h-32px">
              <a href="{{ route('dashboard') }}" class="d-inline-flex align-items-center">
-                 <img src="https://wpresidence.net/wp-content/uploads/2020/11/logo.png" class="d-none d-sm-inline-block h-48px ms-3">
+                 <img src="{{ asset('assets/images/default/win-realty-logo.png') }}" class="d-none d-sm-inline-block h-48px ms-3">
              </a>
             <div class="ms-5">
                 <button type="button" class="btn btn-icon btn-sm rounded-pill border-transparent sidebar-control sidebar-main-resize d-none d-lg-inline-flex">

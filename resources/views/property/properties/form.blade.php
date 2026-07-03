@@ -132,6 +132,33 @@
 
         #rental-period-row { display: none; }
 
+        /* Bilingual field tabs */
+        .lang-tabs {
+            display: inline-flex;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .lang-tab-btn {
+            border: none;
+            background: #fff;
+            padding: 0.25rem 0.9rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+            cursor: pointer;
+        }
+
+        .lang-tab-btn.active {
+            background: var(--primary-color);
+            color: #fff;
+        }
+
+        .lang-pane { display: none; }
+        .lang-pane.active { display: block; }
+
         .form-control,
         .select2-container .select2-selection--single {
             border: 1px solid var(--border-color);
@@ -184,19 +211,26 @@
                                 <i class="fa fa-info-circle"></i> Basic Information
                             </div>
                             <div class="card-body p-4">
+
                                 <div class="row mb-3">
-                                    <div class="col-md-12">
+                                    <div class="col-md-4">
                                         <x-basic.form.input
-                                            label="{{ __('global.property_title') }}"
-                                            name="title"
-                                            :value="$property->title"
-                                            placeholder="e.g. Luxury Villa in Downtown"
-                                            required
+                                            label="Property Code"
+                                            name="property_code"
+                                            :value="$property->property_code"
+                                            placeholder="e.g. PP-1024"
                                         />
                                     </div>
-                                </div>
-
-                                <div class="row g-3 mb-3">
+                                    <div class="col-md-4">
+                                        <x-basic.form.select
+                                            label="Agent"
+                                            name="agent_id"
+                                            class="select2"
+                                            placeholder="— Unassigned —"
+                                            :options="getAgents()->pluck('agency_name', 'id')->toArray()"
+                                            :value="$property?->agent_id"
+                                        />
+                                    </div>
                                     <div class="col-md-4">
                                         <x-basic.form.select
                                             label="{{ __('global.type') }}"
@@ -208,7 +242,30 @@
                                             required
                                         />
                                     </div>
+                                </div>
 
+                                {{-- Title (EN / KH) --}}
+                                <div class="row mb-3">
+                                    <div class="col-md-12">
+                                        <label class="form-label">{{ __('global.property_title') }}</label>
+                                        <div class="lang-tabs" data-lang-group="title">
+                                            <button type="button" class="lang-tab-btn active" data-lang="en">English</button>
+                                            <button type="button" class="lang-tab-btn" data-lang="kh">ខ្មែរ</button>
+                                        </div>
+                                        <div class="lang-pane active" data-lang-group="title" data-lang="en">
+                                            <input type="text" name="title_en" class="form-control"
+                                                   value="{{ old('title_en', $property->title_en) }}"
+                                                   placeholder="e.g. Luxury Villa in Downtown" required>
+                                        </div>
+                                        <div class="lang-pane" data-lang-group="title" data-lang="kh">
+                                            <input type="text" name="title_kh" class="form-control"
+                                                   value="{{ old('title_kh', $property->title_kh) }}"
+                                                   placeholder="ចំណងជើងអចលនទ្រព្យ">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3 mb-3">
                                     <div class="col-md-4">
                                         <x-basic.form.select
                                             label="{{ __('global.purpose') }}"
@@ -233,11 +290,8 @@
                                             required
                                         />
                                     </div>
-                                </div>
 
-                                {{-- Rental period (shown only when purpose = rent / sale_rent) --}}
-                                <div class="row mb-3" id="rental-period-row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-4" id="rental-period-row">
                                         <x-basic.form.select
                                             label="Rental Period"
                                             name="rental_period"
@@ -249,15 +303,20 @@
                                     </div>
                                 </div>
 
+                                {{-- Description (EN / KH) --}}
                                 <div class="row mb-3">
                                     <div class="col-12">
-                                        <x-basic.form.textarea
-                                            label="{{ __('global.description') }}"
-                                            name="description"
-                                            id="elm1"
-                                            class="tinymce"
-                                            :value="$property ? $property?->description : ''"
-                                        />
+                                        <label class="form-label">{{ __('global.description') }}</label>
+                                        <div class="lang-tabs" data-lang-group="description">
+                                            <button type="button" class="lang-tab-btn active" data-lang="en">English</button>
+                                            <button type="button" class="lang-tab-btn" data-lang="kh">ខ្មែរ</button>
+                                        </div>
+                                        <div class="lang-pane active" data-lang-group="description" data-lang="en">
+                                            <textarea name="description_en" id="elm1" class="tinymce form-control">{{ old('description_en', $property->description_en) }}</textarea>
+                                        </div>
+                                        <div class="lang-pane" data-lang-group="description" data-lang="kh">
+                                            <textarea name="description_kh" id="elm1_kh" class="form-control" rows="6">{{ old('description_kh', $property->description_kh) }}</textarea>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -273,6 +332,26 @@
                                                 Internal Notes <small class="text-muted fw-normal">(not shown publicly)</small>
                                             </x-slot:label>
                                         </x-basic.form.textarea>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <x-basic.form.input
+                                            label="Published At"
+                                            name="published_at"
+                                            type="datetime-local"
+                                            :value="$property->published_at ? \Carbon\Carbon::parse($property->published_at)->format('Y-m-d\TH:i') : ''"
+                                        />
+                                    </div>
+                                    <div class="col-md-4">
+                                        <x-basic.form.input
+                                            label="Expires At"
+                                            name="expires_at"
+                                            type="datetime-local"
+                                            :value="$property->expires_at ? \Carbon\Carbon::parse($property->expires_at)->format('Y-m-d\TH:i') : ''"
+                                        />
+                                        <small class="text-muted">Listing auto-deactivates after this date/time.</small>
                                     </div>
                                 </div>
 
@@ -304,18 +383,30 @@
                                             class="select2"
                                             id="area"
                                             placeholder="{{ __('global.select_area') }}"
-                                            :options="getAreas()->pluck('name', 'id')->toArray()"
+                                            :options="getAreas()->pluck('name_.app()->getLocale()', 'id')->toArray()"
                                             :value="$property?->area_id"
                                         />
                                     </div>
+                                </div>
 
-                                    <div class="col-md-4">
-                                        <x-basic.form.input
-                                            label="{{ __('global.address') }}"
-                                            name="address"
-                                            :value="old('address', stripslashes($property?->address ?? ''))"
-                                            placeholder="Street / landmark"
-                                        />
+                                {{-- Address (EN / KH) --}}
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <label class="form-label">{{ __('global.address') }}</label>
+                                        <div class="lang-tabs" data-lang-group="address">
+                                            <button type="button" class="lang-tab-btn active" data-lang="en">English</button>
+                                            <button type="button" class="lang-tab-btn" data-lang="kh">ខ្មែរ</button>
+                                        </div>
+                                        <div class="lang-pane active" data-lang-group="address" data-lang="en">
+                                            <input type="text" name="address_en" class="form-control"
+                                                   value="{{ old('address_en', stripslashes($property?->address_en ?? '')) }}"
+                                                   placeholder="Street / landmark">
+                                        </div>
+                                        <div class="lang-pane" data-lang-group="address" data-lang="kh">
+                                            <input type="text" name="address_kh" class="form-control"
+                                                   value="{{ old('address_kh', stripslashes($property?->address_kh ?? '')) }}"
+                                                   placeholder="អាសយដ្ឋាន">
+                                        </div>
                                     </div>
                                 </div>
 
@@ -395,6 +486,14 @@
                                 <div class="row mb-3">
                                     <div class="col-md-3">
                                         <x-basic.form.input
+                                            label="Garage Size"
+                                            name="garage_size"
+                                            :value="$property->garage_size ?? ''"
+                                            placeholder='e.g. "2 cars"'
+                                        />
+                                    </div>
+                                    <div class="col-md-3">
+                                        <x-basic.form.input
                                             label="Built Area"
                                             name="area_size"
                                             :value="$property->area_size ?? ''"
@@ -420,7 +519,21 @@
                                             :max="date('Y')"
                                         />
                                     </div>
+                                </div>
+
+                                <div class="row mb-3">
                                     <div class="col-md-3">
+                                        <x-basic.form.select
+                                            label="Currency"
+                                            name="currency"
+                                            class="select2"
+                                            :placeholder="null"
+                                            :options="['USD' => 'USD ($)', 'KHR' => 'KHR (៛)']"
+                                            :value="$property->currency ?? 'USD'"
+                                            required
+                                        />
+                                    </div>
+                                    <div class="col-md-5">
                                         <label class="form-label">{{ __('global.price') }}</label>
 
                                         {{-- Hidden fields submitted to the server --}}
@@ -436,17 +549,17 @@
                                                 value="{{ $property->price_label ?: ($property->price ? number_format($property->price, 0) : '') }}"
                                             >
                                         </div>
-                                        <div class="d-flex justify-content-end mt-1">
-                                            <div class="form-check">
-                                                <input type="hidden" name="price_negotiable" value="0">
-                                                <input class="form-check-input" type="checkbox"
-                                                    name="price_negotiable" value="1"
-                                                    id="price_negotiable"
-                                                    {{ $property->price_negotiable == 1 ? 'checked' : '' }}>
-                                                <label class="form-check-label" for="price_negotiable">
-                                                    Negotiable
-                                                </label>
-                                            </div>
+                                    </div>
+                                    <div class="col-md-4 d-flex align-items-end">
+                                        <div class="form-check mb-2">
+                                            <input type="hidden" name="price_negotiable" value="0">
+                                            <input class="form-check-input" type="checkbox"
+                                                name="price_negotiable" value="1"
+                                                id="price_negotiable"
+                                                {{ $property->price_negotiable == 1 ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="price_negotiable">
+                                                Negotiable
+                                            </label>
                                         </div>
                                     </div>
                                 </div>
@@ -489,10 +602,10 @@
                                 <div class="row">
                                     <div class="col-6">
                                         <x-basic.form.multiple-select
-                                            name="amenities"
+                                            name="amenities[]"
                                             class="select2-multiple"
                                             :options="getAmenity()->pluck('name_'.app()->getLocale(), 'id')->toArray()"
-                                            :value="[$property->amenity_id]"
+                                            :value="$property->amenities->pluck('id')->toArray()"
                                         >
                                             <x-slot:label><strong>{{ __('global.amenities') }}</strong></x-slot:label>
                                         </x-basic.form.multiple-select>
@@ -500,10 +613,10 @@
 
                                     <div class="col-6">
                                         <x-basic.form.multiple-select
-                                            name="features"
+                                            name="features[]"
                                             class="select2-multiple"
                                             :options="getFeature()->pluck('name_'.app()->getLocale(), 'id')->toArray()"
-                                            :value="[$property->feature_id]"
+                                            :value="$property->features->pluck('id')->toArray()"
                                         >
                                             <x-slot:label><strong>{{ __('global.features') }}</strong></x-slot:label>
                                         </x-basic.form.multiple-select>
@@ -514,11 +627,7 @@
                         </div>
 
                         {{-- ═══════════════════════════════════════════
-                             CARD 4 – Pricing
-                        ════════════════════════════════════════════ --}} 
-
-                        {{-- ═══════════════════════════════════════════
-                             CARD 5 – Media & Links
+                             CARD 4 – Media & Links
                         ════════════════════════════════════════════ --}}
                         <div class="card">
                             <div class="card-header">
@@ -698,6 +807,20 @@
                 placeholder: 'Select options',
                 allowClear: true,
                 width: '100%'
+            });
+
+            // ── Language tab toggler (title / description / address) ──
+            $('.lang-tab-btn').on('click', function () {
+                const group = $(this).closest('.lang-tabs').data('lang-group');
+                const lang  = $(this).data('lang');
+
+                $(`.lang-tab-btn`).filter(function () {
+                    return $(this).closest('.lang-tabs').data('lang-group') === group;
+                }).removeClass('active');
+                $(this).addClass('active');
+
+                $(`.lang-pane[data-lang-group="${group}"]`).removeClass('active');
+                $(`.lang-pane[data-lang-group="${group}"][data-lang="${lang}"]`).addClass('active');
             });
 
             // ── Rental period toggle ──────────────────────────────

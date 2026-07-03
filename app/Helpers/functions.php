@@ -19,6 +19,7 @@ use App\Models\UserManagement\Agency;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
+use App\Models\UserManagement\Agent;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
@@ -314,7 +315,7 @@ if (!function_exists('getRentalPeriods')) {
 if (!function_exists('getAreas')) {
     function getAreas()
     {
-        $areas = Area::select('id', 'name')->get();
+        $areas = Area::select('id', 'name_en', 'name_km as name_kh')->get();
         return $areas;
     }
 }
@@ -354,6 +355,17 @@ if (!function_exists('getPostStatuses')) {
             ['value' => 'published', 'name' => 'Published'],
             ['value' => 'archived', 'name' => 'Archived'],
         ];
+    }
+}
+
+if (!function_exists('getAgents')) {
+    function getAgents()
+    {
+        return Agent::select(
+                'id',
+                DB::raw("CONCAT_WS(' ', first_name, last_name) AS agency_name")
+            )
+            ->get();
     }
 }
 

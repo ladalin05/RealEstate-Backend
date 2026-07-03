@@ -8,6 +8,7 @@ use App\Http\Controllers\API\CategoryController;
 use App\Http\Controllers\API\PropertyController;
 use App\Http\Controllers\API\FilterController;
 use App\Http\Controllers\API\AgentController;
+use App\Http\Controllers\API\InterestController;
 use App\Http\Controllers\API\BlogController;
 use App\Http\Controllers\DbMockup\EndpointController;
 
@@ -15,6 +16,7 @@ Route::prefix('auth')->group(function () {
     Route::post('/login', [UserAuthController::class, 'login']);
     Route::post('/register', [UserAuthController::class, 'register']);
     Route::post('/register-telegram', [UserAuthController::class, 'telegramRegister']);
+    Route::post('/google-login', [UserAuthController::class, 'googleLogin']);
     Route::post('/verify-otp', [UserAuthController::class, 'verifyOtp']);
     Route::get('/logout', [UserAuthController::class, 'logout']);
 });
@@ -38,6 +40,11 @@ Route::prefix('user-management')->group(function () {
     Route::get('/agent-detail', [AgentController::class, 'getAgentDetail']);
     Route::get('/get-info', [UserAuthController::class, 'getInfo']);
     Route::put('update-info', [UserAuthController::class, 'updateInfo']);
+});
+
+Route::prefix('interest')->group(function () {
+    Route::post('schedule-tour', [InterestController::class, 'scheduleTour']);
+    Route::post('request-info', [InterestController::class, 'requestInfo']);
 });
 
 Route::prefix('property')->group(function () {

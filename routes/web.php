@@ -14,6 +14,8 @@ use App\Http\Controllers\Property\PropertyController;
 use App\Http\Controllers\Property\PropertyCategoryController;
 use App\Http\Controllers\Interaction\InquiryController;
 use App\Http\Controllers\Interaction\ReviewController;
+use App\Http\Controllers\Interaction\Requestinfocontroller;
+use App\Http\Controllers\Interaction\Tourschedulecontroller;
 use App\Http\Controllers\Location\CityController;
 use App\Http\Controllers\Location\CommuneController;
 use App\Http\Controllers\Location\CountryController;
@@ -213,6 +215,22 @@ Route::middleware(['auth', 'abilities'])->group(function () {
             Route::match(['get', 'post'], '/add', [InquiryController::class, 'create'])->name('add');
             Route::match(['get', 'post'], '/edit/{id}', [InquiryController::class, 'edit'])->name('edit');
             Route::get('/delete/{id}', [InquiryController::class, 'destroy'])->name('deleted');
+        });
+
+        Route::group([
+            'prefix' => 'request-infos',
+            'as' => 'request-infos.'
+        ], function () {
+            Route::get('/', [RequestInfoController::class, 'index'])->name('index');
+            Route::get('/delete/{id}', [RequestInfoController::class, 'destroy'])->name('deleted');
+        });
+
+        Route::group([
+            'prefix' => 'tour-schedules',
+            'as' => 'tour-schedules.'
+        ], function () {
+            Route::get('/', [TourScheduleController::class, 'index'])->name('index');
+            Route::get('/delete/{id}', [TourScheduleController::class, 'destroy'])->name('deleted');
         });
 
         Route::group([

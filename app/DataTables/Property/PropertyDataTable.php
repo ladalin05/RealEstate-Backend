@@ -22,13 +22,13 @@ class PropertyDataTable extends DataTable
                     : '<span class="badge bg-light text-dark">No Image</span>';
             })
             ->addColumn('type_name', function ($row) {
-                return $row->type_name ?? '-';
+                return $row->{'type_name_'.app()->getLocale()} ?? '-';
             })
             ->addColumn('location', function ($row) {
                 $parts = array_filter([
-                    $row->commune_name ?? null,
-                    $row->district_name ?? null,
-                    $row->province_name ?? null,
+                    $row->{'commune_name_'.app()->getLocale()} ?? null,
+                    $row->{'district_name_'.app()->getLocale()} ?? null,
+                    $row->{'province_name_'.app()->getLocale()} ?? null,
                 ]);
                 return $parts ? implode(', ', $parts) : '-';
             })
@@ -87,10 +87,14 @@ class PropertyDataTable extends DataTable
             ->leftJoin('communes', 'communes.id', '=', 'areas.commune_id')
             ->select(
                 'properties.*',
-                'property_categories.name_en as type_name',
-                'provinces.name as province_name',
-                'districts.name as district_name',
-                'communes.name as commune_name'
+                'property_categories.name_en as type_name_en',
+                'property_categories.name_km as type_name_kh',
+                'provinces.name_en as province_name_en',
+                'provinces.name_kh as province_name_kh',
+                'districts.name_en as district_name_en',
+                'districts.name_kh as district_name_kh',
+                'communes.name_en as commune_name_en',
+                'communes.name_kh as commune_name_kh'
             );
     }
 
@@ -127,8 +131,10 @@ class PropertyDataTable extends DataTable
                 ->orderable(false)
                 ->width(80),
 
-            Column::make('title')
-                ->title('Title'),
+            Column::make('title_en')
+                ->title('Title (EN)'),
+            Column::make('title_kh')
+                ->title('Title (KH)'),
 
             Column::make('type_name')
                 ->title('Type')
