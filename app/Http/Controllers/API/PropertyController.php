@@ -42,7 +42,7 @@ class PropertyController extends Controller
     public function getPropertyDetails(Request $request)
     { 
         $property = $this->repository->getOneDetail($request->property_id);
-
+        
         if (!$property) {
             return $this->errorResponse('Property not found', 404);
         }

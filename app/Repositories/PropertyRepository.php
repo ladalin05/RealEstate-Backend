@@ -13,18 +13,18 @@ class PropertyRepository extends BaseRepository
         return Property::query()
             ->join('property_categories', 'properties.category_id', '=', 'property_categories.id')
             ->leftJoin('areas', 'properties.area_id', '=', 'areas.id')
-            ->leftJoin('provinces', 'areas.province_id', '=', 'provinces.id')
-            ->leftJoin('districts', 'areas.district_id', '=', 'districts.id')
-            ->leftJoin('communes', 'areas.commune_id', '=', 'communes.id')
             ->leftJoin('agents', 'properties.agent_id', '=', 'agents.id')
             ->select(
                 'properties.id',
-                'properties.title',
+                'properties.property_code',
+                'properties.title_en',
+                'properties.title_kh',
                 'properties.status',
                 'properties.purpose',
                 'properties.featured',
                 'properties.verified',
                 'properties.price',
+                'properties.year_built',
                 'properties.price_label',
                 'properties.currency',
                 'properties.rental_period',
@@ -33,15 +33,14 @@ class PropertyRepository extends BaseRepository
                 'properties.area_size',
                 'properties.land_size',
                 'properties.furnishing',
-                'properties.address',
+                'properties.address_en',
+                'properties.address_kh',
                 'properties.main_image',
                 'property_categories.name_en as category_name_en',
                 'property_categories.name_km as category_name_km',
                 'areas.name_en as area_name_en',
                 'areas.name_km as area_name_km',
-                'provinces.name as province_name',
-                'districts.name as district_name',
-                'communes.name as commune_name',
+                'areas.zip_code',
                 'agents.profile_image as agent_profile',
                 'agents.experience_years as agent_experience',
                 DB::raw("CONCAT(COALESCE(agents.first_name,''), ' ', COALESCE(agents.last_name,'')) as agent_name"),
@@ -69,8 +68,11 @@ class PropertyRepository extends BaseRepository
             ->leftJoin('agents', 'properties.agent_id', '=', 'agents.id')
             ->select(
                 'properties.id',
-                'properties.title',
-                'properties.description',
+                'properties.property_code',
+                'properties.title_en',
+                'properties.title_kh',
+                'properties.description_en',
+                'properties.description_kh',
                 'properties.status',
                 'properties.purpose',
                 'properties.featured',
@@ -84,6 +86,7 @@ class PropertyRepository extends BaseRepository
                 'properties.bedrooms',
                 'properties.bathrooms',
                 'properties.garages',
+                'properties.garage_size',
                 'properties.area_size',
                 'properties.land_size',
                 'properties.furnishing',
@@ -93,7 +96,8 @@ class PropertyRepository extends BaseRepository
                 'properties.floor_plan_image',
                 'properties.video_url',
                 'properties.virtual_tour_url',
-                'properties.address',
+                'properties.address_en',
+                'properties.address_kh',
                 'properties.latitude',
                 'properties.longitude',
                 'properties.published_at',
@@ -101,9 +105,15 @@ class PropertyRepository extends BaseRepository
                 'properties.category_id',
                 'property_categories.name_en as category_name_en',
                 'property_categories.name_km as category_name_km',
-                'provinces.name as province_name',
-                'districts.name as district_name',
-                'communes.name as commune_name',
+                'areas.name_en as area_name_en',
+                'areas.name_km as area_name_km',
+                'areas.zip_code',
+                'provinces.name_en as province_name_en',
+                'provinces.name_kh as province_name_km',
+                'districts.name_en as district_name_en',
+                'districts.name_kh as district_name_km',
+                'communes.name_en as commune_name_en',
+                'communes.name_kh as commune_name_km',
                 'agents.id as agent_id',
                 'agents.profile_image as agent_profile',
                 'agents.phone as agent_phone',
@@ -165,7 +175,7 @@ class PropertyRepository extends BaseRepository
 
     protected function applyDefaultScope(Builder $query): void
     {
-        $query ->where('properties.status', 'active')
+        $query->where('properties.status', 'active')
                ->whereNull('properties.deleted_at');
     }
 
