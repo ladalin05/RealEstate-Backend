@@ -52,7 +52,7 @@ class TourScheduleDataTable extends DataTable
                     ? date('Y-m-d H:i', strtotime($row->created_at))
                     : '-';
             })
-            ->addColumn('action', fn($row) => view('property.tour-schedules.action', compact('row')))
+            ->addColumn('action', fn($row) => view('interaction.tour-schedules.action', compact('row')))
             ->rawColumns(['status_badge', 'action']);
     }
 

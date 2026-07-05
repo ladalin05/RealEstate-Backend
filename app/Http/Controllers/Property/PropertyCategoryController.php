@@ -35,7 +35,7 @@ class PropertyCategoryController extends Controller
 
                 return $this->redirectResponse(
                     message: __('messages.create_category_successfully'),
-                    route: route('property.types.index'),
+                    route: route('property.categories.index'),
                 );
             }
 
@@ -43,7 +43,7 @@ class PropertyCategoryController extends Controller
                 title:  __('global.add_new'),
                 view:   'property.property-type.form',
                 data:   ['form' => new PropertyCategory()],
-                action: route('property.types.add'),
+                action: route('property.categories.add'),
             );
 
         } catch (\Throwable $e) {
@@ -65,7 +65,7 @@ class PropertyCategoryController extends Controller
 
                 return $this->redirectResponse(
                     message: __('messages.update_category_successfully'),
-                    route: route('property.types.index'),
+                    route: route('property.categories.index'),
                 );
             }
 
@@ -73,7 +73,7 @@ class PropertyCategoryController extends Controller
                 title: __('global.edit'),
                 view: 'property.property-type.form',
                 data: ['form' => $type],
-                action: route('property.types.edit', ['id' => $type->id]),
+                action: route('property.categories.edit', ['id' => $type->id]),
             );
 
         } catch (\Throwable $e) {
@@ -92,7 +92,7 @@ class PropertyCategoryController extends Controller
 
             return $this->redirectResponse(
                 message: __('messages.delete_category_successfully'),
-                route: route('property.types.index'),
+                route: route('property.categories.index'),
             );
         } catch (\Throwable $e) {
             return $this->errorResponse(

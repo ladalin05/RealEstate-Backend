@@ -9,7 +9,7 @@
         </x-slot>
 
         <div class="header-actions">
-            <a href="{{ route('property.types.add') }}"
+            <a href="{{ route('property.categories.add') }}"
                class="btn btn-add-user text-white"
                onclick="addData(event)" >
                 <i class="ph ph-plus-circle me-1"></i>

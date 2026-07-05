@@ -3,7 +3,7 @@
 use App\Http\Controllers\Blog\BlogCategoryController;
 use App\Http\Controllers\Blog\BlogPostController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ReportsController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\TransactionController;
@@ -120,8 +120,8 @@ Route::middleware(['auth', 'abilities'])->group(function () {
         });
 
         Route::group([
-            'prefix' => 'types',
-            'as' => 'types.'
+            'prefix' => 'categories',
+            'as' => 'categories.'
         ], function () {
             Route::get('/', [PropertyCategoryController::class, 'index'])->name('index');
             Route::match(['get', 'post'], '/add', [PropertyCategoryController::class, 'create'])->name('add');
@@ -222,7 +222,11 @@ Route::middleware(['auth', 'abilities'])->group(function () {
             'as' => 'request-infos.'
         ], function () {
             Route::get('/', [RequestInfoController::class, 'index'])->name('index');
-            Route::get('/delete/{id}', [RequestInfoController::class, 'destroy'])->name('deleted');
+            Route::get('/{id}', [RequestInfoController::class, 'show'])->name('show');
+            Route::patch('/{id}/read', [RequestInfoController::class, 'markAsRead'])->name('read');
+            Route::patch('/{id}/reply', [RequestInfoController::class, 'reply'])->name('reply');
+            Route::patch('/{id}/close', [RequestInfoController::class, 'close'])->name('close');
+            Route::delete('/{id}', [RequestInfoController::class, 'destroy'])->name('destroy');
         });
 
         Route::group([
@@ -230,7 +234,10 @@ Route::middleware(['auth', 'abilities'])->group(function () {
             'as' => 'tour-schedules.'
         ], function () {
             Route::get('/', [TourScheduleController::class, 'index'])->name('index');
-            Route::get('/delete/{id}', [TourScheduleController::class, 'destroy'])->name('deleted');
+            Route::get('tour-schedules/{id}', [TourScheduleController::class, 'show'])->name('show');
+            Route::patch('tour-schedules/{id}/confirm', [TourScheduleController::class, 'confirm'])->name('confirm');
+            Route::patch('tour-schedules/{id}/reject', [TourScheduleController::class, 'reject'])->name('reject');
+            Route::get('/delete/{id}', [TourScheduleController::class, 'destroy'])->name('destroy');
         });
 
         Route::group([
@@ -274,11 +281,9 @@ Route::middleware(['auth', 'abilities'])->group(function () {
         'prefix' => 'reports',
         'as' => 'reports.'
     ], function () {
-        Route::get('/property-report', [ReportsController::class, 'property_report'])->name('prop-report');
-        Route::get('/sales-report', [ReportsController::class, 'sale_report'])->name('sale-report');
-        Route::get('/agent-report', [ReportsController::class, 'agent_report'])->name('agent-report');
-        Route::get('/investment-report', [ReportsController::class, 'invest_report'])->name('invest-report');
-        Route::get('/filter', [ReportsController::class, 'report_filter'])->name('filter');
+        Route::get('/', [ReportController::class, 'index'])->name('index');
+        Route::patch('/{report}/toggle', [ReportController::class, 'toggleStatus'])->name('toggle');
+        Route::delete('/{report}', [ReportController::class, 'destroy'])->name('destroy');
     });
 
     // Web Settings

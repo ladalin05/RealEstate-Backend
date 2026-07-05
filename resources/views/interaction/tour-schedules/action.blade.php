@@ -1,43 +1,97 @@
+<div class="d-flex gap-1">
+    {{-- View --}}
+    <a href="{{ route('interaction.tour-schedules.show', $row->id) }}"
+       class="btn btn-sm btn-info text-white"
+       title="View">
+        <i class="fa fa-eye"></i>
+    </a>
 
-<div class="d-flex gap-2">
-    <button class="btn btn-sm btn-primary flex gap-1 align-items-center">
-        <i class="fa-regular fa-share-from-square"></i>Reply
-    </button>
+    {{-- Confirm (only if pending) --}}
+    @if($row->status === 'pending')
+        <button type="button"
+                class="btn btn-sm btn-success text-white btn-confirm-tour"
+                data-id="{{ $row->id }}"
+                title="Confirm">
+            <i class="fa fa-check"></i>
+        </button>
 
-    <button class="btn btn-sm btn-danger data_remove"
-        data-id="{{$row->id}}">
+        {{-- Reject (only if pending) --}}
+        <button type="button"
+                class="btn btn-sm btn-danger text-white btn-reject-tour"
+                data-id="{{ $row->id }}"
+                title="Reject">
+            <i class="fa fa-times"></i>
+        </button>
+    @endif
+
+    {{-- Delete --}}
+    <button type="button"
+            class="btn btn-sm btn-dark text-white btn-delete-tour"
+            data-id="{{ $row->id }}"
+            data-url="{{ route('interaction.tour-schedules.destroy', $row->id) }}"
+            title="Delete">
         <i class="fa fa-trash"></i>
     </button>
 </div>
 
 <script>
-    // DELETE
-    $(document).on("click",".data_remove", function(){
+    $(document).on('click', '.btn-confirm-tour', function () {
+        const id = $(this).data('id');
 
-        let id = $(this).data("id");
+        if (!confirm('Confirm this tour schedule?')) return;
 
-        Swal.fire({
-            title: '{{ __("global.dlt_warning") }}',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: '{{ __("global.dlt_confirm") }}'
-        }).then((result) => {
+        $.ajax({
+            url: `/interaction/tour-schedules/${id}/confirm`,
+            type: 'PATCH',
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content'),
+            },
+            success: function () {
+                $('#tour-schedules-table').DataTable().ajax.reload();
+            },
+            error: function () {
+                alert('Failed to confirm tour.');
+            },
+        });
+    });
 
-            if(result.isConfirmed){
+    $(document).on('click', '.btn-reject-tour', function () {
+        const id = $(this).data('id');
 
-                $.post("{{ URL::to('admin/ajax_delete') }}", {
-                    _token: "{{ csrf_token() }}",
-                    id: id,
-                    action_for: "type_delete"
-                }, function(res){
+        if (!confirm('Reject this tour schedule?')) return;
 
-                    if(res.status == '1'){
-                        $('#type-table').DataTable().ajax.reload();
-                        Swal.fire('Deleted!', '', 'success');
-                    }
-                });
+        $.ajax({
+            url: `/interaction/tour-schedules/${id}/reject`,
+            type: 'PATCH',
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content'),
+            },
+            success: function () {
+                $('#tour-schedules-table').DataTable().ajax.reload();
+            },
+            error: function () {
+                alert('Failed to reject tour.');
+            },
+        });
+    });
 
-            }
+    $(document).on('click', '.btn-delete-tour', function () {
+        const url = $(this).data('url');
+
+        if (!confirm('Are you sure you want to delete this tour schedule?')) return;
+
+        $.ajax({
+            url: url,
+            type: 'DELETE',
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content'),
+            },
+            success: function () {
+                $('#tour-schedules-table').DataTable().ajax.reload();
+            },
+            error: function () {
+                alert('Failed to delete tour schedule.');
+            },
         });
     });
 </script>

@@ -47,7 +47,7 @@ class RequestInfoDataTable extends DataTable
                     ? date('Y-m-d H:i', strtotime($row->created_at))
                     : '-';
             })
-            ->addColumn('action', fn($row) => view('property.request-infos.action', compact('row')))
+            ->addColumn('action', fn($row) => view('interaction.request-infos.action', compact('row')))
             ->rawColumns(['status_badge', 'action']);
     }
 

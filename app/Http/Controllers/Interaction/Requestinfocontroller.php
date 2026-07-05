@@ -29,20 +29,111 @@ class RequestInfoController extends Controller
     }
 
     /**
+     * Admin endpoint — view a single inquiry.
+     */
+    public function show(string $id)
+    {
+        try {
+            $requestInfo = $this->service->find($id);
+
+            return view('interaction.request-infos.show', compact('requestInfo'));
+        } catch (\Throwable $ex) {
+            report($ex);
+
+            return $this->errorResponse(
+                message: __('messages.something_went_wrong'),
+                code: 500
+            );
+        }
+    }
+
+    /**
+     * Admin endpoint — mark an inquiry as read.
+     */
+    public function markAsRead(string $id)
+    {
+        try {
+            $requestInfo = $this->service->update(['status' => 'read'], $id);
+
+            return $this->successResponse(
+                message: __('messages.mark_as_read_success'),
+                data: $requestInfo,
+            );
+        } catch (\Throwable $ex) {
+            report($ex);
+
+            return $this->errorResponse(
+                message: __('messages.something_went_wrong'),
+                code: 500
+            );
+        }
+    }
+
+    /**
      * Admin endpoint — reply to an inquiry.
      */
     public function reply(ReplyRequestInfoRequest $request, string $id)
     {
         try {
-            $requestInfo = $this->service->update($request->validated(), $id);
+            $data = $request->validated();
+            $data['status'] = 'replied';
+            $data['replied_by'] = auth()->id();
+            $data['replied_at'] = now();
+
+            $requestInfo = $this->service->update($data, $id);
 
             return $this->successResponse(
                 message: __('messages.reply_request_info_success'),
                 data: $requestInfo,
             );
-        } catch (\Exception $ex) {
+        } catch (\Throwable $ex) {
+            report($ex);
+
             return $this->errorResponse(
-                message: $ex->getMessage(),
+                message: __('messages.something_went_wrong'),
+                code: 500
+            );
+        }
+    }
+
+    /**
+     * Admin endpoint — close an inquiry.
+     */
+    public function close(string $id)
+    {
+        try {
+            $requestInfo = $this->service->update(['status' => 'closed'], $id);
+
+            return $this->successResponse(
+                message: __('messages.close_request_info_success'),
+                data: $requestInfo,
+            );
+        } catch (\Throwable $ex) {
+            report($ex);
+
+            return $this->errorResponse(
+                message: __('messages.something_went_wrong'),
+                code: 500
+            );
+        }
+    }
+
+    /**
+     * Admin endpoint — delete an inquiry.
+     */
+    public function destroy(string $id)
+    {
+        try {
+            $this->service->delete($id);
+
+            return $this->successResponse(
+                message: __('messages.delete_success'),
+            );
+        } catch (\Throwable $ex) {
+            report($ex);
+
+            return $this->errorResponse(
+                message: __('messages.something_went_wrong'),
                 code: 500
             );
         }

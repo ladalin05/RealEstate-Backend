@@ -28,6 +28,25 @@ class TourScheduleController extends Controller
     }
 
     /**
+     * Admin endpoint — view a single tour schedule.
+     */
+    public function show(string $id)
+    {
+        try {
+            $tourSchedule = $this->service->find($id);
+
+            return view('interaction.tour-schedules.show', compact('tourSchedule'));
+        } catch (\Throwable $ex) {
+            report($ex);
+
+            return $this->errorResponse(
+                message: __('messages.something_went_wrong'),
+                code: 500
+            );
+        }
+    }
+
+    /**
      * Admin endpoint — confirm or reject a pending tour request.
      */
     public function updateStatus(UpdateTourScheduleStatusRequest $request, string $id)
@@ -39,9 +58,32 @@ class TourScheduleController extends Controller
                 message: __('messages.update_tour_status_success'),
                 data: $tourSchedule,
             );
-        } catch (\Exception $ex) {
+        } catch (\Throwable $ex) {
+            report($ex);
+
             return $this->errorResponse(
-                message: $ex->getMessage(),
+                message: __('messages.something_went_wrong'),
+                code: 500
+            );
+        }
+    }
+
+    /**
+     * Admin endpoint — delete a tour schedule.
+     */
+    public function destroy(string $id)
+    {
+        try {
+            $this->service->delete($id);
+
+            return $this->successResponse(
+                message: __('messages.delete_success'),
+            );
+        } catch (\Throwable $ex) {
+            report($ex);
+
+            return $this->errorResponse(
+                message: __('messages.something_went_wrong'),
                 code: 500
             );
         }
