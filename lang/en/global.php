@@ -292,4 +292,5 @@ return [
     'update_property' => 'Update Property',
     'create_post' => 'Create Post',
     'update_post' => 'Update Post',
+    'select_area' => 'Select Area',
 ];

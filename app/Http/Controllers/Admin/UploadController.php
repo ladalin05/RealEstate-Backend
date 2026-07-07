@@ -13,8 +13,7 @@ class UploadController extends Controller
     public function store(UploadFileRequest $request, MinioStorageService $storage)
     {
         $validated = $request->validated();
-
-        $result = $storage->upload($validated['file'], $validated['folder']);
+        $result = $storage->upload($validated['file'], $validated['folder']); 
 
         return $this->successResponse(__('messages.upload_successfully'), $result);
     }

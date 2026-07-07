@@ -1,138 +1,283 @@
-<div class="py-1 px-4">
+<div class="cf-wrap">
+
+    <style>
+        /* Scoped to .cf-wrap so it never leaks into the rest of the admin panel */
+        .cf-wrap {
+            --cf-ink: #1f2430;
+            --cf-muted: #6b7280;
+            --cf-line: #e7e5e0;
+            --cf-surface: #fafaf8;
+            --cf-accent: #2f6f5e;      /* deep teal — calm, professional, not the usual AI-default palette */
+            --cf-accent-soft: #e6f0ed;
+            --cf-gold: #c9973f;        /* warm gold for the "active" state — nods to the Khmer name field's context */
+            --cf-radius: 10px;
+        }
+
+        .cf-wrap { color: var(--cf-ink); font-size: 0.925rem; }
+
+        .cf-section {
+            padding: 1.1rem 1.15rem;
+            margin-bottom: 1rem;
+            background: var(--cf-surface);
+            border: 1px solid var(--cf-line);
+            border-radius: var(--cf-radius);
+        }
+
+        .cf-section + .cf-section { margin-top: 0; }
+
+        .cf-eyebrow {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--cf-accent);
+            margin-bottom: 0.9rem;
+        }
+
+        .cf-eyebrow .cf-dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: var(--cf-accent);
+            flex-shrink: 0;
+        }
+
+        .cf-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.9rem;
+        }
+        @media (max-width: 576px) {
+            .cf-grid-2 { grid-template-columns: 1fr; }
+        }
+
+        .cf-field { margin-bottom: 0; }
+        .cf-field + .cf-field { margin-top: 0.9rem; }
+        .cf-grid-2 .cf-field + .cf-field { margin-top: 0; }
+
+        .cf-label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--cf-ink);
+            margin-bottom: 0.35rem;
+        }
+        .cf-label .req { color: #c0392b; margin-left: 2px; }
+        .cf-label .hint {
+            font-weight: 400;
+            color: var(--cf-muted);
+            font-size: 0.75rem;
+            margin-left: 0.35rem;
+        }
+
+        .cf-input {
+            width: 100%;
+            padding: 0.55rem 0.75rem;
+            font-size: 0.9rem;
+            color: var(--cf-ink);
+            background: #fff;
+            border: 1px solid #d9d7d1;
+            border-radius: 8px;
+            transition: border-color .15s ease, box-shadow .15s ease;
+        }
+        .cf-input:focus {
+            outline: none;
+            border-color: var(--cf-accent);
+            box-shadow: 0 0 0 3px var(--cf-accent-soft);
+        }
+        .cf-input::placeholder { color: #b7b5af; }
+
+        .cf-slug-wrap { position: relative; }
+        .cf-slug-wrap .cf-slug-prefix {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.8rem;
+            color: var(--cf-muted);
+            pointer-events: none;
+        }
+        .cf-slug-wrap .cf-input { padding-left: 1.4rem; }
+
+        .cf-help {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.4rem;
+            font-size: 0.78rem;
+            color: var(--cf-muted);
+            margin-top: 0.5rem;
+        }
+        .cf-help i { margin-top: 2px; color: var(--cf-accent); }
+
+        /* ── Status toggle ─────────────────────────────────────────── */
+        .cf-status-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+        .cf-status-text { font-size: 0.85rem; }
+        .cf-status-text strong { display: block; font-size: 0.85rem; }
+        .cf-status-text span { color: var(--cf-muted); font-size: 0.76rem; }
+
+        .cf-switch {
+            position: relative;
+            width: 46px;
+            height: 26px;
+            flex-shrink: 0;
+        }
+        .cf-switch input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+        .cf-switch .track {
+            position: absolute; inset: 0;
+            background: #d9d7d1;
+            border-radius: 999px;
+            transition: background .15s ease;
+        }
+        .cf-switch .thumb {
+            position: absolute;
+            top: 3px; left: 3px;
+            width: 20px; height: 20px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 1px 2px rgba(0,0,0,.25);
+            transition: transform .15s ease;
+        }
+        .cf-switch input:checked ~ .track { background: var(--cf-gold); }
+        .cf-switch input:checked ~ .thumb { transform: translateX(20px); }
+        .cf-switch input:focus-visible ~ .track { box-shadow: 0 0 0 3px var(--cf-accent-soft); }
+
+        /* ── Footer ────────────────────────────────────────────────── */
+        .cf-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.6rem;
+            padding: 0.9rem 0 0.1rem;
+            margin-top: 0.25rem;
+            border-top: 1px solid var(--cf-line);
+        }
+        .cf-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.55rem 1.1rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: transform .1s ease, box-shadow .15s ease, background .15s ease;
+        }
+        .cf-btn:active { transform: translateY(1px); }
+        .cf-btn-ghost {
+            background: #fff;
+            border-color: #d9d7d1;
+            color: var(--cf-ink);
+        }
+        .cf-btn-ghost:hover { background: #f4f3f0; }
+        .cf-btn-primary {
+            background: var(--cf-accent);
+            color: #fff;
+        }
+        .cf-btn-primary:hover { background: #285f50; box-shadow: 0 2px 8px rgba(47,111,94,.35); }
+    </style>
 
     <form action="{{ $action }}" method="POST" id="form-category" class="ajax-form">
         @csrf
 
-        {{-- Name (English) --}}
-        <div class="mb-3">
-            <label for="name_en" class="form-label">
-                Name (English) <span class="text-danger">*</span>
-            </label>
-            <input type="text"
-                   name="name_en"
-                   id="name_en"
-                   class="form-control form-control-modern"
-                   value="{{ old('name_en', $form->name_en ?? '') }}"
-                   placeholder="e.g. Apartment"
-                   required>
+        {{-- Basic info --}}
+        <div class="cf-section">
+            <div class="cf-eyebrow"><span class="cf-dot"></span> Basic information</div>
+
+            <div class="cf-grid-2">
+
+                <div class="cf-field">
+                    <x-basic.form.input
+                        label="Name (English)"
+                        name="name_en"
+                        type="text"
+                        :value="$form->name_en ?? ''"
+                        placeholder="e.g. Apartment"
+                    />
+                </div>
+
+                <div class="cf-field">
+                    <x-basic.form.input
+                        label="Name (Khmer)"
+                        name="name_km"
+                        type="text"
+                        :value="$form->name_km ?? ''"
+                        placeholder="e.g. អាផាតមិន"
+                    />
+                </div>
+            </div>
+
+            <div class="cf-field" style="margin-top: 0.9rem;">
+                <label for="slug" class="cf-label">
+                    Slug<span class="req">*</span>
+                    <span class="hint">auto-generated, editable</span>
+                </label>
+                <div class="cf-slug-wrap">
+                    <span class="cf-slug-prefix">/</span>
+                    <input type="text"
+                           name="slug"
+                           id="slug"
+                           class="cf-input"
+                           value="{{ old('slug', $form->slug ?? '') }}"
+                           placeholder="apartment"
+                           required>
+                </div>
+            </div>
         </div>
 
-        {{-- Name (Khmer) --}}
-        <div class="mb-3">
-            <label for="name_km" class="form-label">
-                Name (Khmer)
-            </label>
-            <input type="text"
-                   name="name_km"
-                   id="name_km"
-                   class="form-control form-control-modern"
-                   value="{{ old('name_km', $form->name_km ?? '') }}"
-                   placeholder="e.g. អាផាតមិន">
-        </div>
-
-        {{-- Slug --}}
-        <div class="mb-3">
-            <label for="slug" class="form-label">
-                Slug <span class="text-danger">*</span>
-                <small class="text-muted fw-normal">(auto-generated, editable)</small>
-            </label>
-            <input type="text"
-                   name="slug"
-                   id="slug"
-                   class="form-control form-control-modern"
-                   value="{{ old('slug', $form->slug ?? '') }}"
-                   placeholder="e.g. apartment"
-                   required>
-        </div>
-
-        {{-- Image (MinIO async upload) --}}
-        <div class="mb-3">
-            <label class="form-label">Category Image</label>
-
+        {{-- Image --}}
+        <div class="cf-section">
+            <div class="cf-eyebrow"><span class="cf-dot"></span> Category image</div>
             @php
                 $hasImage  = !empty($form->image ?? null);
-                $minioBase = rtrim(env('MINIO_ENDPOINT', ''), '/') . '/' . env('MINIO_BUCKET', '') . '/';
-                $imageUrl  = $hasImage ? $minioBase . $form->image : null;
+                $imageUrl  = $hasImage ? $form->image : '';
             @endphp
 
-            <div class="image-upload-wrapper {{ $hasImage ? 'upload-done' : '' }}" id="category-image-wrapper">
-
-                {{-- Upload spinner overlay --}}
-                <div class="upload-spinner" id="category-image-spinner" style="display:none; align-items:center; padding: 6px 0;">
-                    <div class="spinner-border spinner-border-sm text-warning" role="status"></div>
-                    <span class="ms-2" style="font-size:.8rem;font-weight:600;color:#858796;">Uploading…</span>
-                </div>
-
-                {{-- Hidden inputs --}}
-                <input type="file"   id="category_image_file" class="d-none" accept="image/*">
-                <input type="hidden" name="image" id="category_image_path"
-                       value="{{ old('image', $form->image ?? '') }}">
-
-                {{-- Browse bar --}}
-                <div class="input-group mb-2">
-                    <input type="text"
-                           id="category-image-name"
-                           readonly
-                           class="form-control form-control-modern bg-white"
-                           placeholder="No file chosen"
-                           value="{{ old('image', $form->image ?? '') }}">
-                    <button class="btn btn-dark px-4" type="button" id="category-image-btn">Browse</button>
-                </div>
-
-                {{-- Hint + badge --}}
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <small class="text-muted">
-                        <i class="fa-solid fa-circle-info me-1"></i> Recommended: 600×400px
-                    </small>
-                    <span id="category-upload-badge"
-                          class="badge {{ $hasImage ? 'bg-success' : 'bg-secondary d-none' }}">
-                        {{ $hasImage ? 'Uploaded' : 'Pending' }}
-                    </span>
-                </div>
-
-                {{-- Preview --}}
-                <div class="image-preview-container p-1">
-                    <img src="{{ $imageUrl ?? '#' }}"
-                         id="category-image-preview"
-                         alt="Preview"
-                         class="img-fluid rounded {{ $hasImage ? '' : 'd-none' }}"
-                         style="max-height: 120px;">
-
-                    <div id="no-image-placeholder-category"
-                         class="{{ $hasImage ? 'd-none' : '' }} text-muted text-center py-2">
-                        <i class="fa-regular fa-image fa-3x mb-2 d-block"></i>
-                        <span>Image Preview</span>
-                    </div>
-                </div>
-
-                {{-- Remove button --}}
-                <div class="mt-2">
-                    <button type="button"
-                            class="btn btn-sm btn-outline-danger"
-                            id="category-image-remove"
-                            style="{{ $hasImage ? '' : 'display:none' }}">
-                        <i class="fa fa-times me-1"></i> Remove
-                    </button>
-                </div>
-
-            </div>{{-- /.image-upload-wrapper --}}
+            <div class="d-flex justify-content-center w-100"> 
+                <x-basic.uploader
+                    input-name="image"
+                    :url="old('image', $imageUrl)"
+                    :path="old('image', $form->image ?? '')"
+                    folder="properties/types"
+                    width="200px"
+                    height="150px"
+                    caption="Recommended: 600×400px"
+                />
+            </div>
         </div>
 
         {{-- Status --}}
-        <div class="mb-3">
-            <label for="status" class="form-label fw-bold text-dark small text-uppercase">Status</label>
-            <select name="status" id="status" class="form-select custom-select">
-                <option value="1" {{ (old('status', $form->status ?? 1) == 1) ? 'selected' : '' }}>🟢 Active</option>
-                <option value="0" {{ (old('status', $form->status ?? 1) == 0) ? 'selected' : '' }}>⚪ Inactive</option>
-            </select>
+        <div class="cf-section">
+            <div class="cf-eyebrow"><span class="cf-dot"></span> Status</div>
+
+            @php $isActive = (old('status', $form->status ?? 1)) == 1; @endphp
+
+            <div class="cf-status-row">
+                <div class="cf-status-text">
+                    <strong id="statusLabel">{{ $isActive ? 'Active' : 'Inactive' }}</strong>
+                    <span>{{ $isActive ? 'Visible to visitors on the site' : 'Hidden from the site' }}</span>
+                </div>
+
+                <label class="cf-switch">
+                    <input type="checkbox" id="status-toggle" {{ $isActive ? 'checked' : '' }}>
+                    <span class="track"></span>
+                    <span class="thumb"></span>
+                </label>
+                <input type="hidden" name="status" id="status" value="{{ $isActive ? 1 : 0 }}">
+            </div>
         </div>
 
-        {{-- Modal Footer --}}
-        <div class="modal-footer px-0 pb-0 pt-3">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary btn-save text-white shadow-sm" id="category-submit-btn">
-                <i class="fa-solid fa-floppy-disk me-2"></i>
-                <span id="saveBtnText">Save Changes</span>
+        {{-- Footer --}}
+        <div class="cf-footer">
+            <button type="button" class="cf-btn cf-btn-ghost" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="cf-btn cf-btn-primary" id="category-submit-btn">
+                <i class="fa-solid fa-floppy-disk"></i>
+                <span id="saveBtnText">Save changes</span>
             </button>
         </div>
 
@@ -140,178 +285,44 @@
 </div>
 
 <script>
-$(document).ready(function () {
-
-    /* ─────────────────────────────────────────────
-       Config – injected by Laravel at render time
-    ───────────────────────────────────────────── */
-    const CSRF         = $('meta[name="csrf-token"]').attr('content');
-    const UPLOAD_URL   = '{{ route("uploads.store") }}';
-    const DESTROY_URL  = '{{ route("uploads.destroy") }}';
-    const UPLOAD_FOLDER = 'properties/categories';
-
-    /* ─────────────────────────────────────────────
-       Auto-slug from Name (English)
-    ───────────────────────────────────────────── */
-    let slugManuallyEdited = {{ !empty($form->slug ?? null) ? 'true' : 'false' }};
+(function () {
+    let slugManuallyEdited = {{ isset($form) && filled($form->slug) ? 'true' : 'false' }};
 
     function updateSlugFromName(value) {
         if (slugManuallyEdited) return;
+
         const slug = value
             .toLowerCase()
             .trim()
             .replace(/[^a-z0-9\s-]/g, '')
             .replace(/\s+/g, '-')
             .replace(/-+/g, '-');
+
         $('#slug').val(slug);
     }
 
-    $('#name_en').on('input', function () {
+    $('#name_en').off('input.slug').on('input.slug', function () {
         updateSlugFromName($(this).val());
     });
 
-    $('#slug').on('input', function () {
+    $('#slug').off('input.slug').on('input.slug', function () {
         slugManuallyEdited = true;
     });
 
-    /* ─────────────────────────────────────────────
-       MinIO helpers
-    ───────────────────────────────────────────── */
-    function uploadToMinio(file, folder) {
-        const fd = new FormData();
-        fd.append('file', file);
-        fd.append('folder', folder || UPLOAD_FOLDER);
-        return $.ajax({
-            url:          UPLOAD_URL,
-            method:       'POST',
-            data:         fd,
-            processData:  false,
-            contentType:  false,
-            headers:      { 'X-CSRF-TOKEN': CSRF }
-        }).then(function (res) { return res.data; });
-    }
+    $('#status-toggle').off('change.status').on('change.status', function () {
+        const isActive = this.checked;
 
-    function deleteFromMinio(path) {
-        if (!path) return;
-        $.ajax({
-            url:         DESTROY_URL,
-            method:      'DELETE',
-            data:        JSON.stringify({ path: path }),
-            contentType: 'application/json',
-            headers:     { 'X-CSRF-TOKEN': CSRF }
-        });
-    }
-
-    /* ─────────────────────────────────────────────
-       DOM refs
-    ───────────────────────────────────────────── */
-    const $file    = $('#category_image_file');
-    const $path    = $('#category_image_path');
-    const $preview = $('#category-image-preview');
-    const $ph      = $('#no-image-placeholder-category');
-    const $wrapper = $('#category-image-wrapper');
-    const $spinner = $('#category-image-spinner');
-    const $nameBox = $('#category-image-name');
-    const $remove  = $('#category-image-remove');
-    const $btn     = $('#category-image-btn');
-    const $badge   = $('#category-upload-badge');
-
-    /* ─────────────────────────────────────────────
-       Browse trigger
-    ───────────────────────────────────────────── */
-    $btn.on('click', function () {
-        $file.trigger('click');
+        $('#status').val(isActive ? 1 : 0);
+        $('#statusLabel').text(isActive ? 'Active' : 'Inactive');
+        $('#statusLabel').next('span').text(
+            isActive
+                ? 'Visible to visitors on the site'
+                : 'Hidden from the site'
+        );
     });
 
-    /* ─────────────────────────────────────────────
-       File selected → upload to MinIO
-    ───────────────────────────────────────────── */
-    $file.on('change', async function () {
-        const file = this.files[0];
-        if (!file) return;
-
-        $spinner.css('display', 'flex');
-        $wrapper.addClass('uploading').removeClass('upload-done');
-        $btn.prop('disabled', true);
-        $badge
-            .text('Uploading…')
-            .removeClass('bg-success bg-secondary bg-danger d-none')
-            .addClass('bg-warning text-dark');
-
-        try {
-            const prevPath = $path.val();
-            if (prevPath) deleteFromMinio(prevPath);
-
-            const result = await uploadToMinio(file, UPLOAD_FOLDER);
-
-            $path.val(result.public_url);
-            $nameBox.val(result.public_url);
-            $preview.attr('src', result.public_url).removeClass('d-none');
-            $ph.addClass('d-none');
-            $remove.show();
-            $wrapper.removeClass('uploading').addClass('upload-done');
-            $badge
-                .text('Uploaded')
-                .removeClass('bg-warning text-dark bg-secondary')
-                .addClass('bg-success');
-            $btn.text('Change Image');
-
-        } catch (err) {
-            console.error('Category image upload failed:', err);
-            alert('Upload failed. Please try again.');
-            $wrapper.removeClass('uploading');
-            $badge
-                .text('Failed')
-                .removeClass('bg-warning text-dark bg-secondary')
-                .addClass('bg-danger');
-        } finally {
-            $spinner.css('display', 'none');
-            $btn.prop('disabled', false);
-            $(this).val('');
-        }
-    });
-
-    /* ─────────────────────────────────────────────
-       Remove image
-    ───────────────────────────────────────────── */
-    $remove.on('click', function () {
-        const path = $path.val();
-        if (!path) return;
-        if (!confirm('Remove this image?')) return;
-
-        deleteFromMinio(path);
-
-        $path.val('');
-        $nameBox.val('');
-        $preview.attr('src', '#').addClass('d-none');
-        $ph.removeClass('d-none');
-        $remove.hide();
-        $wrapper.removeClass('upload-done uploading');
-        $badge
-            .text('Pending')
-            .removeClass('bg-success bg-danger bg-warning text-dark')
-            .addClass('bg-secondary')
-            .removeClass('d-none');
-        $btn.text('Browse');
-    });
-
-    /* ─────────────────────────────────────────────
-       Submit guard – block if upload still in flight
-    ───────────────────────────────────────────── */
-    $('#form-category').on('submit', function (e) {
-        if ($wrapper.hasClass('uploading')) {
-            e.preventDefault();
-            alert('Please wait — the image is still uploading.');
-            return false;
-        }
-    });
-
-    /* ─────────────────────────────────────────────
-       External ajax-form handler (if defined globally)
-    ───────────────────────────────────────────── */
     if (typeof handleFormSubmit === 'function') {
         handleFormSubmit('#form-category');
     }
-
-});
+})();
 </script>

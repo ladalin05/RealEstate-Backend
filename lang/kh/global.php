@@ -294,4 +294,5 @@ return [
     'update_property' => 'កែប្រែអចលនទ្រព្យ',
     'create_post' => 'បង្កើតអត្ថបទ',
     'update_post' => 'កែប្រែអត្ថបទ',
+    'select_area' => 'ជ្រើសរើសតំបន់',
 ];

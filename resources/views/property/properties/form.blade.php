@@ -47,87 +47,10 @@
             transform: translateY(-1px);
         }
 
-        .image-upload-wrapper {
-            background: #fdfdfd;
-            border: 2px dashed var(--border-color);
-            border-radius: 10px;
-            padding: 20px;
-            text-align: center;
-            transition: 0.3s;
-            position: relative;
-        }
-
-        .image-upload-wrapper:hover {
-            border-color: var(--primary-color);
-            background: #f8faff;
-        }
-
-        .image-upload-wrapper.uploading {
-            border-color: #f6c23e;
-            background: #fffbf0;
-        }
-
-        .image-upload-wrapper.upload-done {
-            border-color: var(--success-color);
-            background: #f0fdf8;
-        }
-
-        .img-preview-custom {
-            width: 100%;
-            max-width: 200px;
-            border-radius: 8px;
-            margin-top: 15px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        .img-preview-custom.hidden { display: none; }
-
-        .upload-spinner {
-            display: none;
-            position: absolute;
-            inset: 0;
-            background: rgba(255,255,255,0.75);
-            border-radius: 10px;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            gap: 8px;
-            font-size: 0.8rem;
-            color: var(--secondary-color);
-            font-weight: 600;
-        }
-
-        .upload-spinner.active { display: flex; }
-
-        .spinner-border-sm { width: 1.2rem; height: 1.2rem; }
-
-        .btn-remove-image {
-            display: none;
-            margin-top: 8px;
-        }
-
         .section-divider {
             height: 1px;
             background: var(--border-color);
             margin: 2rem 0;
-        }
-
-        .gallery-image-item {
-            background: #fff;
-            padding: 15px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-
-        .gallery-image-item.uploading { border-color: #f6c23e; }
-        .gallery-image-item.upload-done { border-color: var(--success-color); }
-        .gallery-image-item.upload-error { border-color: #e74a3b; }
-
-        .upload-status-badge {
-            font-size: 0.72rem;
-            padding: 2px 8px;
-            border-radius: 20px;
         }
 
         #rental-period-row { display: none; }
@@ -186,6 +109,116 @@
         .select2-selection__arrow b {
             top: 50% !important;
         }
+
+        .price-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+            background: #fff;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .price-input-wrapper:focus-within {
+            border-color: #86b7fe;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+        }
+
+        .price-prefix {
+            padding-left: 12px;
+            color: #6c757d;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .price-input-wrapper .price-input {
+            border: none !important;
+            box-shadow: none !important;
+            background: transparent;
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        .price-input-wrapper .price-input:focus {
+            box-shadow: none;
+        }
+
+        .price-input-wrapper .price-input:disabled {
+            color: #495057;
+            font-style: italic;
+            background: transparent;
+        }
+
+        .negotiable-inline {
+            display: flex;
+            align-items: center;
+            padding-right: 12px;
+            flex-shrink: 0;
+            border-left: 1px solid #eee;
+            padding-left: 10px;
+            white-space: nowrap;
+        }
+
+        .negotiable-inline .form-check-input {
+            cursor: pointer;
+            width: 2em;
+            height: 1.1em;
+            margin-top: 0;
+        }
+
+        .negotiable-inline .form-check-input:checked {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+
+        .negotiable-inline .form-check-label {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #6c757d;
+            margin-left: 6px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .toggle-switch-group {
+            display: flex;
+            align-items: center;
+            padding: 8px 14px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 0.5rem;
+            height: 38px; /* aligns visually with select2's height */
+        }
+
+        .toggle-switch-group .form-check-input {
+            cursor: pointer;
+            width: 2.4em;
+            height: 1.3em;
+            margin-top: 0;
+        }
+
+        .toggle-switch-group .form-check-input:checked {
+            background-color: #198754;
+            border-color: #198754;
+        }
+
+        .toggle-switch-group .form-check-label {
+            margin-left: 10px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .toggle-status-text {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #6c757d;
+        }
+
+        .toggle-switch-group .form-check-input:checked ~ .form-check-label .toggle-status-text {
+            color: #198754;
+        }
+
     </style>
 
     <div class="content mt-4">
@@ -214,6 +247,14 @@
 
                                 <div class="row mb-3">
                                     <div class="col-md-4">
+                                        <x-basic.form.lang-input
+                                            name="title"
+                                            :model="$property"
+                                            label="Property Title"
+                                            placeholder-en="Title"
+                                            placeholder-kh="ចំណងជើង" />
+                                    </div>
+                                    <div class="col-md-4">
                                         <x-basic.form.input
                                             label="Property Code"
                                             name="property_code"
@@ -231,6 +272,9 @@
                                             :value="$property?->agent_id"
                                         />
                                     </div>
+                                </div>
+
+                                <div class="row g-3 mb-3">
                                     <div class="col-md-4">
                                         <x-basic.form.select
                                             label="{{ __('global.type') }}"
@@ -242,30 +286,6 @@
                                             required
                                         />
                                     </div>
-                                </div>
-
-                                {{-- Title (EN / KH) --}}
-                                <div class="row mb-3">
-                                    <div class="col-md-12">
-                                        <label class="form-label">{{ __('global.property_title') }}</label>
-                                        <div class="lang-tabs" data-lang-group="title">
-                                            <button type="button" class="lang-tab-btn active" data-lang="en">English</button>
-                                            <button type="button" class="lang-tab-btn" data-lang="kh">ខ្មែរ</button>
-                                        </div>
-                                        <div class="lang-pane active" data-lang-group="title" data-lang="en">
-                                            <input type="text" name="title_en" class="form-control"
-                                                   value="{{ old('title_en', $property->title_en) }}"
-                                                   placeholder="e.g. Luxury Villa in Downtown" required>
-                                        </div>
-                                        <div class="lang-pane" data-lang-group="title" data-lang="kh">
-                                            <input type="text" name="title_kh" class="form-control"
-                                                   value="{{ old('title_kh', $property->title_kh) }}"
-                                                   placeholder="ចំណងជើងអចលនទ្រព្យ">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row g-3 mb-3">
                                     <div class="col-md-4">
                                         <x-basic.form.select
                                             label="{{ __('global.purpose') }}"
@@ -303,28 +323,34 @@
                                     </div>
                                 </div>
 
-                                {{-- Description (EN / KH) --}}
-                                <div class="row mb-3">
-                                    <div class="col-12">
-                                        <label class="form-label">{{ __('global.description') }}</label>
-                                        <div class="lang-tabs" data-lang-group="description">
-                                            <button type="button" class="lang-tab-btn active" data-lang="en">English</button>
-                                            <button type="button" class="lang-tab-btn" data-lang="kh">ខ្មែរ</button>
-                                        </div>
-                                        <div class="lang-pane active" data-lang-group="description" data-lang="en">
-                                            <textarea name="description_en" id="elm1" class="tinymce form-control">{{ old('description_en', $property->description_en) }}</textarea>
-                                        </div>
-                                        <div class="lang-pane" data-lang-group="description" data-lang="kh">
-                                            <textarea name="description_kh" id="elm1_kh" class="form-control" rows="6">{{ old('description_kh', $property->description_kh) }}</textarea>
-                                        </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <x-basic.form.input
+                                            label="Published At"
+                                            name="published_at"
+                                            type="datetime-local"
+                                            :value="$property->published_at ? \Carbon\Carbon::parse($property->published_at)->format('Y-m-d\TH:i') : ''"
+                                        />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <x-basic.form.input
+                                            label="Expires At"
+                                            name="expires_at"
+                                            type="datetime-local"
+                                            :value="$property->expires_at ? \Carbon\Carbon::parse($property->expires_at)->format('Y-m-d\TH:i') : ''"
+                                        />
                                     </div>
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-12">
+                                </div>
+
+                                {{-- Description (EN / KH) --}}
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
                                         <x-basic.form.textarea
                                             name="notes"
-                                            :rows="2"
+                                            :rows="4"
                                             placeholder="Staff-only notes about this listing…"
                                             :value="$property ? $property?->notes : ''"
                                         >
@@ -333,28 +359,19 @@
                                             </x-slot:label>
                                         </x-basic.form.textarea>
                                     </div>
-                                </div>
-
-                                <div class="row g-3">
-                                    <div class="col-md-4">
-                                        <x-basic.form.input
-                                            label="Published At"
-                                            name="published_at"
-                                            type="datetime-local"
-                                            :value="$property->published_at ? \Carbon\Carbon::parse($property->published_at)->format('Y-m-d\TH:i') : ''"
-                                        />
-                                    </div>
-                                    <div class="col-md-4">
-                                        <x-basic.form.input
-                                            label="Expires At"
-                                            name="expires_at"
-                                            type="datetime-local"
-                                            :value="$property->expires_at ? \Carbon\Carbon::parse($property->expires_at)->format('Y-m-d\TH:i') : ''"
-                                        />
-                                        <small class="text-muted">Listing auto-deactivates after this date/time.</small>
+                                    <div class="col-md-8">
+                                        <x-basic.form.lang-input
+                                            name="description"
+                                            :model="$property"
+                                            label="{{ __('global.description') }}"
+                                            type="textarea"
+                                            layout="stacked"
+                                            :tinymce="true"
+                                            id-en="elm1"
+                                            id-kh="elm1_kh"
+                                            :rows="4" />
                                     </div>
                                 </div>
-
                             </div>
                         </div>
 
@@ -366,16 +383,7 @@
                                 <i class="fa fa-map-marker-alt"></i> Location & Contact
                             </div>
                             <div class="card-body">
-
                                 <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <label class="form-label">{{ __('global.phone') }}</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="fa fa-phone"></i></span>
-                                            <input type="text" name="phone" value="{{ $property ? $property?->phone : '' }}" class="form-control" placeholder="+855 xx xxx xxx">
-                                        </div>
-                                    </div>
-
                                     <div class="col-md-4">
                                         <x-basic.form.select
                                             label="{{ __('global.area') }}"
@@ -383,29 +391,23 @@
                                             class="select2"
                                             id="area"
                                             placeholder="{{ __('global.select_area') }}"
-                                            :options="getAreas()->pluck('name_.app()->getLocale()', 'id')->toArray()"
+                                            :options="getAreas()->pluck('name_' . app()->getLocale(), 'id')->toArray()"
                                             :value="$property?->area_id"
                                         />
                                     </div>
-                                </div>
-
-                                {{-- Address (EN / KH) --}}
-                                <div class="row mb-3">
-                                    <div class="col-12">
-                                        <label class="form-label">{{ __('global.address') }}</label>
-                                        <div class="lang-tabs" data-lang-group="address">
-                                            <button type="button" class="lang-tab-btn active" data-lang="en">English</button>
-                                            <button type="button" class="lang-tab-btn" data-lang="kh">ខ្មែរ</button>
-                                        </div>
-                                        <div class="lang-pane active" data-lang-group="address" data-lang="en">
-                                            <input type="text" name="address_en" class="form-control"
-                                                   value="{{ old('address_en', stripslashes($property?->address_en ?? '')) }}"
-                                                   placeholder="Street / landmark">
-                                        </div>
-                                        <div class="lang-pane" data-lang-group="address" data-lang="kh">
-                                            <input type="text" name="address_kh" class="form-control"
-                                                   value="{{ old('address_kh', stripslashes($property?->address_kh ?? '')) }}"
-                                                   placeholder="អាសយដ្ឋាន">
+                                    <div class="col-md-4">
+                                        <x-basic.form.lang-input
+                                            name="address"
+                                            :model="$property"
+                                            label="Address"
+                                            placeholder-en="Street / landmark"
+                                            placeholder-kh="អាសយដ្ឋាន" />
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">{{ __('global.phone') }}</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fa fa-phone"></i></span>
+                                            <input type="text" name="phone" value="{{ $property ? $property?->phone : '' }}" class="form-control" placeholder="+855 xx xxx xxx">
                                         </div>
                                     </div>
                                 </div>
@@ -522,49 +524,35 @@
                                 </div>
 
                                 <div class="row mb-3">
-                                    <div class="col-md-3">
-                                        <x-basic.form.select
-                                            label="Currency"
-                                            name="currency"
-                                            class="select2"
-                                            :placeholder="null"
-                                            :options="['USD' => 'USD ($)', 'KHR' => 'KHR (៛)']"
-                                            :value="$property->currency ?? 'USD'"
-                                            required
-                                        />
-                                    </div>
-                                    <div class="col-md-5">
-                                        <label class="form-label">{{ __('global.price') }}</label>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-semibold">{{ __('global.price') }}</label>
 
-                                        {{-- Hidden fields submitted to the server --}}
-                                        <input type="hidden" name="price"       id="price_numeric" value="{{ $property->price }}">
-                                        <input type="hidden" name="price_label" id="price_label"   value="{{ $property->price_label }}">
+                                        <input type="hidden" name="price" id="price_numeric" value="{{ $property->price }}">
+                                        <input type="hidden" name="price_label" id="price_label" value="{{ $property->price_label }}">
+                                        <input type="hidden" name="price_negotiable" value="0">
 
-                                        <div class="input-group">
+                                        <div class="price-input-wrapper">
                                             <input
                                                 type="text"
                                                 id="price_display"
-                                                class="form-control"
+                                                class="form-control price-input"
                                                 placeholder='e.g. 300 or "Contact us"'
                                                 value="{{ $property->price_label ?: ($property->price ? number_format($property->price, 0) : '') }}"
+                                                {{ $property->price_negotiable == 1 ? 'disabled' : '' }}
                                             >
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 d-flex align-items-end">
-                                        <div class="form-check mb-2">
-                                            <input type="hidden" name="price_negotiable" value="0">
-                                            <input class="form-check-input" type="checkbox"
-                                                name="price_negotiable" value="1"
-                                                id="price_negotiable"
-                                                {{ $property->price_negotiable == 1 ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="price_negotiable">
-                                                Negotiable
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
 
-                                <div class="row mb-3">
+                                            <div class="negotiable-inline form-check form-switch mb-0">
+                                                <input class="form-check-input" type="checkbox"
+                                                    name="price_negotiable" value="1"
+                                                    id="price_negotiable" role="switch"
+                                                    {{ $property->price_negotiable == 1 ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="price_negotiable">
+                                                    Negotiable
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div class="col-md-4">
                                         <x-basic.form.select
                                             label="{{ __('global.furnishing') }}"
@@ -576,26 +564,40 @@
                                         />
                                     </div>
 
-                                    <div class="col-md-4">
-                                        <x-basic.form.select
-                                            label="Featured"
-                                            name="featured"
-                                            class="select2"
-                                            :placeholder="null"
-                                            :options="['0' => 'No', '1' => 'Yes']"
-                                            :value="(string) $property->featured"
-                                        />
+                                    <div class="col-md-2">
+                                        <label class="form-label fw-semibold d-block">Featured</label>
+                                        <div class="toggle-switch-group">
+                                            <input type="hidden" name="featured" value="0">
+                                            <div class="form-check form-switch mb-0">
+                                                <input class="form-check-input" type="checkbox"
+                                                    name="featured" value="1" id="featured_toggle"
+                                                    role="switch"
+                                                    {{ (string) $property->featured === '1' ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="featured_toggle">
+                                                    <span class="toggle-status-text">
+                                                        {{ (string) $property->featured === '1' ? 'Yes' : 'No' }}
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        </div>
                                     </div>
 
-                                    <div class="col-md-4">
-                                        <x-basic.form.select
-                                            label="{{ __('global.verified') }}"
-                                            name="verified"
-                                            class="select2"
-                                            :placeholder="null"
-                                            :options="['0' => 'No', '1' => 'Yes']"
-                                            :value="(string) $property->verified"
-                                        />
+                                    <div class="col-md-2">
+                                        <label class="form-label fw-semibold d-block">{{ __('global.verified') }}</label>
+                                        <div class="toggle-switch-group">
+                                            <input type="hidden" name="verified" value="0">
+                                            <div class="form-check form-switch mb-0">
+                                                <input class="form-check-input" type="checkbox"
+                                                    name="verified" value="1" id="verified_toggle"
+                                                    role="switch"
+                                                    {{ (string) $property->verified === '1' ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="verified_toggle">
+                                                    <span class="toggle-status-text">
+                                                        {{ (string) $property->verified === '1' ? 'Yes' : 'No' }}
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -635,77 +637,13 @@
                             </div>
                             <div class="card-body">
 
-                                <div class="row mb-4">
-                                    @php
-                                        $mainImgRaw = $property->main_image ?? '';
-                                        $mainImgUrl = $mainImgRaw
-                                            ? (str_starts_with($mainImgRaw, 'http://') || str_starts_with($mainImgRaw, 'https://')
-                                                ? $mainImgRaw
-                                                : Storage::url($mainImgRaw))
-                                            : '';
-                                    @endphp
-                                    <div class="col-md-6 mb-4">
-                                        <label class="form-label">Main Image</label>
-                                        <div class="image-upload-wrapper {{ $mainImgUrl ? 'upload-done' : '' }}" id="main-image-wrapper" data-storage-path="{{ $mainImgRaw }}">
-                                            <div class="upload-spinner" id="main-image-spinner">
-                                                <div class="spinner-border spinner-border-sm text-warning" role="status"></div>
-                                                Uploading…
-                                            </div>
-                                            <input type="file" id="main_image_file" class="d-none" accept="image/*">
-                                            <input type="hidden" name="main_image" id="main_image_path" value="{{ $mainImgUrl }}">
-                                            <button type="button" class="btn btn-dark mb-2" id="main-image-btn">
-                                                {{ $mainImgUrl ? 'Change Image' : 'Select Image' }}
-                                            </button>
-                                            <p class="small text-muted mb-0">Recommended: 800×480px</p>
-                                            <img id="main-image-preview"
-                                                 src="{{ $mainImgUrl ?: '#' }}"
-                                                 class="img-preview-custom {{ $mainImgUrl ? '' : 'hidden' }}">
-                                            <div>
-                                                <button type="button"
-                                                        class="btn btn-sm btn-outline-danger btn-remove-image mt-2"
-                                                        id="main-image-remove"
-                                                        style="{{ $mainImgUrl ? 'display:inline-block' : '' }}">
-                                                    <i class="fa fa-times me-1"></i> Remove
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
+                                @php
+                                    $mainImgRaw = $property->main_image ?? '';
+                                    $mainImgUrl = $mainImgRaw ? $mainImgRaw : '';
 
-                                    @php
-                                        $floorPlanRaw = $property->floor_plan_image ?? '';
-                                        $floorPlanUrl = $floorPlanRaw
-                                            ? (str_starts_with($floorPlanRaw, 'http://') || str_starts_with($floorPlanRaw, 'https://')
-                                                ? $floorPlanRaw
-                                                : Storage::url($floorPlanRaw))
-                                            : '';
-                                    @endphp
-                                    <div class="col-md-6 mb-4">
-                                        <label class="form-label">Floor Plan</label>
-                                        <div class="image-upload-wrapper {{ $floorPlanUrl ? 'upload-done' : '' }}" id="floor-plan-wrapper" data-storage-path="{{ $floorPlanRaw }}">
-                                            <div class="upload-spinner" id="floor-plan-spinner">
-                                                <div class="spinner-border spinner-border-sm text-warning" role="status"></div>
-                                                Uploading…
-                                            </div>
-                                            <input type="file" id="floor_plan_file" class="d-none" accept="image/*">
-                                            <input type="hidden" name="floor_plan_image" id="floor_plan_path" value="{{ $floorPlanUrl }}">
-                                            <button type="button" class="btn btn-dark mb-2" id="floor-plan-btn">
-                                                {{ $floorPlanUrl ? 'Change Plan' : 'Select Plan' }}
-                                            </button>
-                                            <p class="small text-muted mb-0">Upload architecture layout</p>
-                                            <img id="floor-plan-preview"
-                                                 src="{{ $floorPlanUrl ?: '#' }}"
-                                                 class="img-preview-custom {{ $floorPlanUrl ? '' : 'hidden' }}">
-                                            <div>
-                                                <button type="button"
-                                                        class="btn btn-sm btn-outline-danger btn-remove-image mt-2"
-                                                        id="floor-plan-remove"
-                                                        style="{{ $floorPlanUrl ? 'display:inline-block' : '' }}">
-                                                    <i class="fa fa-times me-1"></i> Remove
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                    $floorPlanRaw = $property->floor_plan_image ?? '';
+                                    $floorPlanUrl = $floorPlanRaw ? $floorPlanRaw : '';
+                                @endphp
 
                                 <div class="row mb-3">
                                     <div class="col-md-6">
@@ -733,54 +671,57 @@
                                     </div>
                                 </div>
 
+                                <div class="row mb-4">
+                                    <div class="col-md-6 mb-4 px-5">
+                                        <label class="form-label">Main Image</label>
+                                        <div class="w-100 d-flex justify-content-center align-items-center">
+                                            <x-basic.uploader
+                                                input-name="main_image"
+                                                :url="$mainImgUrl"
+                                                :path="$mainImgRaw"
+                                                :folder="'properties/main'"
+                                                width="200px"
+                                                height="150px"
+                                                caption="Recommended: 800×480px"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 mb-4 px-5">
+                                        <label class="form-label">Floor Plan</label>
+                                        <div class="w-100 d-flex justify-content-center align-items-center">
+                                            <x-basic.uploader
+                                                input-name="floor_plan_image"
+                                                :url="$floorPlanUrl"
+                                                :path="$floorPlanRaw"
+                                                :folder="'properties/floor_plan'"
+                                                width="200px"
+                                                height="150px"
+                                                caption="Upload architecture layout"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="section-divider"></div>
 
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <label class="form-label mb-0">{{ __('global.gallery_images') }}</label>
-                                    <button type="button" id="add-gallery-image" class="btn btn-outline-primary btn-sm">
-                                        <i class="fa fa-plus"></i> Add Image
-                                    </button>
-                                </div>
-
-                                <div id="gallery-images-wrapper">
-                                    @if ($property->id)
-                                        @foreach ($property->property_image as $image)
-                                            @php
-                                                $gStoragePath = $image->image ?? '';
-                                                $gFullUrl = $gStoragePath
-                                                    ? (str_starts_with($gStoragePath, 'http://') || str_starts_with($gStoragePath, 'https://')
-                                                        ? $gStoragePath
-                                                        : Storage::url($gStoragePath))
-                                                    : asset('/upload/placeholder_img.jpg');
-                                            @endphp
-                                            <div class="gallery-image-item upload-done"
-                                                 data-storage-path="{{ $gStoragePath }}">
-                                                <input type="hidden" name="gallery_images[]" value="{{ $gFullUrl }}">
-                                                <div class="row align-items-center">
-                                                    <div class="col-md-7">
-                                                        <input type="file" accept="image/*" class="gallery-file d-none">
-                                                        <input type="text"
-                                                               class="form-control gallery-image-name bg-white"
-                                                               readonly
-                                                               value="{{ $gFullUrl }}">
-                                                    </div>
-                                                    <div class="col-md-5 text-end d-flex align-items-center justify-content-end gap-2">
-                                                        <span class="badge bg-success upload-status-badge">Uploaded</span>
-                                                        <button type="button" class="btn btn-dark select-gallery" style="height:36px">Change</button>
-                                                        <button type="button" class="btn btn-outline-danger remove-gallery" style="height:36px"
-                                                                data-storage-path="{{ $gStoragePath }}">
-                                                            <i class="fa fa-trash"></i>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                                <div class="preview mt-2">
-                                                    <img src="{{ $gFullUrl }}" width="120" height="90"
-                                                         style="object-fit:cover;border-radius:6px;">
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    @endif
-                                </div>
+                                <x-basic.uploader-group
+                                    label="{{ __('global.gallery_images') }}"
+                                    folder="properties/gallery"
+                                    input-name="gallery_images[]"
+                                    :items="$property->id
+                                        ? $property->property_image->map(fn ($image) => [
+                                            'url' => $image->image
+                                                ? (str_starts_with($image->image, 'http://') || str_starts_with($image->image, 'https://')
+                                                    ? $image->image
+                                                    : Storage::url($image->image))
+                                                : '',
+                                            'path' => $image->image ?? '',
+                                        ])->toArray()
+                                        : []"
+                                    width="150px"
+                                    height="110px"
+                                />
 
                             </div>
 
@@ -796,261 +737,103 @@
             </div>
         </div>
     </div>
-
     @push('scripts')
         @include('property.properties.script')
+
         <script>
-        $(document).ready(function () {
+            $(function () {
 
-            $('.select2').select2({ width: '100%' });
-            $('.select2-multiple').select2({
-                placeholder: 'Select options',
-                allowClear: true,
-                width: '100%'
-            });
-
-            // ── Language tab toggler (title / description / address) ──
-            $('.lang-tab-btn').on('click', function () {
-                const group = $(this).closest('.lang-tabs').data('lang-group');
-                const lang  = $(this).data('lang');
-
-                $(`.lang-tab-btn`).filter(function () {
-                    return $(this).closest('.lang-tabs').data('lang-group') === group;
-                }).removeClass('active');
-                $(this).addClass('active');
-
-                $(`.lang-pane[data-lang-group="${group}"]`).removeClass('active');
-                $(`.lang-pane[data-lang-group="${group}"][data-lang="${lang}"]`).addClass('active');
-            });
-
-            // ── Rental period toggle ──────────────────────────────
-            function toggleRentalPeriod() {
-                const p = $('#purpose').val();
-                $('#rental-period-row').toggle(p === 'rent' || p === 'sale_rent');
-            }
-            $('#purpose').on('change', toggleRentalPeriod);
-            toggleRentalPeriod();
-
-            // ── Price display → hidden price + price_label ────────
-            function syncPrice() {
-                const raw     = $('#price_display').val().trim();
-                const cleaned = raw.replace(/,/g, '');
-                const numeric = parseFloat(cleaned);
-
-                if (raw !== '' && !isNaN(numeric) && /^[\d,\.]+$/.test(raw)) {
-                    // Pure number → store in price, clear price_label
-                    $('#price_numeric').val(numeric);
-                    $('#price_label').val('');
-                } else {
-                    // Text label → clear price, store in price_label
-                    $('#price_numeric').val('');
-                    $('#price_label').val(raw);
-                }
-            }
-            $('#price_display').on('input', syncPrice);
-            syncPrice(); // run once on load to sync existing value
-
-            // ── MinIO upload helpers ──────────────────────────────
-            const CSRF = $('meta[name="csrf-token"]').attr('content');
-
-            function uploadToMinio(file, folder = 'properties') {
-                const fd = new FormData();
-                fd.append('file', file);
-                fd.append('folder', folder);
-                return $.ajax({
-                    url: '{{ route("uploads.store") }}',
-                    method: 'POST',
-                    data: fd,
-                    processData: false,
-                    contentType: false,
-                    headers: { 'X-CSRF-TOKEN': CSRF }
-                }).then(res => res.data);
-            }
-
-            function deleteFromMinio(path) {
-                if (!path) return;
-                $.ajax({
-                    url: '{{ route("uploads.destroy") }}',
-                    method: 'DELETE',
-                    data: JSON.stringify({ path }),
-                    contentType: 'application/json',
-                    headers: { 'X-CSRF-TOKEN': CSRF }
-                });
-            }
-
-            // ── Single image uploader ─────────────────────────────
-            function initSingleUploader(cfg) {
-                const $file    = $(cfg.fileInputId);
-                const $path    = $(cfg.pathInputId);
-                const $preview = $(cfg.previewId);
-                const $wrapper = $(cfg.wrapperId);
-                const $spinner = $(cfg.spinnerId);
-                const $remove  = $(cfg.removeId);
-                const $btn     = $(cfg.triggerBtnId);
-
-                let storagePath = $wrapper.attr('data-storage-path') || '';
-
-                $btn.on('click', () => $file.trigger('click'));
-
-                $file.on('change', async function () {
-                    const file = this.files[0];
-                    if (!file) return;
-
-                    $spinner.addClass('active');
-                    $wrapper.addClass('uploading').removeClass('upload-done');
-                    $btn.prop('disabled', true);
-
-                    try {
-                        if (storagePath) deleteFromMinio(storagePath);
-
-                        const result = await uploadToMinio(file, cfg.folder);
-
-                        $path.val(result.public_url);
-                        storagePath = result.path;
-                        $wrapper.attr('data-storage-path', storagePath);
-                        $preview.attr('src', result.public_url).removeClass('hidden');
-                        $remove.show();
-                        $wrapper.removeClass('uploading').addClass('upload-done');
-                        $btn.text('Change Image');
-                    } catch (err) {
-                        console.error('Upload failed', err);
-                        alert('Upload failed. Please try again.');
-                        $wrapper.removeClass('uploading');
-                    } finally {
-                        $spinner.removeClass('active');
-                        $btn.prop('disabled', false);
-                        $file.val('');
-                    }
+                // Select2
+                $('.select2').select2({
+                    width: '100%'
                 });
 
-                $remove.on('click', function () {
-                    if (storagePath && confirm('Remove this image?')) {
-                        deleteFromMinio(storagePath);
-                        storagePath = '';
-                        $wrapper.removeAttr('data-storage-path');
-                        $path.val('');
-                        $preview.attr('src', '#').addClass('hidden');
-                        $remove.hide();
-                        $wrapper.removeClass('upload-done uploading');
-                        $btn.text('Select Image');
-                    }
+                $('.select2-multiple').select2({
+                    placeholder: 'Select options',
+                    allowClear: true,
+                    width: '100%'
                 });
-            }
 
-            initSingleUploader({
-                fileInputId:  '#main_image_file',
-                pathInputId:  '#main_image_path',
-                previewId:    '#main-image-preview',
-                wrapperId:    '#main-image-wrapper',
-                spinnerId:    '#main-image-spinner',
-                removeId:     '#main-image-remove',
-                triggerBtnId: '#main-image-btn',
-                folder:       'properties/main',
-            });
+                // Language tab toggler
+                $('.lang-tab-btn').on('click', function () {
+                    const group = $(this).closest('.lang-tabs').data('lang-group');
+                    const lang = $(this).data('lang');
 
-            initSingleUploader({
-                fileInputId:  '#floor_plan_file',
-                pathInputId:  '#floor_plan_path',
-                previewId:    '#floor-plan-preview',
-                wrapperId:    '#floor-plan-wrapper',
-                spinnerId:    '#floor-plan-spinner',
-                removeId:     '#floor-plan-remove',
-                triggerBtnId: '#floor-plan-btn',
-                folder:       'properties/floor-plan',
-            });
+                    $('.lang-tab-btn').filter(function () {
+                        return $(this).closest('.lang-tabs').data('lang-group') === group;
+                    }).removeClass('active');
 
-            // ── Gallery images ────────────────────────────────────
-            function galleryRowHtml() {
-                return `
-                    <div class="gallery-image-item">
-                        <input type="hidden" name="gallery_images[]" value="">
-                        <div class="row align-items-center">
-                            <div class="col-md-7">
-                                <input type="file" accept="image/*" class="gallery-file d-none">
-                                <input type="text" class="form-control gallery-image-name bg-white"
-                                       readonly placeholder="No file selected">
-                            </div>
-                            <div class="col-md-5 text-end d-flex align-items-center justify-content-end gap-2">
-                                <span class="badge bg-secondary upload-status-badge">Pending</span>
-                                <button type="button" class="btn btn-dark select-gallery" style="height:36px">Select</button>
-                                <button type="button" class="btn btn-outline-danger remove-gallery" style="height:36px" data-storage-path="">
-                                    <i class="fa fa-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="preview mt-2"></div>
-                    </div>`;
-            }
+                    $(this).addClass('active');
 
-            $('#add-gallery-image').on('click', function () {
-                $('#gallery-images-wrapper').append(galleryRowHtml());
-            });
+                    $('.lang-pane[data-lang-group="' + group + '"]').removeClass('active');
+                    $('.lang-pane[data-lang-group="' + group + '"][data-lang="' + lang + '"]').addClass('active');
+                });
 
-            $(document).on('click', '.select-gallery', function () {
-                $(this).closest('.gallery-image-item').find('.gallery-file').trigger('click');
-            });
-
-            $(document).on('change', '.gallery-file', async function () {
-                const file = this.files[0];
-                if (!file) return;
-
-                const $item    = $(this).closest('.gallery-image-item');
-                const $path    = $item.find('input[name="gallery_images[]"]');
-                const $badge   = $item.find('.upload-status-badge');
-                const $nameBox = $item.find('.gallery-image-name');
-                const $select  = $item.find('.select-gallery');
-
-                const prevStoragePath = $item.attr('data-storage-path') || '';
-                if (prevStoragePath) deleteFromMinio(prevStoragePath);
-
-                $badge.text('Uploading…').removeClass('bg-success bg-danger bg-secondary').addClass('bg-warning text-dark');
-                $item.addClass('uploading').removeClass('upload-done upload-error');
-                $select.prop('disabled', true);
-
-                try {
-                    const result = await uploadToMinio(file, 'properties/gallery');
-
-                    $path.val(result.public_url);
-                    $nameBox.val(result.public_url);
-                    $item.attr('data-storage-path', result.path);
-                    $item.find('.remove-gallery').attr('data-storage-path', result.path);
-                    $badge.text('Uploaded').removeClass('bg-warning text-dark').addClass('bg-success');
-                    $item.removeClass('uploading').addClass('upload-done');
-                    $item.find('.preview').html(
-                        `<img src="${result.public_url}" width="120" height="90" style="object-fit:cover;border-radius:6px;">`
+                // Rental period toggle
+                function toggleRentalPeriod() {
+                    const purpose = $('#purpose').val();
+                    $('#rental-period-row').toggle(
+                        purpose === 'rent' || purpose === 'sale_rent'
                     );
-                } catch (err) {
-                    console.error('Gallery upload failed', err);
-                    $badge.text('Failed').removeClass('bg-warning text-dark').addClass('bg-danger');
-                    $item.removeClass('uploading').addClass('upload-error');
-                    alert('Gallery image upload failed. Please try again.');
-                } finally {
-                    $select.prop('disabled', false);
-                    $(this).val('');
                 }
-            });
 
-            $(document).on('click', '.remove-gallery', function () {
-                const storagePath = $(this).attr('data-storage-path') || '';
-                const doRemove = () => {
-                    if (storagePath) deleteFromMinio(storagePath);
-                    $(this).closest('.gallery-image-item').remove();
-                };
-                storagePath ? (confirm('Delete this image?') && doRemove()) : doRemove();
-            });
+                $('#purpose').on('change', toggleRentalPeriod);
+                toggleRentalPeriod();
 
-            // ── Guard: block submit while uploads are in progress ─
-            $('#propertyForm').on('submit', function (e) {
-                if ($('.gallery-image-item.uploading').length > 0 ||
-                    $('#main-image-wrapper.uploading').length > 0 ||
-                    $('#floor-plan-wrapper.uploading').length > 0) {
-                    e.preventDefault();
-                    alert('Please wait — some images are still uploading.');
-                    return false;
+                // Price display -> hidden price + price_label
+                function syncPrice() {
+                    const raw = $('#price_display').val().trim();
+                    const cleaned = raw.replace(/,/g, '');
+                    const numeric = parseFloat(cleaned);
+
+                    if (raw !== '' && !isNaN(numeric) && /^[\d,.]+$/.test(raw)) {
+                        $('#price_numeric').val(numeric);
+                        $('#price_label').val('');
+                    } else {
+                        $('#price_numeric').val('');
+                        $('#price_label').val(raw);
+                    }
                 }
-            });
 
-        });
+                $('#price_display').on('input', syncPrice);
+                syncPrice();
+
+                // Negotiable checkbox
+                $('#price_negotiable').on('change', function () {
+                    const $priceDisplay = $('#price_display');
+
+                    if ($(this).is(':checked')) {
+                        $priceDisplay
+                            .val('Contact us')
+                            .prop('disabled', true);
+                    } else {
+                        $priceDisplay
+                            .prop('disabled', false)
+                            .val('')
+                            .focus();
+                    }
+
+                    syncPrice();
+                });
+
+                // Featured / Verified toggle labels
+                $('.toggle-switch-group .form-check-input').on('change', function () {
+                    $(this)
+                        .closest('.toggle-switch-group')
+                        .find('.toggle-status-text')
+                        .text($(this).is(':checked') ? 'Yes' : 'No');
+                });
+
+                // Prevent submit while uploading
+                $('#propertyForm').on('submit', function (e) {
+                    if ($('.uploader-item.uploading').length) {
+                        e.preventDefault();
+                        alert('Please wait — some images are still uploading.');
+                        return false;
+                    }
+                });
+
+            });
         </script>
     @endpush
 </x-app-layout>
