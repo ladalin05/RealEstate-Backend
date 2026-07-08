@@ -26,6 +26,7 @@ class GoogleService
         $googleId = $googleData['id'] ?? null;
         $name     = $googleData['name'] ?? 'Unknown';
         $email    = $googleData['email'] ?? null;
+        $profilePicture = $googleData['picture'] ?? null;
 
         if (!$googleId) {
             throw new Exception('Unable to retrieve Google user info');
@@ -43,6 +44,9 @@ class GoogleService
             if (!$user->email && $email) {
                 $user->email = $email;
             }
+            if ($profilePicture) {
+                $user->profile_picture = $profilePicture;
+            }
             $user->save();
         } else {
             $user = User::create([
@@ -50,6 +54,7 @@ class GoogleService
                 'username'         => self::generateUniqueUsername($name),
                 'email'            => $email,
                 'google_id'        => $googleId,
+                'profile_picture'  => $profilePicture,
                 'is_verify_google' => 1,
                 'is_verify_email'  => $email ? 1 : 0,
             ]);

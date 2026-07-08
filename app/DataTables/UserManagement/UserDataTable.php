@@ -75,7 +75,7 @@ class UserDataTable extends DataTable
                 return dateFormat($user->updated_at);
             })
             ->addColumn('action', function ($row) {
-                return view('admin.users.action', compact('row'))->render();
+                return view('user-management.users.action', compact('row'))->render();
             })
             ->rawColumns([
                 'profile_picture',

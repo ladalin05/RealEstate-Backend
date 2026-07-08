@@ -1,38 +1,63 @@
-<div class="d-flex gap-1">
-    {{-- View --}}
-    <a href="{{ route('interaction.request-infos.show', $row->id) }}"
-       class="btn btn-sm btn-info text-white"
-       title="View">
-        <i class="fa fa-eye"></i>
-    </a>
 
-    {{-- Reply (only if not already replied/closed) --}}
-    @if(in_array($row->status, ['new', 'read']))
-        <a href="{{ route('interaction.request-infos.reply', $row->id) }}"
-           class="btn btn-sm btn-success text-white"
-           title="Reply">
-            <i class="fa fa-reply"></i>
-        </a>
-    @endif
+<style>
+    .action-toggle {
+        width: 36px;
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+    }
 
-    {{-- Close --}}
-    @if($row->status !== 'closed')
-        <button type="button"
-                class="btn btn-sm btn-dark text-white btn-close-inquiry"
-                data-id="{{ $row->id }}"
-                title="Close">
-            <i class="fa fa-lock"></i>
-        </button>
-    @endif
+    .action-toggle:hover {
+        background-color: #f1f1f1;
+    }
 
-    {{-- Delete --}}
-    <button type="button"
-            class="btn btn-sm btn-danger text-white btn-delete-inquiry"
-            data-id="{{ $row->id }}"
-            data-url="{{ route('interaction.request-infos.destroy', $row->id) }}"
-            title="Delete">
-        <i class="fa fa-trash"></i>
+    .dropdown-menu .dropdown-item {
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        padding: 8px 16px;
+    }
+
+    .dropdown-menu .dropdown-item:hover {
+        background-color: #f8f9fa;
+    }
+</style>
+
+<div class="dropdown">
+    <button type="button" class="btn btn-sm btn-light border action-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="fa-solid fa-bars"></i>
     </button>
+
+    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+        <li>
+            <a href="{{route('interaction.request-infos.show', ['id' => $row->id])}}" class="dropdown-item">
+                <i class="fa fa-eye"></i>
+                View
+            </a>
+        </li>
+        <li>
+            @if(in_array($row->status, ['new', 'read']))
+                <a href="{{ route('interaction.request-infos.reply', $row->id) }}" class="dropdown-item" title="Reply">
+                    <i class="fa fa-reply"></i> Reply
+                </a>
+            @endif
+        </li>
+        <li>
+            @if($row->status !== 'closed')
+                <button type="button" class="dropdown-item btn-close-inquiry" data-id="{{ $row->id }}" >
+                    <i class="fa fa-lock"></i> Lock
+                </button>
+            @endif
+        </li>
+        <li>
+            <button type="button" class="dropdown-item text-danger data_remove" data-url="{{route('interaction.request-infos.destroy', ['id' => $row->id])}}" onclick="deleteData(event)">
+                <i class="fa fa-trash me-2"></i>
+                Delete
+            </button>
+        </li>
+    </ul>
 </div>
 
 <script>

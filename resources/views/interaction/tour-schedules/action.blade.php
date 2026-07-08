@@ -1,37 +1,72 @@
-<div class="d-flex gap-1">
-    {{-- View --}}
-    <a href="{{ route('interaction.tour-schedules.show', $row->id) }}"
-       class="btn btn-sm btn-info text-white"
-       title="View">
-        <i class="fa fa-eye"></i>
-    </a>
+<style>
+    .action-toggle {
+        width: 36px;
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+    }
 
-    {{-- Confirm (only if pending) --}}
-    @if($row->status === 'pending')
-        <button type="button"
-                class="btn btn-sm btn-success text-white btn-confirm-tour"
-                data-id="{{ $row->id }}"
-                title="Confirm">
-            <i class="fa fa-check"></i>
-        </button>
+    .action-toggle:hover {
+        background-color: #f1f1f1;
+    }
 
-        {{-- Reject (only if pending) --}}
-        <button type="button"
-                class="btn btn-sm btn-danger text-white btn-reject-tour"
-                data-id="{{ $row->id }}"
-                title="Reject">
-            <i class="fa fa-times"></i>
-        </button>
-    @endif
+    .dropdown-menu .dropdown-item {
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        padding: 8px 16px;
+    }
 
-    {{-- Delete --}}
-    <button type="button"
-            class="btn btn-sm btn-dark text-white btn-delete-tour"
-            data-id="{{ $row->id }}"
-            data-url="{{ route('interaction.tour-schedules.destroy', $row->id) }}"
-            title="Delete">
-        <i class="fa fa-trash"></i>
+    .dropdown-menu .dropdown-item:hover {
+        background-color: #f8f9fa;
+    }
+</style>
+
+<div class="dropdown">
+    <button type="button" class="btn btn-sm btn-light border action-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="fa-solid fa-bars"></i>
     </button>
+
+    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+        <li>
+            <a href="{{route('interaction.tour-schedules.show', ['id' => $row->id])}}" class="dropdown-item">
+                <i class="fa fa-eye"></i>
+                View
+            </a>
+        </li>
+        <li>
+            @if($row->status === 'pending')
+                <button type="button" class="dropdown-item btn-confirm-tour" data-id="{{ $row->id }}">
+                    <i class="fa fa-check"></i>
+                    Confirm
+                </button>
+            @endif
+        </li>
+        <li>
+            @if($row->status === 'pending')
+                {{-- Reject (only if pending) --}}
+                <button type="button" class="dropdown-item btn-reject-tour" data-id="{{ $row->id }}">
+                    <i class="fa fa-times"></i>
+                    Reject
+                </button>
+            @endif
+        </li>
+        <li>
+            @if($row->status !== 'closed')
+                <button type="button" class="dropdown-item btn-close-inquiry" data-id="{{ $row->id }}" >
+                    <i class="fa fa-lock"></i> Lock
+                </button>
+            @endif
+        </li>
+        <li>
+            <button type="button" class="dropdown-item text-danger data_remove" data-url="{{route('interaction.tour-schedules.destroy', ['id' => $row->id])}}" onclick="deleteData(event)">
+                <i class="fa fa-trash me-2"></i>
+                Delete
+            </button>
+        </li>
+    </ul>
 </div>
 
 <script>

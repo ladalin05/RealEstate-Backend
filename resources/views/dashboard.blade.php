@@ -136,8 +136,7 @@
                                         <th>Message</th>
                                         <th>Severity</th>
                                         <th>Date</th>
-                                        <th>Status</th>
-                                        <th class="text-right">Actions</th>
+                                        <th>Status</th> 
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -160,25 +159,11 @@
                                                 {{ $report->severity }}
                                             </span>
                                         </td>
-                                        <td><span class="badge badge-light border">{{ $report->date?->format('M d') }}</span></td>
+                                        <td><span class="badge badge-light text-dark border">{{ $report->date?->format('M d') }}</span></td>
                                         <td>
                                             <span class="badge badge-soft-{{ $report->status === 'Pending' ? 'warning' : 'success' }}">
                                                 {{ $report->status }}
                                             </span>
-                                        </td>
-                                        <td class="text-right">
-                                            <form action="{{ route('reports.toggle', $report) }}" method="POST" class="d-inline">
-                                                @csrf
-                                                @method('PATCH')
-                                                <button type="submit" class="btn btn-sm btn-light border text-primary font-weight-600">Toggle</button>
-                                            </form>
-                                            <form action="{{ route('reports.destroy', $report) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this system log report completely?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-icon-only text-danger" title="Delete Report">
-                                                    <i class="fa fa-trash"></i>
-                                                </button>
-                                            </form>
                                         </td>
                                     </tr>
                                     @empty

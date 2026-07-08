@@ -58,8 +58,16 @@ Route::middleware(['auth', 'abilities'])->group(function () {
         ], function () {
             Route::get('/', [InternalUserController::class, 'index'])->name('index');
             Route::match(['get', 'post'], '/add', [InternalUserController::class, 'create'])->name('add');
-            Route::match(['get', 'post'], '/edit', [InternalUserController::class, 'update'])->name('edit');
-            Route::delete('/delete', [InternalUserController::class, 'delete'])->name('delete');
+            Route::match(['get', 'post'], '/edit/{id}', [InternalUserController::class, 'update'])->name('edit');
+            Route::get('/view/{id}', [InternalUserController::class, 'view'])->name('view');
+            Route::delete('/delete/{id}', [InternalUserController::class, 'delete'])->name('delete');
+
+            // Staff/admin control actions
+            Route::post('/toggle-status/{id}', [InternalUserController::class, 'toggleStatus'])->name('toggleStatus');
+            Route::post('/send-reset-link/{id}', [InternalUserController::class, 'sendResetLink'])->name('sendResetLink');
+            Route::post('/change-role/{id}', [InternalUserController::class, 'changeRole'])->name('changeRole');
+            Route::post('/assign-permissions/{id}', [InternalUserController::class, 'assignPermissions'])->name('assignPermissions');
+            Route::get('/activity-log/{id}', [InternalUserController::class, 'activityLog'])->name('activityLog');
         });
 
         Route::group([
@@ -68,9 +76,13 @@ Route::middleware(['auth', 'abilities'])->group(function () {
         ], function () {
             Route::get('/', [UsersController::class, 'index'])->name('index');
             Route::match(['get', 'post'], '/add', [UsersController::class, 'add'])->name('add');
-            Route::match(['get', 'post'], '/edit', [UsersController::class, 'edit'])->name('edit');
-            Route::delete('/delete', [UsersController::class, 'delete'])->name('delete');
+            Route::match(['get', 'post'], '/edit/{id}', [UsersController::class, 'edit'])->name('edit');
+            Route::get('/view/{id}', [UsersController::class, 'view'])->name('view');
+            Route::delete('/delete/{id}', [UsersController::class, 'delete'])->name('delete');
 
+            Route::post('/toggle-status/{id}', [UsersController::class, 'toggleStatus'])->name('toggleStatus');
+            Route::post('/send-reset-link/{id}', [UsersController::class, 'sendResetLink'])->name('sendResetLink');
+            Route::post('/change-role/{id}', [UsersController::class, 'changeRole'])->name('changeRole');
         });
         
         Route::group([
@@ -88,9 +100,17 @@ Route::middleware(['auth', 'abilities'])->group(function () {
             'as' => 'agents.'
         ], function () {
             Route::get('/', [AgentController::class, 'index'])->name('index');
-            Route::match(['get', 'post'], '/add', [AgentController::class, 'create'])->name('add');
-            Route::match(['get', 'post'], '/edit', [AgentController::class, 'update'])->name('edit');
-            Route::delete('/delete', [AgentController::class, 'delete'])->name('delete');
+            Route::match(['get', 'post'], '/add', [AgentController::class, 'add'])->name('add');
+            Route::match(['get', 'post'], '/edit/{id}', [AgentController::class, 'edit'])->name('edit');
+            Route::get('/view/{id}', [AgentController::class, 'view'])->name('view');
+            Route::delete('/delete/{id}', [AgentController::class, 'delete'])->name('delete');
+
+            // Admin control actions (privacy-respecting)
+            Route::post('/toggle-status/{id}', [AgentController::class, 'toggleStatus'])->name('toggleStatus');
+            Route::post('/send-reset-link/{id}', [AgentController::class, 'sendResetLink'])->name('sendResetLink');
+            Route::post('/verify-license/{id}', [AgentController::class, 'verifyLicense'])->name('verifyLicense');
+            Route::post('/toggle-featured/{id}', [AgentController::class, 'toggleFeatured'])->name('toggleFeatured');
+            Route::get('/properties/{id}', [AgentController::class, 'properties'])->name('properties');
         });
 
         Route::group([

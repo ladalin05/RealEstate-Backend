@@ -132,6 +132,7 @@ class UserAuthController extends Controller
                         'username' => $result['user']->username,
                         'email'    => $result['user']->email,
                         'phone'    => $result['user']->phone,
+                        'profile_picture' => $result['user']->profile_picture,
                     ]]);
         } catch (Exception $e) {
             return response()->json([
