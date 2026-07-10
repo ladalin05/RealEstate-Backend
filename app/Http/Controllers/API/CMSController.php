@@ -50,6 +50,23 @@ class CMSController extends Controller
             'menus' => $menus,
         ]);
     }
+
+    public function getUserDashboard(Request $request)
+    {
+        try {
+            
+            $dash_data = $this->cmsService->getUserDashboard();
+            return response()->json([
+                'success' => true,
+                'data' => $dash_data,
+            ]);
+        } catch(\Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
     
     public function getContact(Request $request)
     {

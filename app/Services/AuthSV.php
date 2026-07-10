@@ -119,7 +119,6 @@ class AuthSV extends BaseService
    public function refreshToken($role)
    {
        if ($role == 'admin') {
-
            return Auth::guard('api')->setTTL( config('jwt.refresh_ttl'))->refresh(true);
        }
    

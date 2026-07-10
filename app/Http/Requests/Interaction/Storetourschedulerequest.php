@@ -20,8 +20,8 @@ class StoreTourScheduleRequest extends FormRequest
             'email'           => ['required', 'email', 'max:255'],
             'phone'           => ['nullable', 'string', 'max:30'],
             'tour_type'       => ['required', 'in:in-person,video-chat'],
-            'requested_date'  => ['required', 'date', 'after_or_equal:today'],
-            'requested_time'  => ['required', 'date_format:H:i'],
+            'schedule_date'  => ['required', 'date', 'after_or_equal:today'],
+            'schedule_time'  => ['required', 'date_format:H:i:s'],
             'message'         => ['nullable', 'string'],
         ];
     }
@@ -36,8 +36,8 @@ class StoreTourScheduleRequest extends FormRequest
             'email'           => $this->email,
             'phone'           => $this->phone ?? null,
             'tour_type'       => $this->tour_type,
-            'requested_date'  => $this->requested_date,
-            'requested_time'  => $this->requested_time,
+            'schedule_date'  => $this->schedule_date,
+            'schedule_time'  => $this->schedule_time,
             'message'         => $this->message ?? null,
             'status'          => 'pending',
         ];

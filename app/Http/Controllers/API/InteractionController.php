@@ -4,21 +4,28 @@ namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\Interaction\StoreTourScheduleRequest;
+use App\Http\Requests\Interaction\StoreRequestInfoRequest;
+use App\Models\Interaction\Tourschedule;
+use App\Models\Interaction\Requestinfo;
 use App\Services\BaseService;
-use App\Models\Interest;
-use App\Http\Requests\Property\StoreInquiryRequest;
 use App\Traits\FormatsDataCard;
 
-class InterestController extends Controller
+class InteractionController extends Controller
 {
     use FormatsDataCard;
+
     private BaseService $service;
 
     public function __construct()
     {
-        $this->service = new class extends BaseService {
-            protected function getQuery() { return Area::query(); }
+        $this->tour_service = new class extends BaseService {
+            protected function getQuery() { return Tourschedule::query(); }
+        };
+        $this->request_service = new class extends BaseService {
+            protected function getQuery() { return Requestinfo::query(); }
         };
     }
 
@@ -45,9 +52,10 @@ class InterestController extends Controller
         }
     }
 
-    public function scheduleTour(StoreInquiryRequest $request)
+    public function scheduleTour(StoreTourScheduleRequest $request)
     {
         try {
+            
             if(!auth('api')->user()) {
                 return $this->errorResponse(
                     message: __('messages.unauthorized'),
@@ -56,8 +64,8 @@ class InterestController extends Controller
             }
             $data = $request->validated();
             $data['user_id'] = auth('api')->id();
-            $data['type'] = 'schedule-tour';
-            $inquiry = $this->service->create($data);
+            $data['type'] = 'schedule-tour'; 
+            $tour_schedule = $this->tour_service->create($data);
 
             return $this->successResponse(
                 message: __('messages.schedule_tour_success'),
@@ -71,10 +79,10 @@ class InterestController extends Controller
         }
     }
 
-    public function requestInfo(StoreInquiryRequest $request)
+    public function requestInfo(StoreRequestInfoRequest $request)
     {
         try {
-            $data = $request->all();
+            $data = $request->validated();
             $data['user_id'] = auth('api')->id();
             $data['type'] = 'request-info';
             $inquiry = $this->service->create($data);

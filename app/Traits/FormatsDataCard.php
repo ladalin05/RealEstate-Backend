@@ -158,4 +158,47 @@ trait FormatsDataCard
 
         return $years . ' ' . ($years === 1 ? 'year' : 'years');
     }
+
+    public function transformInquiries($inquiries)
+    {
+        return $inquiries->map(function ($inquiry) {
+            return [
+                'id'          => $inquiry->id,
+                'property_id' => $inquiry->property_id,
+                'user_id'     => $inquiry->user_id,
+                'name'        => $inquiry->name,
+                'email'       => $inquiry->email,
+                'phone'       => $inquiry->phone,
+                'role'        => $inquiry->role,
+                'type'        => $inquiry->type,
+                'status'      => $inquiry->status,
+                'message'     => $inquiry->message,
+                'created_at'  => $inquiry->created_at,
+                'updated_at'  => $inquiry->updated_at,
+            ];
+        })->values();
+    }
+
+    public function transformTourSchedules($tourSchedules)
+    {
+        return $tourSchedules->map(function ($tourSchedule) {
+            return [
+                'id'              => $tourSchedule->id,
+                'property_title_en'  => $tourSchedule->property_title_en,
+                'property_title_km'  => $tourSchedule->property_title_kh,
+                'name'            => $tourSchedule->name,
+                'email'           => $tourSchedule->email,
+                'phone'           => $tourSchedule->phone,
+                'tour_type'       => $tourSchedule->tour_type,
+                'schedule_date'  => $tourSchedule->schedule_date,
+                'schedule_time'  => $tourSchedule->schedule_time,
+                'message'         => $tourSchedule->message,
+                'status'          => $tourSchedule->status,
+                'handled_by'      => $tourSchedule->handled_by,
+                'handled_at'      => $tourSchedule->handled_at,
+                'created_at'      => $tourSchedule->created_at,
+                'updated_at'      => $tourSchedule->updated_at,
+            ];
+        })->values();
+    }
 }

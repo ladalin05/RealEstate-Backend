@@ -8,7 +8,7 @@ use App\Http\Controllers\API\CategoryController;
 use App\Http\Controllers\API\PropertyController;
 use App\Http\Controllers\API\FilterController;
 use App\Http\Controllers\API\AgentController;
-use App\Http\Controllers\API\InterestController;
+use App\Http\Controllers\API\InteractionController;
 use App\Http\Controllers\API\BlogController;
 use App\Http\Controllers\DbMockup\EndpointController;
 
@@ -24,6 +24,7 @@ Route::prefix('auth')->group(function () {
 Route::prefix('cms')->group(function () {
     Route::get('/home', [CMSController::class, 'getHomeData']);
     Route::get('/featured-properties', [CMSController::class, 'getFeaturedProperties']);
+    Route::get('/user-dashboard', [CMSController::class, 'getUserDashboard']);
     Route::get('/menu', [CMSController::class, 'getMenu']);
     Route::get('/setting', [CMSController::class, 'getSetting']);
     Route::get('/contact', [CMSController::class, 'getContact']);
@@ -42,9 +43,9 @@ Route::prefix('user-management')->group(function () {
     Route::put('update-info', [UserAuthController::class, 'updateInfo']);
 });
 
-Route::prefix('interest')->group(function () {
-    Route::post('schedule-tour', [InterestController::class, 'scheduleTour']);
-    Route::post('request-info', [InterestController::class, 'requestInfo']);
+Route::prefix('interaction')->group(function () {
+    Route::post('schedule-tour', [InteractionController::class, 'scheduleTour']);
+    Route::post('request-info',  [InteractionController::class, 'requestInfo']);
 });
 
 Route::prefix('property')->group(function () {

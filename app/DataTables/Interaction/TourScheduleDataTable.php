@@ -27,14 +27,14 @@ class TourScheduleDataTable extends DataTable
             ->editColumn('tour_type', function ($row) {
                 return ucfirst(str_replace('-', ' ', $row->tour_type));
             })
-            ->editColumn('requested_date', function ($row) {
-                return $row->requested_date
-                    ? date('Y-m-d', strtotime($row->requested_date))
+            ->editColumn('schedule_date', function ($row) {
+                return $row->schedule_date
+                    ? date('Y-m-d', strtotime($row->schedule_date))
                     : '-';
             })
-            ->editColumn('requested_time', function ($row) {
-                return $row->requested_time
-                    ? date('H:i', strtotime($row->requested_time))
+            ->editColumn('schedule_time', function ($row) {
+                return $row->schedule_time
+                    ? date('H:i', strtotime($row->schedule_time))
                     : '-';
             })
             ->addColumn('status_badge', function ($row) {
@@ -112,10 +112,10 @@ class TourScheduleDataTable extends DataTable
             Column::make('tour_type')
                 ->title('Tour Type'),
 
-            Column::make('requested_date')
+            Column::make('schedule_date')
                 ->title('Date'),
 
-            Column::make('requested_time')
+            Column::make('schedule_time')
                 ->title('Time'),
 
             Column::make('status_badge')

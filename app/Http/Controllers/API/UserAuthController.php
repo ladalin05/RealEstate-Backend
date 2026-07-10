@@ -235,7 +235,7 @@ class UserAuthController extends Controller
         try {
             $role = 'user';
             $token = $this->AuthSV->refreshToken($role);
-            return $this->successResponse($token, 'Token refreshed successfully');
+            return $this->successResponse('Token refreshed successfully', $token);
         } catch (\Exception $e) {
             return $this->errorResponse($e->getMessage(), $e->getCode());
         }

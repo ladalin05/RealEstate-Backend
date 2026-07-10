@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\UserManagement\User;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 use Firebase\JWT\JWT;
 use Exception;
 
@@ -60,7 +61,11 @@ class GoogleService
             ]);
         }
 
-        $token = self::generateToken($user->id);
+        $token = Auth::guard('api-user')->login($user);
+
+        if (!$token) {
+            throw new Exception('Unable to create token');
+        }
 
         return [
             'user'  => $user,

@@ -18,8 +18,8 @@ class TourSchedule extends Model
         'email',
         'phone',
         'tour_type',
-        'requested_date',
-        'requested_time',
+        'schedule_date',
+        'schedule_time',
         'message',
         'status',
         'handled_by',
@@ -27,7 +27,7 @@ class TourSchedule extends Model
     ];
 
     protected $casts = [
-        'requested_date' => 'date',
+        'schedule_date' => 'date',
         'handled_at'     => 'datetime',
     ];
 

@@ -9,6 +9,8 @@ use App\Repositories\CMSRepository;
 use App\Models\UserManagement\Agent;
 use App\Models\Property\PropertyCategory;
 use App\Repositories\PropertyRepository;
+use App\Models\Interaction\Inquiry;
+use App\Models\Interaction\TourSchedule;
 use App\Traits\FormatsDataCard;
 
 class CMSService
@@ -31,6 +33,15 @@ class CMSService
             'propertyCategories' => $this->getPropertyCategories(),
             'propertiesForRent'  => $this->getPropertiesForRent(),
             'agents'             => $this->getAgents(),
+        ];
+    }
+
+    public function getUserDashboard(): array
+    {
+        return [
+            'favouriteProperties' => $this->getFavouriteProperties(),
+            'tourSchedules' => $this->getTourSchedule(),
+            'inquiries' => $this->getInquiry()
         ];
     }
 
@@ -171,6 +182,32 @@ class CMSService
             )
             ->get();
         return $this->transformAgents($agents);
+    }
+
+    public function getFavouriteProperties()
+    {
+        $properties = $this->propertyRepository->getFavouriteProperties(auth('api')->id());
+        return $this->transformProperties($properties);
+    }
+
+    public function getTourSchedule()
+    {
+        $tourSchedules = TourSchedule::query()
+                            ->join('properties', 'tour_schedules.property_id', 'properties.id')
+                            ->select('tour_schedules.*', 'properties.title_en as property_title_en', 'properties.title_kh as property_title_kh')
+                            ->where('tour_schedules.user_id', auth('api')->id())
+                            ->orderBy('tour_schedules.schedule_date', 'desc')
+                            ->get();
+        return $this->transformTourSchedules($tourSchedules);
+    }
+
+    public function getInquiry()
+    { 
+        $inquiries = Inquiry::query()
+            ->where('user_id', auth('api')->id())
+            ->orderBy('created_at', 'desc')
+            ->get();
+        return $this->transformInquiries($inquiries);
     }
 
 }
