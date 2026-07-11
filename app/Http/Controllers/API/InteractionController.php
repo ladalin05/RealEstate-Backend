@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\Interaction\StoreTourScheduleRequest;
 use App\Http\Requests\Interaction\StoreRequestInfoRequest;
 use App\Models\Interaction\Tourschedule;
+use App\Models\Interaction\RequestMessage;
 use App\Models\Interaction\Requestinfo;
 use App\Services\BaseService;
 use App\Traits\FormatsDataCard;
@@ -89,7 +90,15 @@ class InteractionController extends Controller
             }
             $data = $request->validated();
             $data['user_id'] = auth('api')->id();
-            $inquiry = $this->request_service->create($data);
+            $message = $data['message'];
+            unset($data['message']);
+            $requestInfo = $this->request_service->create($data);
+
+            RequestMessage::create([
+                'request_info_id' => $requestInfo->id,
+                'sender'          => 'user',
+                'message'         => $message,
+            ]);
 
             return $this->successResponse(
                 message: __('messages.request_info_success'),

@@ -35,7 +35,7 @@ class StoreRequestInfoRequest extends FormRequest
             'phone'       => $this->phone ?? null,
             'role'        => $this->role ?? null,
             'message'     => $this->message,
-            'status'      => 'new',
+            'status'      => 'pending',
         ];
     }
 }

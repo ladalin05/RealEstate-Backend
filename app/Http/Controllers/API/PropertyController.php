@@ -30,13 +30,13 @@ class PropertyController extends Controller
 
     public function getProperty(Request $request)
     {
-        $params['filter_by'] = ['properties.status' => 1];
+        $params['filter_by'] = ['properties.status' => 'active'];
         $params['sort_by']   = 'properties.id';
         $params['sort_dir']  = 'desc';
 
         $property = $this->repository->getAll($params);
 
-        return $this->successResponse('Property list', $this->transformProperties($property));
+        return $this->successResponse('Property list', $this->paginatedResponse($property));
     }
 
     public function getPropertyDetails(Request $request)
@@ -84,11 +84,31 @@ class PropertyController extends Controller
     }
     
 
-    public function filterProperties(Request $request): JsonResponse
+    public function filterProperties(Request $request)
     {
-        $property = $this->repository->filterProperties($request->all());
+        $params = $request->only([
+            'search', 'category_id', 'area_id', 'purpose',
+            'furnishing', 'bathrooms', 'rooms',
+            'min_price', 'max_price',
+            'sort_by', 'sort_dir', 'page', 'limit',
+        ]);
 
-        return $this->successResponse('Property list', $this->transformProperties($property));
+        $params['filter_by'] = array_merge($params['filter_by'] ?? [], ['properties.status' => 1]);
+
+        $property = $this->repository->getAll($params);
+
+        return $this->successResponse('Filtered property list', $this->paginatedResponse($property));
+    }
+
+    protected function paginatedResponse($paginator): array
+    {
+        return [
+            'data'         => $this->transformProperties($paginator),
+            'current_page' => $paginator->currentPage(),
+            'last_page'    => $paginator->lastPage(),
+            'total'        => $paginator->total(),
+            'per_page'     => $paginator->perPage(),
+        ];
     }
 
     public function getDataFillter(): JsonResponse

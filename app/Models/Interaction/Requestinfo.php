@@ -4,12 +4,9 @@ namespace App\Models\Interaction;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\UserManagement\User;
-use App\Models\UserManagement\Admin;
 
 class RequestInfo extends Model
 {
-    protected $table = 'request_infos';
-
     protected $fillable = [
         'property_id',
         'agent_id',
@@ -18,40 +15,27 @@ class RequestInfo extends Model
         'email',
         'phone',
         'role',
-        'message',
         'status',
-        'reply_message',
-        'replied_by',
-        'replied_at',
     ];
-
-    protected $casts = [
-        'replied_at' => 'datetime',
-    ];
-
-    /*
-    |--------------------------------------------------------------------------
-    | Relationships
-    |--------------------------------------------------------------------------
-    */
 
     public function property()
     {
-        return $this->belongsTo(Property::class, 'property_id');
+        return $this->belongsTo(Property::class);
     }
 
     public function agent()
     {
-        return $this->belongsTo(Agent::class, 'agent_id');
+        return $this->belongsTo(Agent::class);
     }
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class);
     }
 
-    public function repliedBy()
+    public function messages()
     {
-        return $this->belongsTo(Admin::class, 'replied_by');
+        return $this->hasMany(RequestMessage::class)
+                    ->orderBy('created_at');
     }
 }
