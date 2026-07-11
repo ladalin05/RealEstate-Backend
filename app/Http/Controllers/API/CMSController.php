@@ -25,9 +25,23 @@ class CMSController extends Controller
 
     public function getHomeData(Request $request)
     {
-        $data = $this->cmsService->getHomeData();
+        try {
+            // if(!auth('api')->user()) {
+            //     return $this->errorResponse(
+            //         message: __('messages.unauthorized'),
+            //         code: 401
+            //     );
+            // }
 
-        return $this->successResponse('Home data fetched successfully', $data);
+            $data = $this->cmsService->getHomeData();
+
+            return $this->successResponse('Home data fetched successfully', $data);
+        } catch(\Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function getFeaturedProperties(Request $request)

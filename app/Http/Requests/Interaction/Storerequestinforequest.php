@@ -19,7 +19,7 @@ class StoreRequestInfoRequest extends FormRequest
             'name'        => ['required', 'string', 'max:150'],
             'email'       => ['required', 'email', 'max:255'],
             'phone'       => ['nullable', 'string', 'max:30'],
-            'role'        => ['nullable', 'in:buyer,tenant,agent,other'],
+            'role'        => ['nullable', 'string', 'max:150'],
             'message'     => ['required', 'string'],
         ];
     }

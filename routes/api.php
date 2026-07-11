@@ -37,6 +37,7 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::prefix('user-management')->group(function () {
+    Route::get('/get-user', [UserAuthController::class, 'getInfo']);
     Route::get('/agents', [AgentController::class, 'getAllAgents']);
     Route::get('/agent-detail', [AgentController::class, 'getAgentDetail']);
     Route::get('/get-info', [UserAuthController::class, 'getInfo']);

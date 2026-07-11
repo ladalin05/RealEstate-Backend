@@ -55,7 +55,6 @@ class InteractionController extends Controller
     public function scheduleTour(StoreTourScheduleRequest $request)
     {
         try {
-            
             if(!auth('api')->user()) {
                 return $this->errorResponse(
                     message: __('messages.unauthorized'),
@@ -82,10 +81,15 @@ class InteractionController extends Controller
     public function requestInfo(StoreRequestInfoRequest $request)
     {
         try {
+            if(!auth('api')->user()) {
+                return $this->errorResponse(
+                    message: __('messages.unauthorized'),
+                    code: 401
+                );
+            }
             $data = $request->validated();
             $data['user_id'] = auth('api')->id();
-            $data['type'] = 'request-info';
-            $inquiry = $this->service->create($data);
+            $inquiry = $this->request_service->create($data);
 
             return $this->successResponse(
                 message: __('messages.request_info_success'),
