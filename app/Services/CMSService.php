@@ -9,7 +9,7 @@ use App\Repositories\CMSRepository;
 use App\Models\UserManagement\Agent;
 use App\Models\Property\PropertyCategory;
 use App\Repositories\PropertyRepository;
-use App\Models\Interaction\Inquiry;
+use App\Models\Interaction\RequestInfo;
 use App\Models\Interaction\TourSchedule;
 use App\Traits\FormatsDataCard;
 
@@ -203,11 +203,11 @@ class CMSService
 
     public function getInquiry()
     { 
-        $inquiries = Inquiry::query()
+        $requestInfos = RequestInfo::query()
             ->where('user_id', auth('api')->id())
             ->orderBy('created_at', 'desc')
             ->get();
-        return $this->transformInquiries($inquiries);
+        return $this->transformRequestInfos($requestInfos);
     }
 
 }

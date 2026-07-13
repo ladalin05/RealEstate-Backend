@@ -159,9 +159,9 @@ trait FormatsDataCard
         return $years . ' ' . ($years === 1 ? 'year' : 'years');
     }
 
-    public function transformInquiries($inquiries)
+    public function transformRequestInfos($requestInfos)
     {
-        return $inquiries->map(function ($inquiry) {
+        return $requestInfos->map(function ($inquiry) {
             return [
                 'id'          => $inquiry->id,
                 'property_id' => $inquiry->property_id,
@@ -172,7 +172,6 @@ trait FormatsDataCard
                 'role'        => $inquiry->role,
                 'type'        => $inquiry->type,
                 'status'      => $inquiry->status,
-                'message'     => $inquiry->message,
                 'created_at'  => $inquiry->created_at,
                 'updated_at'  => $inquiry->updated_at,
             ];
@@ -190,14 +189,100 @@ trait FormatsDataCard
                 'email'           => $tourSchedule->email,
                 'phone'           => $tourSchedule->phone,
                 'tour_type'       => $tourSchedule->tour_type,
-                'schedule_date'  => $tourSchedule->schedule_date,
-                'schedule_time'  => $tourSchedule->schedule_time,
+                'schedule_date'   => $tourSchedule->schedule_date,
+                'schedule_time'   => $tourSchedule->schedule_time,
                 'message'         => $tourSchedule->message,
                 'status'          => $tourSchedule->status,
                 'handled_by'      => $tourSchedule->handled_by,
                 'handled_at'      => $tourSchedule->handled_at,
                 'created_at'      => $tourSchedule->created_at,
                 'updated_at'      => $tourSchedule->updated_at,
+            ];
+        })->values();
+    }
+
+    public function formatRequestInfo($requestInfos)
+    {
+        return $requestInfos->map(function ($requestInfo) {
+            return [
+                'id'         => $requestInfo->id,
+                'name'       => $requestInfo->name,
+                'email'      => $requestInfo->email,
+                'phone'      => $requestInfo->phone,
+                'role'       => $requestInfo->role,
+                'status'     => $requestInfo->status,
+                'created_at' => $requestInfo->created_at,
+                'updated_at' => $requestInfo->updated_at,
+
+                'property' => $requestInfo->property ? [
+                    'id'            => $requestInfo->property->id,
+                    'property_code' => $requestInfo->property->property_code,
+                    'title_en'      => $requestInfo->property->title_en,
+                    'price'         => $requestInfo->property->price,
+                    'currency'      => $requestInfo->property->currency,
+                    'main_image'    => $requestInfo->property->main_image,
+                ] : null,
+
+                'agent' => $requestInfo->agent ? [
+                    'id'            => $requestInfo->agent->id,
+                    'name'          => $requestInfo->agent->first_name . ' ' . $requestInfo->agent->last_name,
+                    'profile_image' => $requestInfo->agent->profile_image,
+                ] : null,
+
+                'user' => $requestInfo->user ? [
+                    'id'   => $requestInfo->user->id,
+                    'name' => $requestInfo->user->name,
+                ] : null,
+
+                // messages is a collection (hasMany), so map through it
+                'messages' => $requestInfo->messages ? $requestInfo->messages->map(function ($msg) {
+                    return [
+                        'id'         => $msg->id,
+                        'message'    => $msg->message,
+                        'sender'     => $msg->sender,
+                        'is_read'    => $msg->is_read,
+                        'created_at' => $msg->created_at,
+                    ];
+                })->values() : [],
+            ];
+        })->values();
+    }
+
+    public function formatTourSchedule($tourSchedules)
+    {
+        return $tourSchedules->map(function ($tourSchedule) {
+            return [
+                'id'         => $tourSchedule->id,
+                'name'       => $tourSchedule->name,
+                'email'      => $tourSchedule->email,
+                'phone'      => $tourSchedule->phone,
+                'tour_type'  => $tourSchedule->tour_type,
+                'schedule_date' => $tourSchedule->schedule_date,
+                'schedule_time' => $tourSchedule->schedule_time,
+                'message' => $tourSchedule->message,
+                'status' => $tourSchedule->status,
+                'created_at' => $tourSchedule->created_at,
+                'updated_at' => $tourSchedule->updated_at,
+
+                'property' => $tourSchedule->property ? [
+                    'id'            => $tourSchedule->property->id,
+                    'property_code' => $tourSchedule->property->property_code,
+                    'title_en'      => $tourSchedule->property->title_en,
+                    'price'         => $tourSchedule->property->price,
+                    'currency'      => $tourSchedule->property->currency,
+                    'main_image'    => $tourSchedule->property->main_image,
+                ] : null,
+
+                'agent' => $tourSchedule->agent ? [
+                    'id'            => $tourSchedule->agent->id,
+                    'name'          => $tourSchedule->agent->first_name . ' ' . $tourSchedule->agent->last_name,
+                    'profile_image' => $tourSchedule->agent->profile_image,
+                ] : null,
+
+                'user' => $tourSchedule->user ? [
+                    'id'   => $tourSchedule->user->id,
+                    'name' => $tourSchedule->user->name,
+                ] : null,
             ];
         })->values();
     }

@@ -45,8 +45,10 @@ Route::prefix('user-management')->group(function () {
 });
 
 Route::prefix('interaction')->group(function () {
-    Route::post('schedule-tour', [InteractionController::class, 'scheduleTour']);
-    Route::post('request-info',  [InteractionController::class, 'requestInfo']);
+    Route::get('/get-request-info', [InteractionController::class, 'getRequestInfo']);
+    Route::get('/get-schedule-tour', [InteractionController::class, 'getScheduleTour']);
+    Route::post('/schedule-tour', [InteractionController::class, 'scheduleTour']);
+    Route::post('/request-info',  [InteractionController::class, 'requestInfo']);
 });
 
 Route::prefix('property')->group(function () {

@@ -30,7 +30,7 @@ class InteractionController extends Controller
         };
     }
 
-    public function inquiry()
+    public function getRequestInfo()
     {
         try {
             if(!auth('api')->user()) {
@@ -39,11 +39,37 @@ class InteractionController extends Controller
                     code: 401
                 );
             }
-            $inquiry = $this->service->all();
-
+            $params['filter_by'] = ['user_id' => auth('api')->id()];
+            $requestInfo = $this->request_service->getAll($params);
+            $requestInfo->load(['property', 'agent', 'user', 'messages']);
             return $this->successResponse(
-                message: __('messages.schedule_tour_success'),
-                data: $this->formatDataCard($inquiry),
+                message: __('messages.request_info_success'),
+                data: $this->formatRequestInfo($requestInfo),
+            );
+        } catch (\Exception $ex) {
+            return $this->errorResponse(
+                message: $ex->getMessage(),
+                code: 500
+            );
+        }
+    }
+
+    public function getScheduleTour()
+    {
+        
+        try {
+            if(!auth('api')->user()) {
+                return $this->errorResponse(
+                    message: __('messages.unauthorized'),
+                    code: 401
+                );
+            }
+            $params['filter_by'] = ['user_id' => auth('api')->id()];
+            $tourSchedule = $this->tour_service->getAll($params);
+            $tourSchedule->load(['property', 'agent', 'user']);
+            return $this->successResponse(
+                message: __('messages.request_info_success'),
+                data: $this->formatTourSchedule($tourSchedule),
             );
         } catch (\Exception $ex) {
             return $this->errorResponse(
