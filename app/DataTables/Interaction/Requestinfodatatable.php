@@ -5,7 +5,6 @@ namespace App\DataTables\Interaction;
 use App\Models\Interaction\RequestInfo;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Html\Button;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Yajra\DataTables\Services\DataTable;
 
@@ -17,52 +16,65 @@ class RequestInfoDataTable extends DataTable
             ->eloquent($query)
             ->addIndexColumn()
             ->addColumn('property', function ($row) {
-                return $row->property_title ?? '-';
+                return $row->property->title_en ?? '-';
             })
             ->addColumn('agent', function ($row) {
-                return $row->agent_name ?? '-';
+                return $row->agent
+                    ? trim($row->agent->first_name . ' ' . $row->agent->last_name)
+                    : '-';
             })
             ->addColumn('requester', function ($row) {
-                return $row->user_name ?? $row->name ?? '-';
+                return $row->user->name ?? $row->name ?? '-';
             })
             ->editColumn('role', function ($row) {
                 return $row->role ? ucfirst($row->role) : '-';
             })
-            ->editColumn('message', function ($row) {
-                return Str::limit($row->message, 50);
+            ->addColumn('message', function ($row) {
+                $count = $row->messages->count();
+                $last  = $row->messages->last();
+                $preview = $last ? Str::limit($last->message, 50) : '-';
+
+                if ($count === 0) {
+                    return $preview;
+                }
+
+                return $preview . ' <span class="badge bg-light text-dark border">' . $count . ' msg' . ($count > 1 ? 's' : '') . '</span>';
             })
             ->addColumn('status_badge', function ($row) {
                 $colors = [
-                    'new'     => 'info',
-                    'read'    => 'secondary',
-                    'replied' => 'success',
+                    'pending' => 'info',
+                    'active'  => 'success',
                     'closed'  => 'dark',
                 ];
                 $color = $colors[$row->status] ?? 'secondary';
 
                 return '<span class="badge bg-' . $color . '">' . ucfirst($row->status) . '</span>';
             })
+            ->addColumn('unread_badge', function ($row) {
+                $count = $row->messages
+                    ->where('sender', 'user')
+                    ->where('is_read', false)
+                    ->count();
+
+                if ($count === 0) {
+                    return '<span class="text-muted">-</span>';
+                }
+
+                return '<span class="badge bg-danger">' . $count . ' new</span>';
+            })
             ->editColumn('created_at', function ($row) {
                 return $row->created_at
-                    ? date('Y-m-d H:i', strtotime($row->created_at))
+                    ? $row->created_at->format('Y-m-d H:i')
                     : '-';
             })
             ->addColumn('action', fn($row) => view('interaction.request-infos.action', compact('row')))
-            ->rawColumns(['status_badge', 'action']);
+            ->rawColumns(['message', 'status_badge', 'unread_badge', 'action']);
     }
 
     public function query(RequestInfo $model)
     {
         return $model->newQuery()
-            ->leftJoin('properties', 'request_infos.property_id', 'properties.id')
-            ->leftJoin('agents', 'request_infos.agent_id', 'agents.id')
-            ->leftJoin('users', 'request_infos.user_id', 'users.id')
-            ->select(
-                'request_infos.*',
-                'properties.title_en as property_title',
-                DB::raw("CONCAT(agents.first_name, ' ', agents.last_name) as agent_name"),
-                'users.name as user_name'
-            );
+            ->with(['property', 'agent', 'user', 'messages']);
     }
 
     public function html()
@@ -71,7 +83,7 @@ class RequestInfoDataTable extends DataTable
             ->setTableId('request-infos-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
-            ->orderBy(8, 'desc')
+            ->orderBy(10, 'desc')
             ->selectStyleSingle()
             ->buttons([
                 Button::make('excel'),
@@ -92,11 +104,20 @@ class RequestInfoDataTable extends DataTable
                 ->searchable(false)
                 ->orderable(false),
 
-            Column::make('property')
-                ->title('Property'),
+            Column::computed('property')
+                ->title('Property')
+                ->orderable(false)
+                ->searchable(false),
 
-            Column::make('requester')
-                ->title('Requested By'),
+            Column::computed('agent')
+                ->title('Agent')
+                ->orderable(false)
+                ->searchable(false),
+
+            Column::computed('requester')
+                ->title('Requested By')
+                ->orderable(false)
+                ->searchable(false),
 
             Column::make('email')
                 ->title('Email'),
@@ -107,11 +128,18 @@ class RequestInfoDataTable extends DataTable
             Column::make('role')
                 ->title('Role'),
 
-            Column::make('message')
-                ->title('Message'),
+            Column::computed('message')
+                ->title('Message')
+                ->orderable(false)
+                ->searchable(false),
 
-            Column::make('status_badge')
+            Column::computed('status_badge')
                 ->title('Status')
+                ->orderable(false)
+                ->searchable(false),
+
+            Column::computed('unread_badge')
+                ->title('Unread')
                 ->orderable(false)
                 ->searchable(false),
 

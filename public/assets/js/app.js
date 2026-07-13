@@ -740,6 +740,25 @@ function showLoading() {
     // You could trigger a spinner here
 }
 
+function showView(e) {
+    e.preventDefault();
+    var url = $(e.currentTarget).attr('href');
+    $.ajax({
+        url: url,
+        type: 'GET',
+        beforeSend: showLoading,
+        success: function (res) {
+            $('#action-modal #action-form').html('').removeClass('was-validated');
+            if (res.status == 'success') {
+                $('#action-modal .modal-title').text(res.title);
+                $('#action-modal #action-form').html(res.html);
+                $('#action-modal form').attr('action', url);
+                $('#action-modal').modal('show');
+            }
+        }
+    });
+}
+
 function addData(e) {
     e.preventDefault();
     var url = $(e.currentTarget).attr('href');

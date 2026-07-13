@@ -41,6 +41,16 @@ abstract class BaseService {
         });
     }
 
+    public function getById(string $modelClass, string $id)
+    {
+        $model = new $modelClass;
+        $row = $model->newQuery()->where('id', $id)->first();
+        if (!$row) {
+            abort(404, "Data not found.");
+        }
+        return $row;
+    }
+
     // Get by global_id
     public function getByGlobalId(string $modelClass, string $globalId)
     {

@@ -295,4 +295,5 @@ return [
     'create_post' => 'បង្កើតអត្ថបទ',
     'update_post' => 'កែប្រែអត្ថបទ',
     'select_area' => 'ជ្រើសរើសតំបន់',
+    'request-info' => 'សំណើពត៌មាន',
 ];

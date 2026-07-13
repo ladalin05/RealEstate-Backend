@@ -134,6 +134,7 @@ Route::middleware(['auth', 'abilities'])->group(function () {
             'as'     => 'properties.'
         ], function () {
             Route::get('/',                         [PropertyController::class, 'index'])->name('index');
+            Route::get('/show',                     [PropertyController::class, 'showProperty'])->name('show');
             Route::match(['get', 'post'], '/add',   [PropertyController::class, 'create'])->name('add');
             Route::match(['get', 'post'], '/edit',  [PropertyController::class, 'update'])->name('edit');
             Route::get('/delete',                   [PropertyController::class, 'delete'])->name('deleted');

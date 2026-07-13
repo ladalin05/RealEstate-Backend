@@ -31,6 +31,12 @@
 
     <ul class="dropdown-menu dropdown-menu-end shadow-sm">
         <li>
+            <a href="{{route('property.properties.show', ['id' => $row->id])}}" onclick="showView(event)" class="dropdown-item">
+                <i class="fa fa-eye"></i>
+                View
+            </a>
+        </li>
+        <li>
             <a href="{{ route('property.properties.edit', ['id' => $row->id]) }}" class="dropdown-item">
                 <i class="ph ph-pencil-simple me-2 text-success"></i>
                 Edit

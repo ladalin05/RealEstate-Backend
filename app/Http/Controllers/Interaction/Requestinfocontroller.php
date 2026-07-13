@@ -8,6 +8,7 @@ use App\Http\Requests\Interaction\StoreRequestInfoRequest;
 use App\Http\Requests\Interaction\ReplyRequestInfoRequest;
 use App\Models\Interaction\RequestInfo;
 use App\Services\BaseService;
+use Illuminate\Http\Request;
 
 class RequestInfoController extends Controller
 {
@@ -28,32 +29,49 @@ class RequestInfoController extends Controller
         return $dataTable->render('interaction.request-infos.index');
     }
 
-    /**
-     * Admin endpoint — view a single inquiry.
-     */
-    public function show(string $id)
+    public function show(Request $request, string $id)
     {
         try {
-            $requestInfo = $this->service->find($id);
-
-            return view('interaction.request-infos.show', compact('requestInfo'));
+            $requestInfo = RequestInfo::find($id);
+            $requestInfo->load(['property', 'agent', 'user', 'messages']);
+    
+            $requestInfo->messages()
+                ->where('sender', 'user')
+                ->where('is_read', false)
+                ->update([
+                    'is_read' => true,
+                    'read_at' => now(),
+                ]);
+    
+            return $this->modalResponse(
+            title: __('global.request-info'),
+                view:  'interaction.request-infos.show',
+                data:  ['requestInfo' => $requestInfo],
+            );
         } catch (\Throwable $ex) {
             report($ex);
-
+    
             return $this->errorResponse(
-                message: __('messages.something_went_wrong'),
+                message: $ex->getMessage(),
                 code: 500
             );
         }
     }
-
     /**
-     * Admin endpoint — mark an inquiry as read.
+     * Admin endpoint — mark an inquiry's unread user messages as read.
      */
     public function markAsRead(string $id)
     {
         try {
-            $requestInfo = $this->service->update(['status' => 'read'], $id);
+            $requestInfo = $this->service->find($id);
+
+            $requestInfo->messages()
+                ->where('sender', 'user')
+                ->where('is_read', false)
+                ->update([
+                    'is_read' => true,
+                    'read_at' => now(),
+                ]);
 
             return $this->successResponse(
                 message: __('messages.mark_as_read_success'),
@@ -69,22 +87,27 @@ class RequestInfoController extends Controller
         }
     }
 
-    /**
-     * Admin endpoint — reply to an inquiry.
-     */
     public function reply(ReplyRequestInfoRequest $request, string $id)
     {
         try {
             $data = $request->validated();
-            $data['status'] = 'replied';
-            $data['replied_by'] = auth()->id();
-            $data['replied_at'] = now();
 
-            $requestInfo = $this->service->update($data, $id);
+            $requestInfo = $this->service->find($id);
+
+            $message = $requestInfo->messages()->create([
+                'sender'  => 'agent',
+                'message' => $data['message'],
+                'is_read' => true,
+                'read_at' => now(),
+            ]);
+
+            if ($requestInfo->status === 'pending') {
+                $requestInfo = $this->service->update(['status' => 'active'], $id);
+            }
 
             return $this->successResponse(
                 message: __('messages.reply_request_info_success'),
-                data: $requestInfo,
+                data: $message,
             );
         } catch (\Throwable $ex) {
             report($ex);

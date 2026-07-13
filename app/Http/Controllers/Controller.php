@@ -25,7 +25,7 @@ abstract class Controller
         ], $code);
     }
 
-    protected function modalResponse($title, $view, $data, $action, $modal = 'action-modal')
+    protected function modalResponse($title, $view, $data, $action = '', $modal = 'action-modal')
     {
         return response()->json([
             'title'   => $title,

@@ -17,8 +17,9 @@ class RequestMessage extends Model
     ];
 
     protected $casts = [
-        'is_read' => 'boolean',
-        'read_at' => 'datetime',
+        'is_read'    => 'boolean',
+        'read_at'    => 'datetime',
+        'created_at' => 'datetime',
     ];
 
     public function requestInfo()

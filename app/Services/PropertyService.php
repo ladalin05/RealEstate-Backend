@@ -54,12 +54,6 @@ class PropertyService extends BaseService
 
     // ─── Data splitting ───────────────────────────────────────────────────────
 
-    /**
-     * Pull out the pivot/child-table data (gallery, amenities, features) that
-     * doesn't live directly on the `properties` row — everything else
-     * (including address_en/address_kh/latitude/longitude, which are real
-     * columns on `properties`) stays in $propertyData.
-     */
     private function splitData(array $params): array
     {
         $relationKeys = [

@@ -6,13 +6,18 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Property\StorePropertyRequest;
 use App\Http\Requests\Property\UpdatePropertyRequest;
 use App\DataTables\Property\PropertyDataTable;
+use App\Repositories\PropertyRepository;
+use App\Models\Property\PropertyGallery;
 use App\Models\Property\Property;
 use App\Services\PropertyService;
+use App\Traits\FormatsDataCard;
 use Illuminate\Http\Request;
 
 class PropertyController extends Controller
 {
-    public function __construct(protected PropertyService $service) {}
+    use FormatsDataCard;
+
+    public function __construct(protected PropertyService $service, protected PropertyRepository $repository) {}
 
     public function index(PropertyDataTable $dataTable)
     {
@@ -78,5 +83,30 @@ class PropertyController extends Controller
             message: __('messages.delete_property_successfully'),
             route: route('property.properties.index'),
         );
+    }
+
+    public function showProperty(Request $request)
+    {
+        try {
+
+            $property = $this->repository->getOneDetail($request->id);
+
+            $gallery_images = PropertyGallery::where('property_id', $property->id)
+                ->orderBy('id')
+                ->get();
+
+            return $this->modalResponse(
+                title: __('global.property'),
+                view:  'property.properties.show',
+                data:  ['propertyInfo' => $this->transformPropertyDetail($property, $gallery_images)],
+            );
+        } catch (\Throwable $ex) {
+            report($ex);
+    
+            return $this->errorResponse(
+                message: $ex->getMessage(),
+                code: 500
+            );
+        }
     }
 }

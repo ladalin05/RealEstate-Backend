@@ -293,4 +293,5 @@ return [
     'create_post' => 'Create Post',
     'update_post' => 'Update Post',
     'select_area' => 'Select Area',
+    'request-info' => 'Request Info',
 ];
