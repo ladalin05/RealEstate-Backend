@@ -11,6 +11,7 @@ use App\Models\UserManagement\User;
 use App\Models\Blog\BlogCategory;
 use App\Models\Blog\BlogTag;
 use App\Models\Blog\BlogPost;
+use App\Models\Location\Province;
 use App\Models\Admin\Permission;
 use App\Models\Property\Area;
 use App\Models\Property\Amenity;
@@ -309,6 +310,14 @@ if (!function_exists('getRentalPeriods')) {
             ['value' => 'monthly', 'name' => 'Monthly',], 
             ['value' => 'yearly', 'name' => 'Yearly',], 
         ];
+    }
+}
+
+if (!function_exists('getProvince')) {
+    function getProvince()
+    {
+        $province = Province::all();
+        return $province;
     }
 }
 

@@ -4,6 +4,8 @@ namespace App\Models\Interaction;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\UserManagement\User;
+use App\Models\Property\Property;
+use App\Models\UserManagement\Agent;
 use App\Models\UserManagement\Admin;
 
 class TourSchedule extends Model

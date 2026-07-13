@@ -29,10 +29,10 @@ class RequestInfoController extends Controller
         return $dataTable->render('interaction.request-infos.index');
     }
 
-    public function show(Request $request, string $id)
+    public function show(Request $request)
     {
         try {
-            $requestInfo = RequestInfo::find($id);
+            $requestInfo = RequestInfo::find($request->id);
             $requestInfo->load(['property', 'agent', 'user', 'messages']);
     
             $requestInfo->messages()
@@ -57,6 +57,7 @@ class RequestInfoController extends Controller
             );
         }
     }
+    
     /**
      * Admin endpoint — mark an inquiry's unread user messages as read.
      */

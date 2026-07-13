@@ -1,22 +1,6 @@
 <script>
     $(document).ready(function () {
 
-        // ✅ Load Province first
-        $('#province').focus(function () {
-            if ($('#province').data('loaded')) return;
-
-            $.get('/get-province', function (data) {
-                $('#province').html('<option value="">Select Province</option>');
-
-                data.forEach(item => {
-                    $('#province').append(
-                        `<option value="${item.id}">${item.name_en}</option>`
-                    );
-                });
-
-                $('#province').data('loaded', true);
-            });
-        });
 
         // ✅ Province → District
         $('#province').change(function () {

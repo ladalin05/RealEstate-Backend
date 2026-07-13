@@ -33,18 +33,24 @@ class TourScheduleController extends Controller
     public function show(string $id)
     {
         try {
-            $tourSchedule = $this->service->find($id);
-
-            return view('interaction.tour-schedules.show', compact('tourSchedule'));
+            $tourSchedule = TourSchedule::find($id);
+            $tourSchedule->load(['property', 'agent', 'user']);
+    
+            return $this->modalResponse(
+            title: __('global.tour-schedule'),
+                view:  'interaction.tour-schedules.show',
+                data:  ['tourSchedule' => $tourSchedule],
+            );
         } catch (\Throwable $ex) {
             report($ex);
-
+    
             return $this->errorResponse(
-                message: __('messages.something_went_wrong'),
+                message: $ex->getMessage(),
                 code: 500
             );
         }
     }
+    
 
     /**
      * Admin endpoint — confirm or reject a pending tour request.

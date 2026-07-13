@@ -49,6 +49,7 @@ class AreaDataTable extends DataTable
                 'areas.name_en',
                 'areas.name_km',
                 'areas.slug',
+                'areas.zip_code',
                 'areas.image',
                 'areas.status',
                 'provinces.name_en as province_name_en',
@@ -98,17 +99,31 @@ class AreaDataTable extends DataTable
                 ->orderable(false)
                 ->width(40),
 
+            Column::computed('image')
+                ->title('Image')
+                ->orderable(false)
+                ->searchable(false)
+                ->width(80),
+
             Column::make('name_en')
                 ->title('Name (EN)'),
 
             Column::make('name_km')
                 ->title('Name (KH)'),
 
-            Column::computed('image')
-                ->title('Image')
+            Column::make('slug')
+                ->title('Slug')
+                ->defaultContent('—'),
+
+            Column::make('zip_code')
+                ->title('Zip Code')
+                ->defaultContent('—'),
+
+            Column::computed('status')
+                ->title('Status')
                 ->orderable(false)
                 ->searchable(false)
-                ->width(60),
+                ->width(80),
 
             Column::computed('province')
                 ->title('Province')
@@ -124,16 +139,6 @@ class AreaDataTable extends DataTable
                 ->title('Commune')
                 ->orderable(false)
                 ->searchable(false),
-
-            Column::make('slug')
-                ->title('Slug')
-                ->defaultContent('—'),
-
-            Column::computed('status')
-                ->title('Status')
-                ->orderable(false)
-                ->searchable(false)
-                ->width(80),
 
             Column::computed('action')
                 ->title('Action')

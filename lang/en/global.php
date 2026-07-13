@@ -294,4 +294,5 @@ return [
     'update_post' => 'Update Post',
     'select_area' => 'Select Area',
     'request-info' => 'Request Info',
+    'tour-schedule' => "Tour Schedule",
 ];

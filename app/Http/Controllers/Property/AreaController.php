@@ -32,7 +32,7 @@ class AreaController extends Controller
         try {
             if ($request->isMethod('post')) {
                 $formRequest = app(StoreAreaRequest::class);
-                $this->service->create($formRequest->validated());
+                $data = $this->service->create($formRequest->validated());
 
                 return $this->redirectResponse(
                     message: __('messages.create_area_successfully'),

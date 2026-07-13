@@ -243,11 +243,11 @@ Route::middleware(['auth', 'abilities'])->group(function () {
             'as' => 'request-infos.'
         ], function () {
             Route::get('/', [RequestInfoController::class, 'index'])->name('index');
-            Route::get('/{id}', [RequestInfoController::class, 'show'])->name('show');
-            Route::patch('/{id}/read', [RequestInfoController::class, 'markAsRead'])->name('read');
-            Route::patch('/{id}/reply', [RequestInfoController::class, 'reply'])->name('reply');
-            Route::patch('/{id}/close', [RequestInfoController::class, 'close'])->name('close');
-            Route::delete('/{id}', [RequestInfoController::class, 'destroy'])->name('destroy');
+            Route::get('/show', [RequestInfoController::class, 'show'])->name('show');
+            Route::patch('/read', [RequestInfoController::class, 'markAsRead'])->name('read');
+            Route::patch('/reply', [RequestInfoController::class, 'reply'])->name('reply');
+            Route::patch('/close', [RequestInfoController::class, 'close'])->name('close');
+            Route::delete('/delete', [RequestInfoController::class, 'destroy'])->name('destroy');
         });
 
         Route::group([

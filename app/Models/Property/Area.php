@@ -20,6 +20,8 @@ class Area extends Model
         'name_en',
         'name_km',
         'slug',
+        'image',
+        'zip_code',
         'status',
     ];
 

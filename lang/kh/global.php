@@ -296,4 +296,5 @@ return [
     'update_post' => 'កែប្រែអត្ថបទ',
     'select_area' => 'ជ្រើសរើសតំបន់',
     'request-info' => 'សំណើពត៌មាន',
+    'tour-schedule' => "ណាត់ជួប",
 ];

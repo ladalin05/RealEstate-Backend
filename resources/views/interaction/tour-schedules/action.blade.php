@@ -31,7 +31,7 @@
 
     <ul class="dropdown-menu dropdown-menu-end shadow-sm">
         <li>
-            <a href="{{route('interaction.tour-schedules.show', ['id' => $row->id])}}" class="dropdown-item">
+            <a href="{{route('interaction.tour-schedules.show', ['id' => $row->id])}}" onclick="showView(event)" class="dropdown-item">
                 <i class="fa fa-eye"></i>
                 View
             </a>
