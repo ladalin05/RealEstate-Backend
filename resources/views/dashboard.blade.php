@@ -88,7 +88,10 @@
                         <div class="card-body p-0 scrollable-list">
                             @forelse($latestProperty as $lp)
                             <div class="list-item d-flex align-items-center p-3 border-bottom">
-                                <img src="{{ $lp->main_image ?: asset('admin_assets/images/property-placeholder.png') }}" alt="{{ $lp->title }}" class="rounded mr-3 property-thumb">
+                                <img src="{{ $lp->main_image ?: 'http://localhost:9000/images/properties/no-image-found.jpg' }}"
+                                    alt="{{ $lp->title }}"
+                                    class="rounded mr-3 property-thumb"
+                                    onerror="this.onerror=null;this.src='http://localhost:9000/images/properties/no-image-found.jpg';">
                                 <div class="flex-grow-1 min-width-0">
                                     <p class="mb-0 text-dark font-weight-600 small text-truncate">{{ Str::limit($lp->title_en, 30) }}</p>
                                     <p class="mb-0 text-muted extra-small text-truncate">{{ $lp->location ?? '—' }}</p>

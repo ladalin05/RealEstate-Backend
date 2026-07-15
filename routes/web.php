@@ -255,10 +255,10 @@ Route::middleware(['auth', 'abilities'])->group(function () {
             'as' => 'tour-schedules.'
         ], function () {
             Route::get('/', [TourScheduleController::class, 'index'])->name('index');
-            Route::get('tour-schedules/{id}', [TourScheduleController::class, 'show'])->name('show');
-            Route::patch('tour-schedules/{id}/confirm', [TourScheduleController::class, 'confirm'])->name('confirm');
-            Route::patch('tour-schedules/{id}/reject', [TourScheduleController::class, 'reject'])->name('reject');
-            Route::get('/delete/{id}', [TourScheduleController::class, 'destroy'])->name('destroy');
+            Route::get('/show', [TourScheduleController::class, 'show'])->name('show');
+            Route::patch('/confirm', [TourScheduleController::class, 'confirm'])->name('confirm');
+            Route::patch('/reject', [TourScheduleController::class, 'reject'])->name('reject');
+            Route::get('/delete', [TourScheduleController::class, 'destroy'])->name('destroy');
         });
 
         Route::group([

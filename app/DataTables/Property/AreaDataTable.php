@@ -14,10 +14,12 @@ class AreaDataTable extends DataTable
         return datatables()
             ->eloquent($query)
             ->addIndexColumn()
-            ->addColumn('image', function ($row) {
-                return $row->image
-                    ? '<img src="' . e($row->image) . '" alt="' . e($row->name) . '" style="height:40px;width:40px;object-fit:cover;border-radius:4px;">'
-                    : '<span class="text-muted">—</span>';
+            ->editColumn('image', function ($row) {
+                $src = $row->image ?? null;
+
+                return '<img src="' . e($src) . '" width="60" height="60" 
+                style="object-fit:cover;border-radius:6px;" 
+                onerror="this.onerror=null;this.src=\'http://localhost:9000/images/properties/no-image-found.jpg\';">';
             })
             ->editColumn('name_en', fn($row) => $row->name_en ?? '—')
             ->editColumn('name_km', fn($row) => $row->name_km ?? '—')

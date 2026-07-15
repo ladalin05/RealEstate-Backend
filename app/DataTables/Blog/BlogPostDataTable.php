@@ -3,6 +3,7 @@
 namespace App\DataTables\Blog;
 
 use App\Models\Blog\BlogPost;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Services\DataTable;
@@ -31,16 +32,14 @@ class BlogPostDataTable extends DataTable
                 return '<span class="badge bg-'.$badge.'">'.$row->status.'</span>';
             })
             ->editColumn('image', function ($row) {
-                $src = $row->main_image
-                    ? rtrim(env('MINIO_ENDPOINT'), '/') . '/' . env('MINIO_BUCKET') . '/' . $row->main_image
-                    : null;
+                $src = $row->featured_image ?? null;
 
-                return $src
-                    ? '<img src="' . $src . '" width="60" height="60" style="object-fit:cover;border-radius:6px;">'
-                    : '<span class="badge bg-light text-dark">No Image</span>';
+                return '<img src="' . e($src) . '" width="60" height="60" 
+                style="object-fit:cover;border-radius:6px;" 
+                onerror="this.onerror=null;this.src=\'http://localhost:9000/images/properties/no-image-found.jpg\';">';
             })
             ->addColumn('tags', function ($row) {
-                return $row->tag_name ?? '';
+                return $row->tag_names ?? '';
             })
             ->editColumn('views_count', function ($row) {
                 return number_format($row->views_count);
@@ -55,11 +54,27 @@ class BlogPostDataTable extends DataTable
     public function query(BlogPost $model)
     {
         return $model->newQuery()
-            ->leftJoin('blog_categories', 'blog_posts.category_id', 'blog_categories.id')
-            ->leftJoin('admins', 'blog_posts.author_id', 'admins.id')
-            ->leftJoin('blog_post_tags', 'blog_posts.id', 'blog_post_tags.post_id')
-            ->leftJoin('blog_tags', 'blog_post_tags.tag_id', 'blog_tags.id')
-            ->select('blog_posts.*', 'blog_categories.name_en as category_name_en', 'blog_categories.name_km as category_name_kh', 'admins.name as author_name', 'blog_tags.name as tag_name');
+                    ->leftJoin('blog_categories', 'blog_posts.category_id', 'blog_categories.id')
+                    ->leftJoin('admins', 'blog_posts.author_id', 'admins.id')
+                    ->select(
+                        'blog_posts.*',
+                        'blog_categories.name_en as category_name_en',
+                        'blog_categories.name_km as category_name_kh',
+                        'admins.name as author_name',
+                        DB::raw('(
+                            SELECT GROUP_CONCAT(DISTINCT bt.name SEPARATOR ", ")
+                            FROM blog_post_tags bpt
+                            JOIN blog_tags bt ON bt.id = bpt.tag_id
+                            WHERE bpt.post_id = blog_posts.id
+                        ) as tag_names'),
+                        DB::raw('(
+                            SELECT GROUP_CONCAT(DISTINCT bt.id SEPARATOR ",")
+                            FROM blog_post_tags bpt
+                            JOIN blog_tags bt ON bt.id = bpt.tag_id
+                            WHERE bpt.post_id = blog_posts.id
+                        ) as tag_ids')
+                    );
+
     }
 
     public function html()

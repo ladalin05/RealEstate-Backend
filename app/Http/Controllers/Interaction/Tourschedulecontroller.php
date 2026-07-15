@@ -7,6 +7,7 @@ use App\DataTables\Interaction\TourScheduleDataTable;
 use App\Http\Requests\Interaction\UpdateTourScheduleStatusRequest;
 use App\Models\Interaction\TourSchedule;
 use App\Services\BaseService;
+use Illuminate\Http\Request;
 
 class TourScheduleController extends Controller
 {
@@ -29,36 +30,74 @@ class TourScheduleController extends Controller
 
     /**
      * Admin endpoint — view a single tour schedule.
+     * GET /tour-schedules/show?id=123
      */
-    public function show(string $id)
+    public function show(Request $request)
     {
         try {
-            $tourSchedule = TourSchedule::find($id);
+            $id = $request->query('id');
+
+            $tourSchedule = TourSchedule::findOrFail($id);
             $tourSchedule->load(['property', 'agent', 'user']);
-    
+
             return $this->modalResponse(
-            title: __('global.tour-schedule'),
+                title: __('global.tour-schedule'),
                 view:  'interaction.tour-schedules.show',
                 data:  ['tourSchedule' => $tourSchedule],
             );
         } catch (\Throwable $ex) {
             report($ex);
-    
+
             return $this->errorResponse(
                 message: $ex->getMessage(),
                 code: 500
             );
         }
     }
-    
 
     /**
-     * Admin endpoint — confirm or reject a pending tour request.
+     * Admin endpoint — confirm a pending tour request.
+     * PATCH /tour-schedules/confirm  { id: 123 }
      */
-    public function updateStatus(UpdateTourScheduleStatusRequest $request, string $id)
+    public function confirm(UpdateTourScheduleStatusRequest $request)
     {
         try {
-            $tourSchedule = $this->service->update($request->validated(), $id);
+            $data = $request->validated();
+
+            $tourSchedule = $this->service->update([
+                'status'     => 'confirmed',
+                'handled_by' => auth('web')->id(),
+                'handled_at' => now(),
+            ], $data['id']);
+
+            return $this->successResponse(
+                message: __('messages.update_tour_status_success'),
+                data: $tourSchedule,
+            );
+        } catch (\Throwable $ex) {
+            report($ex);
+
+            return $this->errorResponse(
+                message: __('messages.something_went_wrong'),
+                code: 500
+            );
+        }
+    }
+
+    /**
+     * Admin endpoint — reject a pending tour request.
+     * PATCH /tour-schedules/reject  { id: 123 }
+     */
+    public function reject(UpdateTourScheduleStatusRequest $request)
+    {
+        try {
+            $data = $request->validated();
+
+            $tourSchedule = $this->service->update([
+                'status'     => 'rejected',
+                'handled_by' => auth('web')->id(),
+                'handled_at' => now(),
+            ], $data['id']);
 
             return $this->successResponse(
                 message: __('messages.update_tour_status_success'),
@@ -76,10 +115,13 @@ class TourScheduleController extends Controller
 
     /**
      * Admin endpoint — delete a tour schedule.
+     * GET /tour-schedules/delete?id=123
      */
-    public function destroy(string $id)
+    public function destroy(Request $request)
     {
         try {
+            $id = $request->query('id');
+
             $this->service->delete($id);
 
             return $this->successResponse(
