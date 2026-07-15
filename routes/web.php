@@ -302,9 +302,8 @@ Route::middleware(['auth', 'abilities'])->group(function () {
         'prefix' => 'reports',
         'as' => 'reports.'
     ], function () {
-        Route::get('/', [ReportController::class, 'index'])->name('index');
-        Route::patch('/{report}/toggle', [ReportController::class, 'toggleStatus'])->name('toggle');
-        Route::delete('/{report}', [ReportController::class, 'destroy'])->name('destroy');
+        Route::get('/properties', [ReportController::class, 'propertyReport'])->name('properties');
+        Route::get('/inquiries', [ReportController::class, 'inquiryReport'])->name('inquiries');
     });
 
     // Web Settings

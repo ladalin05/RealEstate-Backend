@@ -6,60 +6,128 @@ use App\Models\Report;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use App\Models\Property\Property;
+use App\Models\UserManagement\Agent;
+use App\Models\Property\PropertyCategory;
+use App\Models\Interaction\RequestInfo;
+use App\Models\Property\Area;
+use Illuminate\Support\Facades\DB;
 
 class ReportController extends Controller
 {
-    public function index(Request $request): View
+    public function propertyReport(Request $request)
     {
-        $statusFilter = $request->query('status', 'All'); // All | Pending | Resolved
-        $search       = $request->query('search');
+        $query = Property::query()
+            ->with(['agent', 'category', 'area']);
 
-        $query = Report::with('user')->latest('date');
-
-        if (in_array($statusFilter, ['Pending', 'Resolved'], true)) {
-            $query->where('status', $statusFilter);
+        // Filters
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
         }
-
-        if ($search) {
+        if ($request->filled('purpose')) {
+            $query->where('purpose', $request->purpose);
+        }
+        if ($request->filled('agent_id')) {
+            $query->where('agent_id', $request->agent_id);
+        }
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+        if ($request->filled('area_id')) {
+            $query->where('area_id', $request->area_id);
+        }
+        if ($request->filled('verified')) {
+            $query->where('verified', $request->verified);
+        }
+        if ($request->filled('featured')) {
+            $query->where('featured', $request->featured);
+        }
+        if ($request->filled('from')) {
+            $query->whereDate('created_at', '>=', $request->from);
+        }
+        if ($request->filled('to')) {
+            $query->whereDate('created_at', '<=', $request->to);
+        }
+        if ($request->filled('search')) {
+            $search = $request->search;
             $query->where(function ($q) use ($search) {
-                $q->where('message', 'like', "%{$search}%")
-                  ->orWhereHas('user', function ($uq) use ($search) {
-                      $uq->where('name', 'like', "%{$search}%")
-                         ->orWhere('email', 'like', "%{$search}%");
-                  });
+                $q->where('property_code', 'like', "%{$search}%")
+                  ->orWhere('title_en', 'like', "%{$search}%");
             });
         }
 
-        $reports = $query->paginate(10)->withQueryString();
+        // Sorting
+        $sort = $request->get('sort', 'created_at');
+        $direction = $request->get('direction', 'desc');
+        $allowedSorts = ['created_at', 'price', 'title_en', 'status', 'property_code'];
+        if (in_array($sort, $allowedSorts)) {
+            $query->orderBy($sort, $direction);
+        }
 
-        // Counts for the filter tabs (independent of the current filter/search)
-        $counts = [
-            'All'      => Report::count(),
-            'Pending'  => Report::pending()->count(),
-            'Resolved' => Report::where('status', 'Resolved')->count(),
-        ];
+        $properties = $query->paginate(20)->withQueryString();
 
-        return view('reports.index', [
-            'reports'      => $reports,
-            'counts'       => $counts,
-            'statusFilter' => $statusFilter,
-            'search'       => $search,
-        ]);
+        // For filter dropdowns
+        $agents = Agent::select('id', 'first_name', 'last_name')->get();
+        $categories = PropertyCategory::select('id', 'name_en', 'name_km as name_kh')->get();
+        $areas = Area::select('id', 'name_en', 'name_km as name_kh')->get();
+
+        return view('reports.properties', compact('properties', 'agents', 'categories', 'areas'));
     }
 
-    public function toggleStatus(Report $report): RedirectResponse
+    public function inquiryReport(Request $request)
     {
-        $report->update([
-            'status' => $report->status === 'Pending' ? 'Resolved' : 'Pending',
-        ]);
+        $query = RequestInfo::query()
+            ->with(['property', 'agent', 'user']);
 
-        return back()->with('success', 'Report status updated.');
-    }
+        // Filters
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+        if ($request->filled('role')) {
+            $query->where('role', $request->role);
+        }
+        if ($request->filled('agent_id')) {
+            $query->where('agent_id', $request->agent_id);
+        }
+        if ($request->filled('property_id')) {
+            $query->where('property_id', $request->property_id);
+        }
+        if ($request->filled('registered')) {
+            if ($request->registered == '1') {
+                $query->whereNotNull('user_id');
+            } elseif ($request->registered == '0') {
+                $query->whereNull('user_id');
+            }
+        }
+        if ($request->filled('from')) {
+            $query->whereDate('created_at', '>=', $request->from);
+        }
+        if ($request->filled('to')) {
+            $query->whereDate('created_at', '<=', $request->to);
+        }
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                ->orWhere('email', 'like', "%{$search}%")
+                ->orWhere('phone', 'like', "%{$search}%");
+            });
+        }
 
-    public function destroy(Report $report): RedirectResponse
-    {
-        $report->delete();
+        // Sorting
+        $sort = $request->get('sort', 'created_at');
+        $direction = $request->get('direction', 'desc');
+        $allowedSorts = ['created_at', 'name', 'status'];
+        if (in_array($sort, $allowedSorts)) {
+            $query->orderBy($sort, $direction);
+        }
 
-        return back()->with('success', 'Report deleted.');
+        $inquiries = $query->paginate(20)->withQueryString();
+
+        // For filter dropdowns
+        $properties = Property::select('id', 'title_en')->get();
+        $agents = Agent::select('id', 'first_name', 'last_name')->get();
+
+        return view('reports.inquiries', compact('inquiries', 'properties', 'agents'));
     }
 }
