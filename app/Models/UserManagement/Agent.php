@@ -2,6 +2,9 @@
 
 namespace App\Models\UserManagement;
 
+use App\Models\Property\Property;
+use App\Models\Interaction\RequestInfo;
+use App\Models\Interaction\TourSchedule;
 use Illuminate\Database\Eloquent\Model;
 
 class Agent extends Model
@@ -34,5 +37,20 @@ class Agent extends Model
     public function agency()
     {
         return $this->belongsTo(Agency::class);
+    }
+
+    public function properties()
+    {
+        return $this->hasMany(Property::class, 'agent_id');
+    }
+
+    public function requestInfos()
+    {
+        return $this->hasMany(RequestInfo::class, 'agent_id');
+    }
+
+    public function tourSchedules()
+    {
+        return $this->hasMany(TourSchedule::class, 'agent_id');
     }
 }

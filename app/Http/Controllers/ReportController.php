@@ -130,4 +130,51 @@ class ReportController extends Controller
 
         return view('reports.inquiries', compact('inquiries', 'properties', 'agents'));
     }
+
+    public function agentPerformanceReport(Request $request)
+    {
+        $query = Agent::query()
+            ->withCount([
+                'properties',
+                'requestInfos as inquiries_count',
+                'tourSchedules as tours_count',
+                'tourSchedules as tours_completed_count' => function ($q) {
+                    $q->where('status', 'confirmed');
+                },
+            ]);
+
+        // Filters
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+        if ($request->filled('min_rating')) {
+            $query->where('rating', '>=', $request->min_rating);
+        }
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('first_name', 'like', "%{$search}%")
+                ->orWhere('last_name', 'like', "%{$search}%")
+                ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+        if ($request->filled('from')) {
+            $query->whereDate('created_at', '>=', $request->from);
+        }
+        if ($request->filled('to')) {
+            $query->whereDate('created_at', '<=', $request->to);
+        }
+
+        // Sorting
+        $sort = $request->get('sort', 'properties_count');
+        $direction = $request->get('direction', 'desc');
+        $allowedSorts = ['first_name', 'rating', 'status', 'created_at', 'properties_count', 'inquiries_count', 'tours_count'];
+        if (in_array($sort, $allowedSorts)) {
+            $query->orderBy($sort, $direction);
+        }
+
+        $agents = $query->paginate(20)->withQueryString();
+
+        return view('reports.agent-performance', compact('agents'));
+    }
 }

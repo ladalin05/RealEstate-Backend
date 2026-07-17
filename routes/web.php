@@ -302,8 +302,17 @@ Route::middleware(['auth', 'abilities'])->group(function () {
         'prefix' => 'reports',
         'as' => 'reports.'
     ], function () {
-        Route::get('/properties', [ReportController::class, 'propertyReport'])->name('properties');
-        Route::get('/inquiries', [ReportController::class, 'inquiryReport'])->name('inquiries');
+        Route::prefix('properties')->name('properties.')->group(function () {
+            Route::get('/', [ReportController::class, 'propertyReport'])->name('index');
+        });
+
+        Route::prefix('inquiries')->name('inquiries.')->group(function () {
+            Route::get('/', [ReportController::class, 'inquiryReport'])->name('index');
+        });
+
+        Route::prefix('agent-performance')->name('agent-performance.')->group(function () {
+            Route::get('/', [ReportController::class, 'agentPerformanceReport'])->name('index');
+        });
     });
 
     // Web Settings

@@ -64,7 +64,7 @@
                         <input type="date" name="to" value="{{ request('to') }}" class="form-control form-control-sm" title="To date">
                     </div>
                     <div class="col-md-2">
-                        <a href="{{ route('reports.inquiries') }}" class="btn btn-outline-secondary btn-sm w-100">Reset</a>
+                        <a href="{{ route('reports.inquiries.index') }}" class="btn btn-outline-secondary btn-sm w-100">Reset</a>
                     </div>
                 </div>
             </div>
