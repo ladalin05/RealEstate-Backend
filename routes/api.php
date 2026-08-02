@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\CMSController;
 use App\Http\Controllers\API\CategoryController;
 use App\Http\Controllers\API\PropertyController;
 use App\Http\Controllers\API\FilterController;
+use App\Http\Controllers\Admin\UploadController;
 use App\Http\Controllers\API\AgentController;
 use App\Http\Controllers\API\InteractionController;
 use App\Http\Controllers\API\BlogController;
@@ -42,6 +43,10 @@ Route::prefix('user-management')->group(function () {
     Route::get('/agent-detail', [AgentController::class, 'getAgentDetail']);
     Route::get('/get-info', [UserAuthController::class, 'getInfo']);
     Route::put('update-info', [UserAuthController::class, 'updateInfo']);
+
+    // File Upload & Delete
+    Route::post('/profile', [UploadController::class, 'store'])->name('profile');
+    Route::delete('/profile', [UploadController::class, 'destroy'])->name('profile');
 });
 
 Route::prefix('interaction')->group(function () {
