@@ -242,6 +242,7 @@
               action="{{ route('login') }}"
               method="POST"
               novalidate>
+              class="ajax-form">
             @csrf
 
             {{-- Brand icon --}}
