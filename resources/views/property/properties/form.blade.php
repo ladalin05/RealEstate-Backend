@@ -679,7 +679,7 @@
                                                 input-name="main_image"
                                                 :url="$mainImgUrl"
                                                 :path="$mainImgRaw"
-                                                :folder="'properties/main'"
+                                                :folder="'images/properties/main'"
                                                 width="200px"
                                                 height="150px"
                                                 caption="Recommended: 800×480px"
@@ -694,7 +694,7 @@
                                                 input-name="floor_plan_image"
                                                 :url="$floorPlanUrl"
                                                 :path="$floorPlanRaw"
-                                                :folder="'properties/floor_plan'"
+                                                :folder="'images/properties/floor_plan'"
                                                 width="200px"
                                                 height="150px"
                                                 caption="Upload architecture layout"
@@ -707,7 +707,7 @@
 
                                 <x-basic.uploader-group
                                     label="{{ __('global.gallery_images') }}"
-                                    folder="properties/gallery"
+                                    folder="images/properties/gallery"
                                     input-name="gallery_images[]"
                                     :items="$property->id
                                         ? $property->property_image->map(fn ($image) => [

@@ -243,7 +243,7 @@
                     input-name="image"
                     :url="old('image', $imageUrl)"
                     :path="old('image', $form->image ?? '')"
-                    folder="properties/types"
+                    folder="images/properties/types"
                     width="200px"
                     height="150px"
                     caption="Recommended: 600×400px"

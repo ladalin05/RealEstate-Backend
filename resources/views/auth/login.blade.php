@@ -238,11 +238,10 @@
 <div class="login-page-wrapper">
     <div class="login-card">
 
-        <form class="needs-validation {{ !empty($errors->toArray()) ? 'was-validated' : '' }}"
+        <form class="ajax-form needs-validation {{ !empty($errors->toArray()) ? 'was-validated' : '' }}"
               action="{{ route('login') }}"
               method="POST"
               novalidate>
-              class="ajax-form">
             @csrf
 
             {{-- Brand icon --}}

@@ -36,7 +36,7 @@ class BlogPostDataTable extends DataTable
 
                 return '<img src="' . e($src) . '" width="60" height="60" 
                 style="object-fit:cover;border-radius:6px;" 
-                onerror="this.onerror=null;this.src=\'http://localhost:9000/images/properties/no-image-found.jpg\';">';
+                onerror="this.onerror=null;this.src=\'http://localhost:9000/winrealty/images/properties/no-image-found.jpg\';">';
             })
             ->addColumn('tags', function ($row) {
                 return $row->tag_names ?? '';

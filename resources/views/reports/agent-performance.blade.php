@@ -89,7 +89,7 @@
                         <tr>
                             <td>
                                 <div class="d-flex align-items-center gap-2">
-                                    <img src="{{ $agent->profile_image }}" class="rounded-circle" style="width:32px;height:32px;object-fit:cover;" onerror="this.onerror=null;this.src='http://localhost:9000/images/profiles/no-image-found.jpg';">
+                                    <img src="{{ $agent->profile_image }}" class="rounded-circle" style="width:32px;height:32px;object-fit:cover;" onerror="this.onerror=null;this.src='http://localhost:9000/winrealty/images/profiles/no-image.png';">
                                     <div>
                                         <div class="fw-semibold">{{ $agent->first_name }} {{ $agent->last_name }}</div>
                                         <div class="small text-muted">{{ $agent->email }}</div>

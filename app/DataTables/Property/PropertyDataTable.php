@@ -15,11 +15,11 @@ class PropertyDataTable extends DataTable
             ->eloquent($query)
             ->addIndexColumn()
             ->editColumn('image', function ($row) {
-                $src = $row->main_image ?: 'http://localhost:9000/images/properties/no-image-found.jpg';
+                $src = $row->main_image ?: 'http://localhost:9000/winrealty/images/properties/no-image-found.jpg';
 
                 return '<img src="' . e($src) . '" width="60" height="60" 
                 style="object-fit:cover;border-radius:6px;" 
-                onerror="this.onerror=null;this.src=\'http://localhost:9000/images/properties/no-image-found.jpg\';">';
+                onerror="this.onerror=null;this.src=\'http://localhost:9000/winrealty/images/properties/no-image-found.jpg\';">';
             })
             ->addColumn('type_name', function ($row) {
                 return $row->{'type_name_'.app()->getLocale()} ?? '-';

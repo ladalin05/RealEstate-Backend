@@ -132,7 +132,7 @@
                         @forelse($properties as $property)
                         <tr>
                             <td>
-                                <img src="{{ $property->main_image }}" class="rounded" style="width:48px;height:48px;object-fit:cover;" onerror="this.onerror=null;this.src='http://localhost:9000/images/properties/no-image-found.jpg';">
+                                <img src="{{ $property->main_image }}" class="rounded" style="width:48px;height:48px;object-fit:cover;" onerror="this.onerror=null;this.src='http://localhost:9000/winrealty/images/properties/no-image-found.jpg';">
                             </td>
                             <td class="fw-semibold">{{ $property->property_code }}</td>
                             <td>
